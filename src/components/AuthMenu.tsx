@@ -29,7 +29,7 @@ const AuthMenu: React.FC = () => {
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn-circle avatar hover:scale-95 border-brandPrimary border">
-        <div className="w-8  rounded-full  border p-0.5 border-blackDee">
+        <div className="md:w-8 w-8  rounded-full  border p-0.5 border-blackDee">
           <Image
             src={image || defaultUserImage}
             alt="User Avatar"
