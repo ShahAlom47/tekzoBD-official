@@ -17,7 +17,7 @@ export default function MainWrapper({
   );
 
   return (
-    <main className={`${hasMargin ? "md:mt-[5%] mt-[12%]" : "mt-0"} min-h-screen`}>
+    <main className={`${hasMargin ? "md:mt-[8%] mt-[15%]" : "mt-0"} min-h-screen`}>
       {children}
     </main>
   );

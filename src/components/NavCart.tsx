@@ -14,11 +14,11 @@ const NavCart = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex items-center ">
       {/* Cart Button */}
       <button
         onClick={onOpen}
-        className="text-black md:text-3xl text-2xl font-light relative"
+        className="text-black md:text-3xl text-2xl font-light relative "
       >
         <PiShoppingCartThin />
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-1 -right-1 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">

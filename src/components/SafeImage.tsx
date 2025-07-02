@@ -1,18 +1,19 @@
 // components/SafeImage.tsx
 
-import Image, { ImageProps } from "next/image";
+import Image, { ImageProps, StaticImageData } from "next/image";
 import React from "react";
-import defaultImage from "@/assets/image/default-image.jpg"
+import defaultImage from "@/assets/image/default-image.jpg";
+
+type LocalOrRemoteSrc = string | StaticImageData | null | undefined;
 
 type Props = {
-  src?: string | null;
+  src?: LocalOrRemoteSrc | StaticImageData;
   alt: string;
   width?: number;
   height?: number;
-  fallback?: string;
+  fallback?: LocalOrRemoteSrc;
   className?: string;
 } & Omit<ImageProps, "src" | "alt" | "width" | "height" | "className">;
-
 
 const SafeImage: React.FC<Props> = ({
   src,
@@ -23,8 +24,13 @@ const SafeImage: React.FC<Props> = ({
   className,
   ...rest
 }) => {
-  // Ensure src is a non-empty string; fallback otherwise
-  const validSrc = typeof src === "string" && src.trim() !== "" ? src : fallback;
+  const isValidString = (val: unknown): val is string =>
+    typeof val === "string" && val.trim() !== "";
+
+  const validSrc: string | StaticImageData =
+    src && (isValidString(src) || src instanceof Object)
+      ? (src as string | StaticImageData)
+      : (fallback as string | StaticImageData);
 
   return (
     <Image
@@ -33,11 +39,8 @@ const SafeImage: React.FC<Props> = ({
       width={width}
       height={height}
       className={className}
-      {...rest}
-      // Optional: add loading="lazy" for performance optimization
       loading="lazy"
-      // Optional: prioritize can be added if you want this image to load fast
-      // priority={true}
+      {...rest}
     />
   );
 };

@@ -19,7 +19,7 @@ const AuthButton = () => {
     return (
       <button
         onClick={() => signOut()}
-        className="btn btn-link text-red-500 font-semibold"
+        className="text-blackDeep hover:text-brandPrimary hover:underline text-xs px-1 py-1 max-h-5"
       >
         Log Out
       </button>

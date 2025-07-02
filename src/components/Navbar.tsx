@@ -43,7 +43,7 @@ const Navbar = () => {
         <div className="flex-1 ">
           <GlobalSearchBox></GlobalSearchBox>
         </div>
-        <div className="flex items-center gap-4  px-2 ">
+        <div className="flex items-center justify-center gap-4   px-2 ">
           <NavCart></NavCart>
           <AuthMenu />
         </div>
