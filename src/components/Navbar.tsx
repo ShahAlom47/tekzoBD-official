@@ -33,7 +33,7 @@ const Navbar = () => {
             <h1 className=" text-brandNeutral">Welcome to TekzoBD</h1>
             <h1 className="text-blackDeep">Contact: 01747291486</h1>
           </div>
-          <AuthButton></AuthButton>
+      <div className="md:block hidden">    <AuthButton></AuthButton></div>
         </div>
       </div>
       <div className=" lg:flex md:flex hidden items-center justify-between  max-w  ">
@@ -49,7 +49,7 @@ const Navbar = () => {
         </div>
       </div>
       <div
-        className={` text-sm  duration-500 transition-all overflow-hidden max-w flex gap-4
+        className={` text-sm  duration-500 transition-all overflow-hidden max-w md:flex hidden gap-4
           ${showNavbar ? " px-4 py-1 " : "  px-4 p-0"} `}
         style={{
           maxHeight: showNavbar ? "200px  " : "0px",

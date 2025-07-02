@@ -6,7 +6,7 @@ import NavLinks from "./NavLinks";
 
 const Footer = () => {
   return (
-    <footer className="bg-blackDeep text-gray-300 py-8 px-4 mt-16">
+    <footer className="bg-grayLight text-gray-300 py-8 px-4 mt-16">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Logo or Site Name */}
         <div className="text-2xl font-bold text-white">
@@ -49,7 +49,7 @@ const Footer = () => {
 
       {/* Bottom Line */}
       <div className="text-center text-xs mt-6 text-gray-500">
-        © {new Date().getFullYear()} Shah Alom. All rights reserved.
+        © {new Date().getFullYear()} TekzoBD. All rights reserved.
       </div>
     </footer>
   );

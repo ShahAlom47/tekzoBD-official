@@ -62,7 +62,7 @@ const Drawer: React.FC<DrawerProps> = ({
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 min-h-screen"
         />
       )}
 
@@ -75,7 +75,7 @@ const Drawer: React.FC<DrawerProps> = ({
           ${getPositionClasses()} ${className}
         `}
       >
-        <div className="flex justify-end p-3">
+        <div className="flex justify-end px-3">
           <button
             onClick={onClose}
             className="text-xl font-bold hover:text-red-500 text-gray-600"
