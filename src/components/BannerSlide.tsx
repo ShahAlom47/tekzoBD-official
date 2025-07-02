@@ -20,6 +20,11 @@ const BannerSlide = ({ bannerData }: SlidePropsType) => {
         pagination={{ clickable: true }}
         loop={true}
         className="w-full"
+          style={{
+                backgroundImage:"linear-gradient(to right, #1e3a8a, #3b82f6)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
       >
         {bannerData?.map((banner) => (
           <SwiperSlide key={String(banner._id)}>
@@ -36,14 +41,14 @@ const BannerSlide = ({ bannerData }: SlidePropsType) => {
               <div className="w-full max-w h-full flex justify-center items-center px-6 py-8 ">
                 <div className="max-w-screen-xl w-full grid grid-cols-1  md:grid-cols-2 gap-8 items-center p-4">
                   {/* Left Content */}
-                  <div className="text-white space-y-4 md:order-1 order-2 ">
-                    <h1 className="text-3xl md:text-5xl font-bold">
+                  <div className="text-white space-y-4 md:order-1 order-2  animate-fadeInUp  ">
+                    <h1 className="text-2xl md:text-4xl font-bold ">
                       {banner.title}
                     </h1>
-                    <p className="text-lg">{banner.subtitle}</p>
+                    <p className="">{banner.subtitle}</p>
                     <Link
                       href={banner.link}
-                      className="inline-block px-6 py-2 bg-white text-brandPrimary font-semibold rounded hover:bg-gray-200 transition"
+                      className="inline-block px-5 py-1 bg-white text-brandPrimary font-semibold rounded-sm hover:bg-gray-200 transition"
                     >
                       View Product
                     </Link>

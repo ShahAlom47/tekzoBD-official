@@ -79,6 +79,15 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      animation: {
+        fadeInUp: "fadeInUp 1s ease-out forwards",
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": { opacity: 0, transform: "translateY(20px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [
@@ -101,9 +110,10 @@ const config = {
           backgroundImage: "linear-gradient(to top right , #1f1f1f, #41454c)",
           boxShadow: "1px -2px 8px rgba(107, 105, 105, 0.39)",
         },
-          '.btn-base': {
-      '@apply inline-flex items-center justify-center font-medium text-white bg-brandPrimary px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-700': {},
-    },
+        ".btn-base": {
+          "@apply inline-flex items-center justify-center font-medium text-white bg-brandPrimary px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-700":
+            {},
+        },
       });
     }),
   ],
