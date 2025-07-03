@@ -20,7 +20,7 @@ const DashNavbar: React.FC<PropsType> = ({ isOpen }) => {
   ];
 
   return (
-    <div className="flex flex-col group gap-2 text-white">
+    <div className="flex flex-col group gap-2 text-black">
       {navItems.map((item, index) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
@@ -29,9 +29,9 @@ const DashNavbar: React.FC<PropsType> = ({ isOpen }) => {
           <Link
             key={index}
             href={item.href}
-            className={`  flex items-center gap-2 md:p-4 p-1  rounded-full transition-all duration-300 ease-in-out overflow-hidden ${
-              isActive ? "bg-blackDeep" : "hover:bg-blackDeep"
-            } ${isOpen ? "w-40 " : " md:w-12 w-0 group-hover:w-48"}`}
+            className={`  flex items-center gap-2 md:p-2 p-1  rounded-full transition-all duration-300 ease-in-out overflow-hidden ${
+              isActive ? "bg-white" : "hover:bg-white"
+            } ${isOpen ? "w-40 " : " md:w-9 w-0 group-hover:w-48"}`}
           >
             {Icon && <Icon className="text-lg flex-shrink-0" />}
             <span

@@ -40,26 +40,26 @@ const AuthMenu: React.FC = () => {
         </div>
       </div>
 
-      <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-        <li className="font-semibold text-sm text-gray-500 px-2 py-1 uppercase">
+      <ul tabIndex={0} className="mt-3 z-[1] p-2 font-semibold shadow menu menu-sm dropdown-content shadow-brandPrimary bg-white rounded-box text-brandNeutral  w-52">
+        <li className="font-semibold text-sm text-brandNeutral px-2 py-1 uppercase border-b-2">
           {name || "User"}
         </li>
         <li>
-          <Link href="/profile">Profile</Link>
+          <Link href="/profile" className="cursor-pointer hover:text-brandPrimary">Profile</Link>
         </li>
         <li>
-          <Link href="/settings">Settings</Link>
+          <Link href="/settings" className="cursor-pointer hover:text-brandPrimary">Settings</Link>
         </li>
 
         {/* Only show if user is admin */}
         {role === "admin" && (
           <li>
-            <Link href="/dashboard" className="text-red-600 font-semibold">Dashboard</Link>
+            <Link href="/dashboard" className="text-red-600 font-semibold cursor-pointer hover:text-brandPrimary">Dashboard</Link>
           </li>
         )}
 
         <li>
-          <button onClick={() => signOut()} className="text-left w-full">Logout</button>
+          <button onClick={() => signOut()} className="text-left w-full cursor-pointer hover:text-brandPrimary">Logout</button>
         </li>
       </ul>
     </div>

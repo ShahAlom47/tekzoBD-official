@@ -38,7 +38,7 @@ const DashSearchBox = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 border border-white primary-hover p-1 text-white relative"
+      className="flex items-center gap-2 border-2 border-brandPrimary rounded-full p-1 text-black relative"
     >
       <input
         className="px-2 w-full bg-transparent outline-none"
@@ -53,7 +53,7 @@ const DashSearchBox = () => {
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-10 text-grayLight hover:text-red-400"
+          className="absolute right-10 text-grayDeep hover:text-red-400"
         >
           <IoMdClose size={18} />
         </button>
@@ -61,7 +61,7 @@ const DashSearchBox = () => {
 
       <button
         type="submit"
-        className="text-grayLight hover:text-gray-400 px-1"
+        className="text-grayDeep hover:text-gray-700 px-1"
       >
         <FaSearch />
       </button>
