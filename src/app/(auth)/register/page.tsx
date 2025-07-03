@@ -1,19 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React  from "react";
 import { useForm } from "react-hook-form";
 import "../../../style/authpage.css";
-import AuthCard from "@/components/AuthCard";
 import Link from "next/link";
 import { registerUser } from "@/lib/allApiRequest/apiRequests";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { handleApiError } from "@/utils/handleApiError";
 import { RegisterUser } from "@/Interfaces/userInterfaces";
+import PrimaryButton from "@/components/PrimaryButton";
 
 
 
 const Register: React.FC = () => {
-  const [hovered, setHovered] = useState<boolean>(false);
   const router = useRouter();
 
   const {
@@ -51,19 +50,20 @@ const Register: React.FC = () => {
   const password = watch("password");
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#1e1e2f]  ">
-      <AuthCard title="Register" hovered={hovered} setHovered={setHovered}>
+    <div className="flex flex-col justify-center items-center min-h-screen max-w   ">
+      <h1 className=" text-xl font-semibold text-black">Sign Up</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="text-sm w-full space-y-4 p-3  "
+          className="text-sm w-full space-y-4 p-3  text-brandNeutral max-w-xl "
         >
           {/* Name Field */}
           <div>
+            <label className=" ml-2" >User Name:</label>
             <input
               type="text"
               placeholder="Enter your name"
               {...register("name", { required: "Name is required" })}
-              className="w-full px-2 py-1 rounded-full bg-gray-900 border border-gray-50 outline-none focus:ring-2 focus:ring-gray-500"
+              className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
@@ -72,11 +72,12 @@ const Register: React.FC = () => {
 
           {/* Email Field */}
           <div>
+             <label  className=" ml-2" >User Email:</label>
             <input
               type="email"
               placeholder="Enter your email"
               {...register("email", { required: "Email is required" })}
-              className="w-full px-2 py-1 rounded-full bg-gray-900 border border-gray-50 outline-none focus:ring-2 focus:ring-gray-500"
+         className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">
@@ -87,6 +88,7 @@ const Register: React.FC = () => {
 
           {/* Password Field */}
           <div>
+             <label className=" ml-2">Password:</label>
             <input
               type="text"
               placeholder="Enter password"
@@ -97,7 +99,7 @@ const Register: React.FC = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-              className="w-full px-2 py-1 rounded-full bg-gray-900 border border-gray-50 outline-none focus:ring-2 focus:ring-gray-500"
+  className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">
@@ -108,6 +110,7 @@ const Register: React.FC = () => {
 
           {/* Confirm Password Field */}
           <div>
+               <label className=" ml-2"> Confirm Password:</label>
             <input
               type="text"
               placeholder="Confirm password"
@@ -116,7 +119,7 @@ const Register: React.FC = () => {
                 validate: (value) =>
                   value === password || "Passwords do not match",
               })}
-              className="w-full px-2 py-1 rounded-full bg-gray-900 border border-gray-50 outline-none focus:ring-2 focus:ring-gray-500"
+        className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.confirmPassword && (
               <p className="text-red-500 text-xs mt-1">
@@ -126,25 +129,18 @@ const Register: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="auth-button font-bold transition duration-200"
-          >
-            <span className="text-white relative z-20 hover:text-[#ff014f] transition duration-200">
-              Register
-            </span>
-          </button>
+        
+          <PrimaryButton  type="submit" >Register</PrimaryButton>
 
          
 
           <p className="flex gap-2 justify-center items-center text-xs text-gray-400 mt-2">
             Already have an account?
-            <Link className="text-white underline hover:scale-105" href="/login">
+            <Link className=" btn-link btn underline hover:scale-105" href="/login">
               Login
             </Link>
           </p>
         </form>
-      </AuthCard>
     </div>
   );
 };

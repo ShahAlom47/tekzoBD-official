@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #1e1e2f;
+  background: #4e4ede;
   position: relative;
   z-index: 0;
 }
@@ -14,10 +14,10 @@
   width: 350px;
   height: fit-content;
   background: transparent;
-  border-radius: 23px;
+  border-radius: 10px;
   z-index: 1;
   overflow: hidden;
-  color: #fff;
+  color: #2e2d31;
   /* font-family: Arial, sans-serif; */
   /* Make content inside relative */
   z-index: 1;
@@ -51,10 +51,10 @@
 .box::after {
   content: "";
   position: absolute;
-  inset: 3px;
-  background: #21212f;
-  border-radius: 20px;
-  border: solid #2a2828e3 15px;
+  inset: 5px;
+  background: #fcfcff;
+  border-radius: 10px;
+  border: solid #636367e3 2px;
   z-index: 1; /* Still below form */
 box-shadow: 
   inset 0 -4px 3 0 rgba(255, 255, 255, 0.729), 
@@ -74,7 +74,7 @@ box-shadow:
 
 
 .title-icon {
-  color: #ff014f;
+  color: #453d3f;
   filter: blur(0.9 );
   text-shadow:
     10px 10px 5px #ff00ff,
@@ -90,7 +90,7 @@ box-shadow:
    border-radius: 9999px;
   z-index: 1;
   overflow: hidden;
-  color: #fff;
+  color: #2f13ff;
   
 }
 

@@ -49,7 +49,7 @@ const AuthCard: React.FC<AuthCardProps> = ({
       onMouseEnter={() => setHovered(true)}
     >
       <div className="w-full">
-        <h2 className="text-center text-xl font-medium relative top-7 mb-2 z-20 uppercase primaryText flex gap-2 justify-center items-center w-full">
+        <h2 className="text-center text-xl font-medium relative top-7 mb-2 z-20 uppercase  flex gap-2 justify-center items-center w-full">
           <span className="text-[#ff014] title-icon">{getIcon()}</span> {title}
         </h2>
 

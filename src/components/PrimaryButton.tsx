@@ -18,13 +18,10 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   href,
 }) => {
   const baseClass = clsx(
-    "px-4 py-1 rounded-sm text-primaryRed font-medium uppercase",
-    "bg-gradient-to-tr from-blackLight to-gray-700",
-    "bg-[length:150%_100%] bg-left",
-    "transition-all duration-700 ease-in-out",
-    "hover:bg-gradient-to-bl hover:-translate-y-1",
-    "shadow-[-1px_2px_2px_#d8d8d863]",
-    "hover:shadow-[1px_-2px_2px_#d8d8d863]",
+    "px-4 py-1 rounded-full font-medium ",
+    "transition-all duration-300 ease-in-out",
+    " border border-brandPrimary text-brandNeutral",
+    "hover:bg-brandPrimary hover:text-white",
     className
   );
 
