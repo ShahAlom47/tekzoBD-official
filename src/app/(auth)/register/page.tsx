@@ -63,7 +63,7 @@ const Register: React.FC = () => {
               type="text"
               placeholder="Enter your name"
               {...register("name", { required: "Name is required" })}
-              className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
+              className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
@@ -77,7 +77,7 @@ const Register: React.FC = () => {
               type="email"
               placeholder="Enter your email"
               {...register("email", { required: "Email is required" })}
-         className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
+         className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">
@@ -99,7 +99,7 @@ const Register: React.FC = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-  className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
+  className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">
@@ -119,7 +119,7 @@ const Register: React.FC = () => {
                 validate: (value) =>
                   value === password || "Passwords do not match",
               })}
-        className="w-full px-2 py-1 rounded-full bg-transparent border border-brandPrimary text-black outline-none focus:ring-2 focus:brandPrimary"
+        className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
             />
             {errors.confirmPassword && (
               <p className="text-red-500 text-xs mt-1">
