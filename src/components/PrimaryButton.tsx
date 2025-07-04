@@ -18,7 +18,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   href,
 }) => {
   const baseClass = clsx(
-    "px-4 py-1 rounded-full font-medium ",
+    "px-4 py-1  rounded-full font-medium flex gap-1 items-center  text-normal",
     "transition-all duration-300 ease-in-out",
     " border border-brandPrimary text-brandNeutral",
     "hover:bg-brandPrimary hover:text-white",

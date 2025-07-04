@@ -6,12 +6,13 @@ export interface ProductType {
   slug: string;
   description: string;
   price: number;
+  discount:number;
   stock: number;
   images: string[];
   category: string;
   isPublished: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 
   // Source Info (নিজের হোক বা ড্রপশিপার)
   sourceInfo?: {
@@ -26,3 +27,11 @@ export interface ProductType {
     externalStock?: boolean;         // স্টক তোমার কাছে না, ওদের কাছে আছে
   };
 }
+
+
+
+export type GetAllProductParams = {
+  currentPage: number;  
+  limit: number;
+  searchTrim?: string;
+};

@@ -10,11 +10,16 @@ import { Project } from "@/Interfaces/portfolioInterfaces";
 
 export const getUserCollection = async (): Promise<Collection<Users>> => {
   const client = await clientPromise;
-  const db: Db = client.db("shah-alom-official"); // Replace with your database name
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<Users>("users");
 };
 export const getPortfolioCollection = async (): Promise<Collection<Project>> => {
   const client = await clientPromise;
-  const db: Db = client.db("shah-alom-official"); // Replace with your database name
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<Project>("portfolios");
+};
+export const getProductCollection = async (): Promise<Collection<Project>> => {
+  const client = await clientPromise;
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
+  return db.collection<Project>("Products");
 };

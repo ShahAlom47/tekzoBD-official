@@ -9,7 +9,7 @@ type DashPageTitleProps = {
 
 const DashPageTitle = ({ children, className }: DashPageTitleProps) => {
   return (
-    <h2 className={clsx("md:text-2xl text-lg font-bold mb-4", className)}>
+    <h2 className={clsx("md:text-2xl text-lg font-bold mb- ", className)}>
       {children}
     </h2>
   );

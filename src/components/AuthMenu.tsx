@@ -54,7 +54,7 @@ const AuthMenu: React.FC = () => {
         {/* Only show if user is admin */}
         {role === "admin" && (
           <li>
-            <Link href="/dashboard" className="text-red-600 font-semibold cursor-pointer hover:text-brandPrimary">Dashboard</Link>
+            <Link href="/dashboard" className="text-red-600 font-semibold cursor-pointer hover:text-brandPrimary checked:bg-red-800  ">Dashboard</Link>
           </li>
         )}
 

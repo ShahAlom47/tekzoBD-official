@@ -10,6 +10,7 @@ import { uploadToCloudinary } from "@/utils/cloudinaryUpload";
 import toast from "react-hot-toast";
 import { useConfirm } from "@/hooks/useConfirm";
 import { ObjectId } from "mongodb";
+import PrimaryButton from "./PrimaryButton";
 
 export interface MediaItem {
   type: "image" | "video";
@@ -178,7 +179,7 @@ const MediaManager: React.FC<Props> = ({
       {mediaList.map((media, index) => (
         <div
           key={index}
-          className="border p-4 rounded-md flex flex-col gap-2 relative bg-[#1d232a]"
+          className="border p-4 rounded-md flex flex-col gap-2 relative my-inpu"
         >
           <div className="flex gap-4 items-center">
             <select
@@ -186,7 +187,7 @@ const MediaManager: React.FC<Props> = ({
               onChange={(e) =>
                 handleTypeChange(index, e.target.value as "image" | "video")
               }
-              className="select select-bordered w-fit"
+              className="selec select-bordered bg-transparent w-fit my-input "
             >
               <option value="image">Image</option>
               <option value="video">Video</option>
@@ -210,7 +211,7 @@ const MediaManager: React.FC<Props> = ({
                 if (e.target.files?.[0])
                   handleImageUpload(index, e.target.files[0]);
               }}
-              className="file-input file-input-bordered w-full"
+              className="my-input w-full"
             />
           ) : (
             <input
@@ -218,7 +219,7 @@ const MediaManager: React.FC<Props> = ({
               placeholder="Enter YouTube URL"
               value={media.url ?? ""}
               onChange={(e) => handleVideoUrl(index, e.target.value)}
-              className="input input-bordered w-full"
+              className="my-input w-full"
             />
           )}
 
@@ -270,9 +271,8 @@ const MediaManager: React.FC<Props> = ({
         </div>
       ))}
 
-      <button type="button" onClick={handleAddMedia} className="primary-hover">
-        + Add Media
-      </button>
+    
+      <PrimaryButton type="button" onClick={handleAddMedia}> + Add Media </PrimaryButton>
 
       {ConfirmModal}
     </div>

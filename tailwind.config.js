@@ -114,6 +114,22 @@ const config = {
           "@apply inline-flex items-center justify-center font-medium text-white bg-brandPrimary px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-700":
             {},
         },
+        // default input filed  style 
+        ".my-input": {
+      backgroundColor: "transparent",
+      borderWidth: "1px",
+      borderColor: "#64748b", // brandNeutral color directly
+      borderRadius: "4px", // full rounded
+      color: "#000", // black
+      padding: "0.15rem 0.91rem", // px-3 py-2
+      outline: "none",
+      width: "100%",
+      transition: "all 0.2s ease-in-out",
+    },
+    ".my-input:focus": {
+      borderColor: "#2563eb", // brandPrimary color
+      boxShadow: "0 0 0 1px #2563eb",
+    },
       });
     }),
   ],
