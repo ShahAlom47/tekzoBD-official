@@ -1,4 +1,4 @@
-import { getPortfolioCollection } from "@/lib/database/db_collections";
+import {  getProductCollection } from "@/lib/database/db_collections";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -12,31 +12,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const portfolioCollection = await getPortfolioCollection();
+    const productCollection = await getProductCollection();
 
-    const addResult = await portfolioCollection.insertOne(body);
+    const addResult = await productCollection.insertOne(body);
 
     if (!addResult.acknowledged) {
       return NextResponse.json(
-        { message: "Failed to add portfolio", success: false },
+        { message: "Failed to add product", success: false },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
       {
-        message: "Portfolio added successfully",
+        message: "product added successfully",
         success: true,
         insertedId: addResult.insertedId,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in POST /api/portfolio:", error);
+    console.error("Error in POST /api/product:", error);
 
     return NextResponse.json(
       {
-        message: "An error occurred while adding the portfolio",
+        message: "An error occurred while adding the product",
         success: false,
         error: error instanceof Error ? error.message : String(error),
       },

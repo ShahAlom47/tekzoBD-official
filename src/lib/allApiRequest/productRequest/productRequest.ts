@@ -6,7 +6,7 @@ import { GetAllProductParams, ProductType } from "@/Interfaces/productInterfaces
 
 
 export const addProduct = async (data:ProductType) => {
-  return request("POST", "/Product/addProduct", { ...data }, );
+  return request("POST", "/product/addProduct", { ...data }, );
 }
 
 export const getAllProduct = async ({ currentPage, limit, searchTrim }: GetAllProductParams) => {
