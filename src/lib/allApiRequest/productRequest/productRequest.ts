@@ -10,20 +10,20 @@ export const addProduct = async (data:ProductType) => {
 }
 
 export const getAllProduct = async ({ currentPage, limit, searchTrim }: GetAllProductParams) => {
-  const url = `/Product/getAllProduct?currentPage=${currentPage}&pageSize=${limit}` +
+  const url = `/product/getAllProducts?currentPage=${currentPage}&pageSize=${limit}` +
               (searchTrim ? `&searchTrim=${encodeURIComponent(searchTrim)}` : "");
 
   return request("GET", url);
 };
 
 export const getSingleProduct = async (id:string|ObjectId,)=>{
-  return request("GET",`/Product/getSingleProduct/${id}`)
+  return request("GET",`/product/getSingleProduct/${id}`)
 }
 
 export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
-  return request("PATCH",`/Product/updateProduct/${id}`,{...data})
+  return request("PATCH",`/product/updateProduct/${id}`,{...data})
 }
 
 export const deleteProduct= async (id: string|ObjectId ) => {
-  return request("DELETE", `/Product/deleteProduct/${id}`);
+  return request("DELETE", `/product/deleteProduct/${id}`);
 }

@@ -1,18 +1,135 @@
-import DashPageTitle from '@/components/DashPageTitle';
-import PrimaryButton from '@/components/PrimaryButton';
-import React from 'react';
-import { FaPlus } from 'react-icons/fa';
+"use client";
 
-const ManageProducts = () => {
-    return (
-        <div>
-          <div className='flex justify-between'>
+import ErrorComponent from "@/app/error";
+import Loading from "@/app/loading";
+import DashPageTitle from "@/components/DashPageTitle";
+import { CustomTable } from "@/components/ui/CustomTable";
+import { DashPaginationButton } from "@/components/ui/DashPaginationButton";
+import { useConfirm } from "@/hooks/useConfirm";
+import { useAppSelector } from "@/redux/hooks/reduxHook";
+import { deleteProduct, getAllProduct } from "@/lib/allApiRequest/productRequest/productRequest";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { queryClient } from "@/Providers/QueryProvider";
+import { ObjectId } from "mongodb";
+import { ProductType } from "@/Interfaces/productInterfaces";
+import PrimaryButton from "@/components/PrimaryButton";
+import { FaPlus } from "react-icons/fa";
+
+const ManageProduct = () => {
+  const { ConfirmModal, confirm } = useConfirm();
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const searchValue = useAppSelector((state) => state.dashSearch.dashSearchValue);
+
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["getAllProduct", searchValue],
+    queryFn: async () => {
+      const response = await getAllProduct({
+        currentPage: page,
+        limit,
+        searchTrim: searchValue,
+      });
+      if (!response || !response.success) {
+        throw new Error(response.message || "Failed to fetch product data");
+      }
+      return response;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const productData = (product?.data as ProductType[]) || [];
+  const totalPages = product?.totalPages || 1;
+
+  const handleDelete = async (id: ObjectId | string | undefined) => {
+    const ok = await confirm({
+      title: "Delete Product",
+      message: "Are you sure you want to delete this product?",
+      confirmText: "Yes",
+      cancelText: "No",
+    });
+
+    if (ok) {
+      if (!id) {
+        toast.error("Invalid product ID");
+        return;
+      }
+      try {
+        const deleteResponse = await deleteProduct(id);
+        if (!deleteResponse || !deleteResponse.success) {
+          throw new Error(deleteResponse.message || "Failed to delete product");
+        }
+        toast.success(deleteResponse.message || "Product deleted successfully!");
+        queryClient.invalidateQueries({ queryKey: ["getAllProduct"] });
+      } catch (error) {
+        toast.error("Error deleting product");
+        console.error(error);
+      }
+    }
+  };
+
+  const columns = [
+    { header: "Title", accessor: "title", isSummary: true },
+    { header: "Price", accessor: "price" },
+    { header: "Discount", accessor: "discount" },
+    { header: "Stock", accessor: "stock" },
+    { header: "Category", accessor: "category" },
+    { header: "Edit", accessor: "edit" },
+    { header: "Delete", accessor: "delete" },
+  ];
+
+  const data = productData?.map((item) => ({
+    title: item.title,
+    price: `${item.price} TK`,
+    discount: `${item.discount || 0}%`,
+    stock: item.stock,
+    category: item.category,
+    edit: (
+      <Link href={`/dashboard/manageProduct/${item._id}`} className="btn btn-sm">
+        View & Edit
+      </Link>
+    ),
+    delete: (
+      <button onClick={() => handleDelete(item._id)} className="btn-sm btn bg-red-500 text-white">
+        Delete
+      </button>
+    ),
+  }));
+
+  return (
+    <div className="p-4 max-w min-h-screen">
+       <div className='flex justify-between'>
               <DashPageTitle >Manage Products</DashPageTitle>
               <PrimaryButton href={"/dashboard/manageProducts/addProducts"} className=' rounded-sm text-sm h-8'><FaPlus></FaPlus> Add Products</PrimaryButton>
           </div>
-            ManageProducts
-        </div>
-    );
+      {isLoading ? (
+        <Loading />
+      ) : error ? (
+        <ErrorComponent />
+      ) : (
+        <>
+          <CustomTable
+            columns={columns}
+            data={data}
+            className="shadow-2xl shadow-stone-600"
+          />
+          <DashPaginationButton
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+            className="mt-4"
+          />
+        </>
+      )}
+      {ConfirmModal}
+    </div>
+  );
 };
 
-export default ManageProducts;
+export default ManageProduct;
