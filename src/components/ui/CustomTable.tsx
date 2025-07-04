@@ -45,33 +45,33 @@ export function CustomTable<T extends object>({
   };
 
   return (
-    <div className={`w-full shadow-2xl shadow-stone-600   ${className} `}>
-      {/* 🖥️ Desktop Table */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full border border-gray-200 dark:border-gray-700">
-          <thead className="bg-blackLight ">
-            <tr>
+    <div className={`w-full bg-gray-200/15   ${className} `}>
+      {/*  Desktop Table */}
+      <div className="hidden md:block overflow-x-auto ">
+        <table className="min-w-full  rounded-md overflow-hidden bg-transparent">
+          <thead className="  bg-grayLight text-black   ">
+            <tr className=" ">
               {columns.map((col, idx) => (
                 <th
                   key={idx}
-                  className="p-3  font-semibold border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-center"
+                  className="p-3 mb-2  font-semibold shadow-md shadow-black   text-center "
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="   ">
             {data.length > 0 ? (
               data.map((row, rowIndex) => (
                 <tr
                   key={rowIndex}
-                  className="border-b hover:bg-gray-50 dark:hover:bg-gray-900 "
+                  className="   py-2  shadow-sm shadow-slate-700 border-b-2"
                 >
                   {columns.map((col, colIndex) => (
                     <td
                       key={colIndex}
-                      className="p-1 border border-gray-200 dark:border-gray-700 text-center"
+                      className="p-1 text-center shadow-sm shadow-blue-400"
                     >
                       {getValue(row, col.accessor, col.render)}
                     </td>
@@ -104,7 +104,7 @@ export function CustomTable<T extends object>({
               >
                 <button
                   onClick={() => toggleRow(rowIndex)}
-                  className="w-full flex items-center justify-between gap-3 text-left px-4 py-3 bg-gray-100 dark:bg-gray-800 font-semibold text-gray-700 dark:text-gray-200"
+                  className="w-full flex items-center justify-between gap-3 text-left px-4 py-3  bg-gray-300"
                 >
                   {getValue(row, summaryColumn.accessor, summaryColumn.render)}
                   <span>{isOpen ? "▲" : "▼"}</span>
@@ -117,7 +117,7 @@ export function CustomTable<T extends object>({
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="px-4 bg-white dark:bg-gray-900"
+                      className="px-4 bg-gray-200 text-black"
                     >
                       <div className="py-2 space-y-2">
                         {detailColumns.map((col, colIdx) => (
@@ -125,10 +125,10 @@ export function CustomTable<T extends object>({
                             key={colIdx}
                             className="flex justify-between border-b pb-1 last:border-b-0"
                           >
-                            <span className="font-medium text-gray-600 dark:text-gray-300">
+                            <span className="font-medium ">
                               {col.header}
                             </span>
-                            <span className="text-right text-gray-800 dark:text-gray-100">
+                            <span className="text-right ">
                               {getValue(row, col.accessor, col.render)}
                             </span>
                           </div>

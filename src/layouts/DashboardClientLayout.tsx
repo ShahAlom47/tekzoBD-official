@@ -55,7 +55,7 @@ export default function DashboardClientLayout({
         </aside>
 
         <main className="flex-1 flex flex-col justify-between  ">
-          <div className="flex-1 max-h-[85vh] overflow-y-scroll overflow-x-hidden  bg-white text-black  p-3">
+          <div className="flex-1 max-h-[85vh] overflow-y-scroll overflow-x-hidden  bg-gray-100 text-black  p-3">
             {children}
           </div>
           <div className="text-center text-xs py-1 text-gray-500 border-t border-grayLight">

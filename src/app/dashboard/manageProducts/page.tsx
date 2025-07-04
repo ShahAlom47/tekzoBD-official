@@ -20,6 +20,7 @@ import { ObjectId } from "mongodb";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import PrimaryButton from "@/components/PrimaryButton";
 import { FaPlus } from "react-icons/fa";
+import { MdDeleteSweep } from "react-icons/md";
 
 const ManageProduct = () => {
   const { ConfirmModal, confirm } = useConfirm();
@@ -100,7 +101,7 @@ const ManageProduct = () => {
     edit: (
       <Link
         href={`/dashboard/manageProduct/${item._id}`}
-        className="btn btn-sm"
+        className="btn-bordered"
       >
         View & Edit
       </Link>
@@ -108,9 +109,9 @@ const ManageProduct = () => {
     delete: (
       <button
         onClick={() => handleDelete(item._id)}
-        className="btn-sm btn bg-red-500 text-white"
+        className=" text-red-500 hover:text-red-600 text-xl "
       >
-        Delete
+      <MdDeleteSweep />
       </button>
     ),
   }));
@@ -135,7 +136,7 @@ const ManageProduct = () => {
           <CustomTable
             columns={columns}
             data={data}
-            className="shadow-2xl shadow-stone-600"
+            className=""
           />
           <DashPaginationButton
             currentPage={page}

@@ -1,4 +1,5 @@
 import React from "react";
+import { MdOutlineDoubleArrow } from "react-icons/md";
 
 type DashPaginationButtonProps = {
   currentPage: number;
@@ -33,31 +34,31 @@ export const DashPaginationButton: React.FC<DashPaginationButtonProps> = ({
       <button
         onClick={handlePrev}
         disabled={isFirst}
-        className={`primary-hover 
+        className={` btn-base rounded-none rounded-l-full 
           ${
             isFirst
               ? "cursor-not-allowed "
               : ""
           }`}
       >
-        Previous
+       <MdOutlineDoubleArrow className="rotate-180" />
       </button>
 
-      <span className="px-3 py-2 text-gray-700 font-medium select-none">
+      <span className="px-3 py-y text-gray-700 font-medium select-none">
         Page {currentPage} of {totalPages}
       </span>
 
       <button
         onClick={handleNext}
         disabled={isLast}
-        className={` 
+        className={`  btn-base rounded-none rounded-r-full 
           ${
             isLast
-              ? "cursor-not-allowed primary-hover"
-              : "primary-hover"
+              ? "cursor-not-allowed"
+              : ""
           }`}
       >
-        Next
+      <MdOutlineDoubleArrow />
       </button>
     </div>
   );
