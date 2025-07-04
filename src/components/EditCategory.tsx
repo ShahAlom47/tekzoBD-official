@@ -47,10 +47,10 @@ const EditCategory: React.FC<EditCategoryProps> = ({ id ,setOpenModal}) => {
         if (setOpenModal) setOpenModal(false);
       } else {
         toast.error(res.message || "Update failed");
+        console.log(res,'res')
       }
-    } catch (error) {
+    } catch  {
       toast.error("Something went wrong");
-      console.error(error);
     }
   };
 

@@ -23,3 +23,8 @@ export const getProductCollection = async (): Promise<Collection<Project>> => {
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<Project>("Products");
 };
+export const getCategoryCollection = async (): Promise<Collection<Project>> => {
+  const client = await clientPromise;
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
+  return db.collection<Project>("Categories");
+};

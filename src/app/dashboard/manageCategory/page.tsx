@@ -14,13 +14,22 @@ import { useAppSelector } from "@/redux/hooks/reduxHook";
 import Loading from "@/app/loading";
 import ErrorComponent from "@/app/error";
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
-import { getAllCategories } from "@/lib/allApiRequest/categoryRequest/categoryRequest";
+import {
+  deleteCategory,
+  getAllCategories,
+} from "@/lib/allApiRequest/categoryRequest/categoryRequest";
+import { useConfirm } from "@/hooks/useConfirm";
+import toast from "react-hot-toast";
+import { ObjectId } from "mongodb";
 
 const ManageCategory = () => {
+  const { confirm, ConfirmModal } = useConfirm();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<"add" | "edit">("add");
   const [selectedId, setSelectedId] = useState<string | undefined>("");
-  const searchValue = useAppSelector((state) => state.dashSearch.dashSearchValue);
+  const searchValue = useAppSelector(
+    (state) => state.dashSearch.dashSearchValue
+  );
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -34,6 +43,7 @@ const ManageCategory = () => {
     data: category,
     isLoading,
     error,
+    refetch
   } = useQuery({
     queryKey: ["getAllCategories", searchValue],
     queryFn: async () => {
@@ -50,26 +60,59 @@ const ManageCategory = () => {
     refetchOnWindowFocus: false,
   });
 
+  const handleDelete = async (id: string |ObjectId) => {
+    const ok = await confirm({
+      title: "Delete Category",
+      message: "Are you sure you want to delete this category?",
+      confirmText: "Yes, Delete",
+      cancelText: "Cancel",
+    });
+
+    if (ok) {
+      const res = await deleteCategory(id);
+      if (res?.success) {
+        toast.success("Category deleted!");
+        refetch()
+      } else {
+        toast?.error(res?.message || "Failed to delete");
+      }
+    } else {
+      console.log("User cancelled delete");
+    }
+  };
+
   const columns = [
     { header: "Name", accessor: "name" },
     { header: "Slug", accessor: "slug" },
     { header: "Parent", accessor: "parentCategory" },
     { header: "Edit", accessor: "edit" },
+    { header: "Delete", accessor: "delete" },
   ];
 
-  const data = (category?.data as CategoryType[] | undefined)?.map((cat) => ({
-    name: cat.name,
-    slug: cat.slug,
-    parentCategory: cat.parentCategory || "—",
-    edit: (
-      <button
-        className="btn btn-sm bg-yellow-500 text-white"
-        onClick={() => handleModal("edit", typeof cat._id === "string" ? cat._id : cat._id.toString())}
-      >
-        Edit
-      </button>
-    ),
-  })) || [];
+  const data =
+    (category?.data as CategoryType[] | undefined)?.map((cat) => ({
+      name: cat.name,
+      slug: cat.slug,
+      parentCategory: cat.parentCategory || "—",
+      edit: (
+        <button
+          className="btn-bordered"
+          onClick={() =>
+            handleModal(
+              "edit",
+              typeof cat._id === "string" ? cat._id : cat._id.toString()
+            )
+          }
+        >
+          Edit
+        </button>
+      ),
+      delete: (
+        <button className="btn-bordered border-red-700 hover:bg-red-700" onClick={() => handleDelete(cat?._id)}>
+          Delete
+        </button>
+      ),
+    })) || [];
 
   return (
     <div>
@@ -89,11 +132,7 @@ const ManageCategory = () => {
         <ErrorComponent />
       ) : (
         <>
-          <CustomTable
-            columns={columns}
-            data={data}
-            className="shadow-md"
-          />
+          <CustomTable columns={columns} data={data} className="shadow-md" />
           <DashPaginationButton
             currentPage={page}
             totalPages={category?.totalPages || 1}
@@ -111,11 +150,10 @@ const ManageCategory = () => {
         {modalContent === "add" ? (
           <AddCategory />
         ) : (
-          <EditCategory id={selectedId || ""}
-          setOpenModal={setOpenModal}
-          />
+          <EditCategory id={selectedId || ""} setOpenModal={setOpenModal} />
         )}
       </CustomModal>
+      {ConfirmModal}
     </div>
   );
 };

@@ -61,3 +61,24 @@ export function useConfirm() {
 
   return { confirm, ConfirmModal };
 }
+
+
+
+
+// const handleDelete = async () => {
+//   const ok = await confirm({
+//     title: "Delete Category",
+//     message: "Are you sure you want to delete this category?",
+//     confirmText: "Yes, Delete",
+//     cancelText: "Cancel",
+//   });
+
+//   if (ok) {
+//     // ✅ ইউজার Confirm করেছে, এখন delete কাজ করো
+//     await deleteCategory(id);
+//     toast.success("Category deleted!");
+//   } else {
+//     // ❌ ইউজার Cancel করেছে
+//     console.log("User cancelled delete");
+//   }
+// };
