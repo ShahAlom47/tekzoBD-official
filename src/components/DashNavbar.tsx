@@ -2,9 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaFolderOpen, FaPlus, FaBlog } from "react-icons/fa";
+import { FaHome, FaFolderOpen, FaPlus,  } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
 import { TbLayoutGridAdd } from "react-icons/tb";
+import { MdCategory } from "react-icons/md";
+
 
 interface PropsType {
   isOpen: boolean;
@@ -17,10 +19,10 @@ const DashNavbar: React.FC<PropsType> = ({ isOpen }) => {
     { name: "OverView", href: "/dashboard", icon: FaHome },
     { name: "Products", href: "/dashboard/manageProducts", icon: AiFillProduct },
     { name: " Add Products", href: "/dashboard/manageProducts/addProducts", icon: TbLayoutGridAdd  },
+    { name: " Category", href: "/dashboard/manageCategory", icon: MdCategory  },
     { name: "Portfolio", href: "/dashboard/managePortfolio", icon: FaFolderOpen },
     { name: "Add Portfolio", href: "/dashboard/addPortfolio", icon: FaPlus },
-    { name: "Blogs", href: "/blogs", icon: FaBlog },
-    { name: "Add Blog", href: "/add-blog", icon: FaPlus },
+   
   ];
 
   return (
