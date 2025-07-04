@@ -9,3 +9,9 @@ export interface CategoryType {
   createdAt: string;         // ISO তারিখ
   updatedAt: string;         // ISO তারিখ
 }
+
+export type GetAllCategoryParams = {
+  currentPage: number;  
+  limit: number;
+  searchTrim?: string;
+};
