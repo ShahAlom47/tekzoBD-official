@@ -8,13 +8,13 @@
 }
 
 .custom-loader {
-  border-bottom: 9px dashed #00e5ff;
+  border-bottom: 9px dashed #2563eb;
   border-left: 7px solid transparent;
   animation: spin 3s linear infinite;
 }
 
 .custom-loader2 {
-  border-top: 9px dashed #00e5ff;
+  border-top: 9px dashed #2563eb;
   border-right: 9px solid transparent;
   animation: spinReverse 3s linear infinite;
 }
@@ -42,10 +42,10 @@
 .glow-line {
   width: 250px;
   height: 4px;
-  background: #00e5ff;
+  background: #2563eb;
   animation: glow-pulse 2s infinite alternate;
   border-radius: 100%;
-  box-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 40px #00e5ff,
+  box-shadow: 0 0 10px #683bda, 0 0 20px #2612d5, 0 0 40px #163337,
     0 0 60px #00e5ff;
 }
 

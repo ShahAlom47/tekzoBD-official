@@ -7,7 +7,10 @@ import { CustomTable } from "@/components/ui/CustomTable";
 import { DashPaginationButton } from "@/components/ui/DashPaginationButton";
 import { useConfirm } from "@/hooks/useConfirm";
 import { useAppSelector } from "@/redux/hooks/reduxHook";
-import { deleteProduct, getAllProduct } from "@/lib/allApiRequest/productRequest/productRequest";
+import {
+  deleteProduct,
+  getAllProduct,
+} from "@/lib/allApiRequest/productRequest/productRequest";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -22,7 +25,9 @@ const ManageProduct = () => {
   const { ConfirmModal, confirm } = useConfirm();
   const [page, setPage] = useState(1);
   const limit = 10;
-  const searchValue = useAppSelector((state) => state.dashSearch.dashSearchValue);
+  const searchValue = useAppSelector(
+    (state) => state.dashSearch.dashSearchValue
+  );
 
   const {
     data: product,
@@ -65,7 +70,9 @@ const ManageProduct = () => {
         if (!deleteResponse || !deleteResponse.success) {
           throw new Error(deleteResponse.message || "Failed to delete product");
         }
-        toast.success(deleteResponse.message || "Product deleted successfully!");
+        toast.success(
+          deleteResponse.message || "Product deleted successfully!"
+        );
         queryClient.invalidateQueries({ queryKey: ["getAllProduct"] });
       } catch (error) {
         toast.error("Error deleting product");
@@ -91,12 +98,18 @@ const ManageProduct = () => {
     stock: item.stock,
     category: item.category,
     edit: (
-      <Link href={`/dashboard/manageProduct/${item._id}`} className="btn btn-sm">
+      <Link
+        href={`/dashboard/manageProduct/${item._id}`}
+        className="btn btn-sm"
+      >
         View & Edit
       </Link>
     ),
     delete: (
-      <button onClick={() => handleDelete(item._id)} className="btn-sm btn bg-red-500 text-white">
+      <button
+        onClick={() => handleDelete(item._id)}
+        className="btn-sm btn bg-red-500 text-white"
+      >
         Delete
       </button>
     ),
@@ -104,10 +117,15 @@ const ManageProduct = () => {
 
   return (
     <div className="p-4 max-w min-h-screen">
-       <div className='flex justify-between'>
-              <DashPageTitle >Manage Products</DashPageTitle>
-              <PrimaryButton href={"/dashboard/manageProducts/addProducts"} className=' rounded-sm text-sm h-8'><FaPlus></FaPlus> Add Products</PrimaryButton>
-          </div>
+      <div className="flex justify-between mb-4">
+        <DashPageTitle>Manage Products</DashPageTitle>
+        <PrimaryButton
+          href={"/dashboard/manageProducts/addProducts"}
+          className=" rounded-sm text-sm h-8"
+        >
+          <FaPlus></FaPlus> Add Products
+        </PrimaryButton>
+      </div>
       {isLoading ? (
         <Loading />
       ) : error ? (
