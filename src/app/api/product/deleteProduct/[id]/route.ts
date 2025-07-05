@@ -1,5 +1,5 @@
-// /api/portfolio/deletePortfolio/[id]/route.ts
-import { getPortfolioCollection } from "@/lib/database/db_collections";
+// /api/product/deleteproduct/[id]/route.ts
+import { getProductCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const portfolioCollection = await getPortfolioCollection();
+    const productCollection = await getProductCollection();
     console.log("Valid ObjectId?", ObjectId.isValid(id));
 
     if (!id) {
@@ -21,25 +21,25 @@ export async function DELETE(
 
     // MongoDB এর ObjectId তে রূপান্তর
     const filter = { _id: new ObjectId(id) };
-    const result = await portfolioCollection.deleteOne(filter);
+    const result = await productCollection.deleteOne(filter);
     console.log("Delete result:", result);
 
     if (result.deletedCount === 0) {
       return NextResponse.json(
-        { message: "Portfolio not found", success: false },
+        { message: "product not found", success: false },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "Portfolio deleted successfully", success: true },
+      { message: "product deleted successfully", success: true },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in DELETE /portfolio/deletePortfolio/[id]:", error);
+    console.error("Error in DELETE /product/deleteProduct/[id]:", error);
     return NextResponse.json(
       {
-        message: "An error occurred while deleting the portfolio",
+        message: "An error occurred while deleting the product",
         success: false,
         error: error instanceof Error ? error.message : String(error),
       },

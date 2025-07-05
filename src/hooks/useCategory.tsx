@@ -46,10 +46,22 @@ export const useCategories = () => {
     loadCategories();
   }, [loadCategories]);
 
+
+const getCategoryById = (id: string): CategoryType | undefined => {
+  return categories.find((item) => item._id === id);
+};
+
+const getCategoryNameById = (id: string): string => {
+  const category = getCategoryById(id);
+  return category?.name || "Unknown Category";
+};
+
   return {
     categories,
     loading,
     error,
+    getCategoryById,
+    getCategoryNameById,
     loadCategories,
     restoreCategories,
   };

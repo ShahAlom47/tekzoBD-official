@@ -21,8 +21,11 @@ import { ProductType } from "@/Interfaces/productInterfaces";
 import PrimaryButton from "@/components/PrimaryButton";
 import { FaPlus } from "react-icons/fa";
 import { MdDeleteSweep } from "react-icons/md";
+import { useCategories } from "@/hooks/useCategory";
 
 const ManageProduct = () => {
+    
+  const {getCategoryNameById}= useCategories()
   const { ConfirmModal, confirm } = useConfirm();
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -54,6 +57,7 @@ const ManageProduct = () => {
 
   const productData = (product?.data as ProductType[]) || [];
   const totalPages = product?.totalPages || 1;
+  console.log(productData)
 
   const handleDelete = async (id: ObjectId | string | undefined) => {
     const ok = await confirm({
@@ -99,10 +103,10 @@ const ManageProduct = () => {
     price: `${item.price} TK`,
     discount: `${item.discount || 0}%`,
     stock: item.stock,
-    category: item.category,
+    category: getCategoryNameById(item?.categoryId),
     edit: (
       <Link
-        href={`/dashboard/manageProduct/${item._id}`}
+        href={`/dashboard/manageProducts/${item._id}`}
         className="btn-bordered"
       >
         View & Edit

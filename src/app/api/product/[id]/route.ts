@@ -1,6 +1,7 @@
-// /api/portfolio/getSinglePortfolio/[id]/route.ts
+// /api/product/getSingleproduct/[id]/route.ts
 
-import { getPortfolioCollection } from "@/lib/database/db_collections";
+
+import { getProductCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,26 +19,26 @@ export async function GET(
       );
     }
 
-    const portfolioCollection = await getPortfolioCollection();
+    const productCollection = await getProductCollection();
     const filter = { _id: new ObjectId(id) };
-    const result = await portfolioCollection.findOne(filter);
+    const result = await productCollection.findOne(filter);
 
     if (!result) {
       return NextResponse.json(
-        { message: "Portfolio not found", success: false },
+        { message: "product not found", success: false },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "Portfolio retrieved successfully", success: true, data: result },
+      { message: "product retrieved successfully", success: true, data: result },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in GET /portfolio/[id]:", error);
+    console.error("Error in GET /product/[id]:", error);
     return NextResponse.json(
       {
-        message: "An error occurred while retrieving the portfolio",
+        message: "An error occurred while retrieving the product",
         success: false,
         error: error instanceof Error ? error.message : String(error),
       },

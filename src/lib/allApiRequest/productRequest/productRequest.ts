@@ -17,7 +17,7 @@ export const getAllProduct = async ({ currentPage, limit, searchTrim }: GetAllPr
 };
 
 export const getSingleProduct = async (id:string|ObjectId,)=>{
-  return request("GET",`/product/getSingleProduct/${id}`)
+  return request("GET",`/product/${id}`)
 }
 
 export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
