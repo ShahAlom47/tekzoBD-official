@@ -1,4 +1,4 @@
-import { getPortfolioCollection, getUserCollection } from "@/lib/database/db_collections";
+import {  getProductCollection, getUserCollection } from "@/lib/database/db_collections";
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
-  const portfolioCollection = await getPortfolioCollection();
+  const productCollection = await getProductCollection();
   const userCollection = await getUserCollection();
 
   try {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     let dbUpdateResult;
 
     // ✅ STEP 1: First remove media from database based on mediaCategory
-    if (mediaCategory === "portfolioMedia") {
+    if (mediaCategory === "productMedia") {
       const filter = { _id: new ObjectId(dataId) };
       const update = {
         $pull: {
@@ -35,13 +35,13 @@ export async function POST(req: NextRequest) {
         },
       };
 
-      dbUpdateResult = await portfolioCollection.updateOne(filter, update);
+      dbUpdateResult = await productCollection.updateOne(filter, update);
 
       if (dbUpdateResult.modifiedCount === 0) {
         return NextResponse.json(
           {
             success: false,
-            message: "Image not found in portfolio media or already removed",
+            message: "Image not found in product media or already removed",
           },
           { status: 404 }
         );

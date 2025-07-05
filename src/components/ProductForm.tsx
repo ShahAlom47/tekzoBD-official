@@ -3,14 +3,14 @@
 import { CategorySelect } from "@/components/CategorySelect";
 import DashPageTitle from "@/components/DashPageTitle";
 import MediaManager from "@/components/MediaManager";
-import { MediaItem, ProductFormInput } from "@/Interfaces/productInterfaces";
+import { MediaItem, ProductFormInput, ProductType } from "@/Interfaces/productInterfaces";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 interface ProductFormProps {
-  onSubmit: SubmitHandler<ProductFormInput>;
-  defaultData?: Partial<ProductFormInput>;
+  onSubmit: (data: ProductType) => Promise<{ success: boolean }>;
+  defaultData?: Partial<ProductType>;
   mode?: "add" | "edit";
 }
 
@@ -64,7 +64,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
       return;
     }
 
-    await onSubmit(data);
+    // Attach _id if present in defaultData (for edit mode)
+    const submitData = mode === "edit" && defaultData && (defaultData as ProductType)._id
+      ? { ...data, _id: (defaultData as ProductType)._id }
+      : data;
+
+     const res = await onSubmit(submitData as ProductType);
+
+  
+  if (mode === "add" && res?.success) {
+    reset();
+  }
   };
 
   return (

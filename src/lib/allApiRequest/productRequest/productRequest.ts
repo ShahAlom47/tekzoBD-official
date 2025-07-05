@@ -21,7 +21,7 @@ export const getSingleProduct = async (id:string|ObjectId,)=>{
 }
 
 export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
-  return request("PATCH",`/product/updateProduct/${id}`,{...data})
+  return request("PATCH",`/product/${id}`,{...data})
 }
 
 export const deleteProduct= async (id: string|ObjectId ) => {

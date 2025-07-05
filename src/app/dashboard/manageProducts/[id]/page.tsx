@@ -26,13 +26,14 @@ export default function EditProduct() {
     load();
   }, [id]);
 
-  const handleUpdate = async (data: ProductFormInput) => {
+  const handleUpdate = async (data: ProductFormInput): Promise<{ success: boolean }> => {
     const res = await updateProduct(id as string, { ...data, _id: id as string });
     if (res?.success) {
       toast.success(res.message || "Product updated");
     } else {
       toast.error(res.message || "Failed to update");
     }
+    return { success: !!res?.success };
   };
 
   if (loading) return <p>Loading...</p>;

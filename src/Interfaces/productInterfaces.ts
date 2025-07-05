@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+
 export type ProductFormInput = Omit<ProductType, "_id" | "createdAt" | "updatedAt">;
 
 export interface MediaItem {
