@@ -1,8 +1,8 @@
-import { getAllPortfolio } from "@/lib/allApiRequest/portfolioRequest/porfolioRequest";
-import { Project } from "@/Interfaces/portfolioInterfaces";
-import PublicPagePaginationButton from "@/components/PublicPagePaginationButton";
 import PageHeading from "@/components/PageHeading";
-import PortfolioCard from "@/components/PortfolioCard";
+import PublicPagePaginationButton from "@/components/PublicPagePaginationButton";
+import { ProductType } from "@/Interfaces/productInterfaces";
+import { getAllProduct } from "@/lib/allApiRequest/productRequest/productRequest";
+
 
 interface Props {
   searchParams: {
@@ -14,9 +14,9 @@ export default async function PortfolioPage({ searchParams }: Props) {
   const currentPage = Number(searchParams?.page) || 1;
   const limit = 6;
 
-  const response = await getAllPortfolio({ currentPage, limit });
+  const response = await getAllProduct({ currentPage, limit });
 
-  const portfolioData = response?.data as Project[] || [];
+  const portfolioData = response?.data as ProductType[] || [];
   const total = response?.totalData || 0;
 
   const totalPages = Math.ceil(total / limit);
@@ -24,7 +24,7 @@ export default async function PortfolioPage({ searchParams }: Props) {
   return (
     <section className="max-w-6xl mx-auto p-6 ">
      <PageHeading
-        title="My Portfolio"
+        title="Our Product"
         subtitle="Visit my portfolio and keep your feedback"
       ></PageHeading>
 
@@ -34,7 +34,7 @@ export default async function PortfolioPage({ searchParams }: Props) {
             key={String(portfolio._id)}
             className=""
           >
-          <PortfolioCard portfolio={portfolio}></PortfolioCard>
+          <p>producs</p>
           </div>
         ))}
       </div>

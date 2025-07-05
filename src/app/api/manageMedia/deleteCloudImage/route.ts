@@ -1,4 +1,5 @@
-import {  getProductCollection, getUserCollection } from "@/lib/database/db_collections";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getProductCollection, getUserCollection } from "@/lib/database/db_collections";
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
@@ -17,81 +18,61 @@ export async function POST(req: NextRequest) {
   try {
     const { publicId, dataId, mediaCategory } = await req.json();
 
-    if (!publicId || !mediaCategory || !dataId) {
+    if (!publicId || !mediaCategory) {
       return NextResponse.json(
-        { success: false, message: "publicId, mediaCategory, and dataId are required" },
+        { success: false, message: "publicId and mediaCategory are required" },
         { status: 400 }
       );
     }
 
-    let dbUpdateResult;
+    let dbDeleted = false;
+    let cloudDeleted = false;
+    let cloudinaryResult: any = null;
 
-    // ✅ STEP 1: First remove media from database based on mediaCategory
-    if (mediaCategory === "productMedia") {
+    // ✅ STEP 1: Try DB delete if dataId is present
+    if (dataId) {
       const filter = { _id: new ObjectId(dataId) };
       const update = {
-        $pull: {
-          media: { publicId }, // Remove image where publicId matches
-        },
+        $pull: { media: { publicId } },
       };
 
-      dbUpdateResult = await productCollection.updateOne(filter, update);
-
-      if (dbUpdateResult.modifiedCount === 0) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Image not found in product media or already removed",
-          },
-          { status: 404 }
-        );
+      if (mediaCategory === "productMedia") {
+        const result = await productCollection.updateOne(filter, update);
+        if (result.modifiedCount > 0) {
+          dbDeleted = true;
+        }
+      } else if (mediaCategory === "userMedia") {
+        const result = await userCollection.updateOne(filter, update);
+        if (result.modifiedCount > 0) {
+          dbDeleted = true;
+        }
       }
     }
 
-    // ☑️ Optional: handle other categories (e.g., userMedia)
-    else if (mediaCategory === "userMedia") {
-        const filter = { _id: new ObjectId(dataId) };
-      const update = {
-        $pull: {
-          media: { publicId }, // Remove image where publicId matches
-        },
-      };
-         dbUpdateResult = await userCollection.updateOne(filter, update);
-
-          // akon  aita kaj nai    just  bujar jonno rakci 
-      
-    }
-
-    // ✅ STEP 2: Delete from Cloudinary only if DB update is successful
+    // ✅ STEP 2: Try Cloudinary delete
     try {
-      const cloudinaryResult = await cloudinary.uploader.destroy(publicId);
-
-      if (cloudinaryResult.result !== "ok") {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Image removed from database but failed to delete from Cloudinary",
-            cloudinaryResult,
-          },
-          { status: 500 }
-        );
+      cloudinaryResult = await cloudinary.uploader.destroy(publicId);
+      if (cloudinaryResult.result === "ok" || cloudinaryResult.result === "not found") {
+        cloudDeleted = true;
       }
-
-      return NextResponse.json({
-        success: true,
-        message: "Image deleted from both database and Cloudinary",
-        cloudinaryResult,
-      });
-    } catch (cloudError) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Image removed from DB, but Cloudinary delete failed",
-          error: cloudError instanceof Error ? cloudError.message : String(cloudError),
-        },
-        { status: 500 }
-      );
+    } catch (err) {
+      console.error("Cloudinary delete error", err);
     }
+
+    // ✅ Final response message
+    const messageParts = [];
+    if (dbDeleted) messageParts.push("Deleted from database");
+    if (cloudDeleted) messageParts.push("Deleted from Cloudinary");
+
+    const success = dbDeleted || cloudDeleted;
+
+    return NextResponse.json({
+      success,
+      message: messageParts.length > 0 ? messageParts.join(" and ") : "Nothing was deleted",
+      dbDeleted,
+      cloudDeleted,
+      cloudinaryResult,
+    });
   } catch (error) {
     return NextResponse.json(
       {
