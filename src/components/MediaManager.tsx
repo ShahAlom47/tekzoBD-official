@@ -24,7 +24,7 @@ interface Props {
   defaultMedia?: MediaItem[];
   folderName?: string; // Optional folder name for organization
   dataId?: string | ObjectId | undefined | number;
-  mediaCategory?: "portfolioMedia" | "blogMedia" | "projectMedia"; //like portfolioMedia ,blogMedia, userMedia etc
+  mediaCategory?: "portfolioMedia" | "blogMedia" | "productMedia"; //like portfolioMedia ,blogMedia, userMedia etc
 }
 
 const MediaManager: React.FC<Props> = ({

@@ -2,7 +2,8 @@
 import { Collection, Db } from "mongodb";
 import clientPromise from "./db_connection";
 import { Users } from "../../Interfaces/userInterfaces";
-import { Project } from "@/Interfaces/portfolioInterfaces";
+import { ProductType } from "@/Interfaces/productInterfaces";
+import { CategoryType } from "@/Interfaces/categoryInterfaces";
 
 
 // Define the User type (you can extend it as needed)
@@ -13,18 +14,14 @@ export const getUserCollection = async (): Promise<Collection<Users>> => {
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<Users>("users");
 };
-export const getPortfolioCollection = async (): Promise<Collection<Project>> => {
+
+export const getProductCollection = async (): Promise<Collection<ProductType>> => {
   const client = await clientPromise;
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
-  return db.collection<Project>("portfolios");
+  return db.collection<ProductType>("Products");
 };
-export const getProductCollection = async (): Promise<Collection<Project>> => {
+export const getCategoryCollection = async (): Promise<Collection<CategoryType>> => {
   const client = await clientPromise;
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
-  return db.collection<Project>("Products");
-};
-export const getCategoryCollection = async (): Promise<Collection<Project>> => {
-  const client = await clientPromise;
-  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
-  return db.collection<Project>("Categories");
+  return db.collection<CategoryType>("Categories");
 };

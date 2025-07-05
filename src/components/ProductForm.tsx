@@ -4,6 +4,8 @@ import { CategorySelect } from "@/components/CategorySelect";
 import DashPageTitle from "@/components/DashPageTitle";
 import MediaManager from "@/components/MediaManager";
 import { MediaItem, ProductFormInput, ProductType } from "@/Interfaces/productInterfaces";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -19,6 +21,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   defaultData = {},
   mode = "add",
 }) => {
+  const router= useRouter()
   const { register, handleSubmit, setValue, reset, control, watch } =
     useForm<ProductFormInput>({
       defaultValues: {
@@ -74,6 +77,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
   
   if (mode === "add" && res?.success) {
     reset();
+  }
+  if (mode === "edit" && res?.success) {
+    router?.push("/dashboard/manageProducts")
   }
   };
 
@@ -145,6 +151,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
         folderName="products"
         defaultMedia={mode === "edit" ? watch("media") : []}
         onChange={(media: MediaItem[]) => setValue("media", media)}
+        dataId={mode==="edit"?defaultData?._id:''}
+        mediaCategory={"productMedia"}
       />
 
       <div>

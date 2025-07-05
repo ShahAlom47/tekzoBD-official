@@ -30,6 +30,7 @@ export default function EditProduct() {
     const res = await updateProduct(id as string, { ...data, _id: id as string });
     if (res?.success) {
       toast.success(res.message || "Product updated");
+      return {success:true}
     } else {
       toast.error(res.message || "Failed to update");
     }
