@@ -10,7 +10,7 @@ interface Props {
   };
 }
 
-export default async function PortfolioPage({ searchParams }: Props) {
+export default async function ShopPage({ searchParams }: Props) {
   const currentPage = Number(searchParams?.page) || 1;
   const limit = 6;
 

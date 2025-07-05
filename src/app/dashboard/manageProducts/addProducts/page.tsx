@@ -8,10 +8,12 @@ import { ProductType } from "@/Interfaces/productInterfaces";
 export default function AddProduct() {
  const handleAddProduct = async (data: ProductType): Promise<{ success: boolean }> => {
     const res = await addProduct({ ...data });
+    console.log(res?.message)
     if (res?.success) {
       toast.success(res.message || "Product added");
       return { success: true };
     } else {
+      console.log(res?.message)
       toast.error(res.message || "Failed to add product");
       return { success: false };
     }

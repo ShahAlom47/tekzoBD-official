@@ -1,6 +1,5 @@
-// src/utils/api.ts
-
 import axios from "axios";
+import type { AxiosError } from "axios";
 
 export interface IApiResponse<T = unknown> {
   success: boolean;
@@ -29,20 +28,13 @@ export const request = async <T>(
       ...customHeaders,
     };
 
-    // Auto-add timestamps if POST or PUT
+    // Auto add timestamps
     if (data && !(data instanceof FormData)) {
       const now = new Date().toISOString();
       if (method === "POST") {
-        data = {
-          ...data,
-          createdAt: now,
-          updatedAt: now,
-        };
+        data = { ...data, createdAt: now, updatedAt: now };
       } else if (method === "PUT" || method === "PATCH") {
-        data = {
-          ...data,
-          updatedAt: now,
-        };
+        data = { ...data, updatedAt: now };
       }
     }
 
@@ -52,15 +44,26 @@ export const request = async <T>(
       data,
       headers,
     });
-
     return response.data as IApiResponse<T>;
+  
   } catch (error: unknown) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw error.response.data as IApiResponse<T>;
+    let message = "Unknown error occurred";
+    if (axios.isAxiosError(error)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const axiosError = error as AxiosError<any>;
+      if (axiosError.response?.data?.message) {
+        message = axiosError.response.data.message;
+      } else if (axiosError.message) {
+        message = axiosError.message;
+      }
+    } else if (error instanceof Error) {
+      message = error.message;
     }
-    throw {
+   
+
+    return {
       success: false,
-      message: (error as Error).message,
-    } as IApiResponse<T>;
+      message,
+    };
   }
 };

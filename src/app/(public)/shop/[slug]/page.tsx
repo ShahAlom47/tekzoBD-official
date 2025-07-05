@@ -13,7 +13,7 @@ interface Props {
   };
 }
 
-export default async function PortfolioDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params }: Props) {
   const { slug } = params;
   const response = await getSinglePortfolio(slug);
   const portfolio = response?.data as Project;

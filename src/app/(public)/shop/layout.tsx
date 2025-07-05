@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from "react";
 
-export default function ProductsLayout({ children }: { children: ReactNode }) {
+export default function ShopLayout({ children }: { children: ReactNode }) {
   return (
     <section className="max-w mx-auto p-4 ">
     
