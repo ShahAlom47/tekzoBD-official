@@ -9,7 +9,7 @@ export interface ProductType {
   discount:number;
   stock: number;
   images: string[];
-  category: string;
+  categoryId: string;
   isPublished: boolean;
   createdAt?: string;
   updatedAt?: string;
