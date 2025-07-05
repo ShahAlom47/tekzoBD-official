@@ -1,5 +1,6 @@
 "use client";
 
+import { useCategories } from "@/hooks/useCategory";
 import { usePathname } from "next/navigation";
 import React from "react";
 
@@ -11,6 +12,9 @@ export default function MainWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+    useCategories();  // first time data load in the redux store 
+
+  
 
   const hasMargin = !HIDE_MARGIN_ROUTES.some((path) =>
     pathname.startsWith(path)

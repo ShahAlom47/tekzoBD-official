@@ -30,6 +30,8 @@ const ManageProduct = () => {
     (state) => state.dashSearch.dashSearchValue
   );
 
+  
+
   const {
     data: product,
     isLoading,

@@ -2,6 +2,7 @@
 
 import DashPageTitle from "@/components/DashPageTitle";
 import MediaManager from "@/components/MediaManager";
+import { useCategories } from "@/hooks/useCategory";
 import { MediaItem } from "@/Interfaces/portfolioInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import { addProduct } from "@/lib/allApiRequest/productRequest/productRequest";
@@ -10,6 +11,11 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const AddProduct: React.FC = () => {
+  const {categories,loading}=useCategories()
+
+  console.log(categories,loading)
+
+  
   const { register, handleSubmit, setValue, reset } = useForm<ProductType>({
     defaultValues: {
       title: "",
