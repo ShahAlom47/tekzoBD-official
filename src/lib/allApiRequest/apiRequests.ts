@@ -1,7 +1,6 @@
 // src/utils/api.ts
 
 import axios from "axios";
-import { RegisterUser } from "../../Interfaces/userInterfaces";
 
 export interface IApiResponse<T = unknown> {
   success: boolean;
@@ -25,18 +24,26 @@ export const request = async <T>(
 ): Promise<IApiResponse<T>> => {
   try {
     const headers = {
-      "Content-Type": isForm === "formData" ? "multipart/form-data" : "application/json",
+      "Content-Type":
+        isForm === "formData" ? "multipart/form-data" : "application/json",
       ...customHeaders,
     };
 
     // Auto-add timestamps if POST or PUT
-    if (data && !(data instanceof FormData) && (method === "POST" || method === "PUT")) {
+    if (data && !(data instanceof FormData)) {
       const now = new Date().toISOString();
-      data = {
-        ...data,
-        updatedAt: now,
-        ...(method === "POST" ? { createdAt: now } : {}),
-      };
+      if (method === "POST") {
+        data = {
+          ...data,
+          createdAt: now,
+          updatedAt: now,
+        };
+      } else if (method === "PUT" || method === "PATCH") {
+        data = {
+          ...data,
+          updatedAt: now,
+        };
+      }
     }
 
     const response = await api({
@@ -51,12 +58,9 @@ export const request = async <T>(
     if (axios.isAxiosError(error) && error.response) {
       throw error.response.data as IApiResponse<T>;
     }
-    throw { success: false, message: (error as Error).message } as IApiResponse<T>;
+    throw {
+      success: false,
+      message: (error as Error).message,
+    } as IApiResponse<T>;
   }
 };
-
-// Auth API requests
-export const registerUser = async (data: RegisterUser) => {
-  return request("POST", "/auth/register", { ...data });
-};
-

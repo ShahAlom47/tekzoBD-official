@@ -3,12 +3,12 @@ import React  from "react";
 import { useForm } from "react-hook-form";
 import "../../../style/authpage.css";
 import Link from "next/link";
-import { registerUser } from "@/lib/allApiRequest/apiRequests";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { handleApiError } from "@/utils/handleApiError";
 import { RegisterUser } from "@/Interfaces/userInterfaces";
 import PrimaryButton from "@/components/PrimaryButton";
+import { registerUser } from "@/lib/allApiRequest/authRequest/authRequest";
 
 
 

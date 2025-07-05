@@ -15,6 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     const body = await req.json();
+    console.log(body)
 
     if (!body || typeof body !== "object") {
       return NextResponse.json(

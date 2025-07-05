@@ -60,6 +60,8 @@ const ManageCategory = () => {
     refetchOnWindowFocus: false,
   });
 
+
+  console.log(category)
   const handleDelete = async (id: string |ObjectId) => {
     const ok = await confirm({
       title: "Delete Category",
