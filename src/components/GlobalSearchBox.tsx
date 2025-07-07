@@ -5,32 +5,40 @@ import {
   clearGlobalSearchValue,
 } from "@/redux/features/search/GlobalSearchSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/reduxHook";
+import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { IoClose } from "react-icons/io5"; // ❌ cross icon
+import { IoClose } from "react-icons/io5";
 
 const GlobalSearchBox: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [searchText, setSearchText] = useState<string>("");
 
-  const dispatch = useAppDispatch();
   const searchTerm = useAppSelector(
     (state) => state.globalSearch.globalSearchValue
   );
-
-  console.log("Search value",searchTerm)
-
+console.log(searchTerm)
+  // ✅ Handle search & redirect
   const handleSearch = () => {
-    dispatch(setGlobalSearchValue(searchText));
+    const trimmed = searchText.trim();
+    if (!trimmed) return;
+
+    dispatch(setGlobalSearchValue(trimmed));
+    router.push(`/shop?searchTrim=${encodeURIComponent(trimmed)}`);
   };
 
+  // ✅ Clear search & go back to shop without query
   const handleClearSearch = () => {
     setSearchText("");
     dispatch(clearGlobalSearchValue());
+    router.push("/shop");
   };
 
+  // ✅ Live update input
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trimStart().toLowerCase();
-    setSearchText(value);
+    setSearchText(e.target.value);
   };
 
   return (

@@ -6,31 +6,34 @@ import { SortOptions } from "@/Interfaces/productInterfaces";
 import { getAllProduct } from "@/lib/allApiRequest/productRequest/productRequest";
 
 interface Props {
-  searchParams: {
+  // Mark searchParams as a Promise since Next.js 13.4+ expects it async now
+  searchParams: Promise<{
     page?: string;
     minPrice?: string;
     maxPrice?: string;
     category?: string;
     brand?: string;
     rating?: string;
-    sort?: SortOptions; 
+    sort?: SortOptions;
     searchTrim?: string;
-  };
+  }>;
 }
 
 export default async function ShopPage({ searchParams }: Props) {
-  const currentPage = Number(searchParams.page) || 1;
+  // Await searchParams here (Important: This fixes the warning/error)
+  const params = await searchParams;
+
+  const currentPage = Number(params?.page) || 1;
   const limit = 6;
 
-  const {
-    sort = "asc",
-    minPrice,
-    maxPrice,
-    category,
-    brand,
-    rating,
-    searchTrim,
-  } = searchParams;
+  // Access params after awaiting
+  const searchTrim = params?.searchTrim;
+  const sort = (params?.sort as SortOptions) || "asc";
+  const minPrice = params?.minPrice;
+  const maxPrice = params?.maxPrice;
+  const category = params?.category;
+  const brand = params?.brand;
+  const rating = params?.rating;
 
   const response = await getAllProduct({
     currentPage,
@@ -53,13 +56,10 @@ export default async function ShopPage({ searchParams }: Props) {
       <PageHeading title="Our Product" />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Sidebar with filtering */}
         <div className="md:col-span-1 space-y-4">
           <ShopFilterSidebar />
-          {/* Future: Add Recent or Featured products here */}
         </div>
 
-        {/* Product grid and pagination */}
         <div className="md:col-span-3 space-y-6">
           <ShopProductGrid products={products} />
 
