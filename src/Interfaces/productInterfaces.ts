@@ -36,8 +36,19 @@ export interface ProductType {
   };
 }
 
-export type GetAllProductParams = {
+
+export type SortOptions = "asc" | "desc" | "newest" | "popular";
+
+
+export interface GetAllProductParams {
   currentPage: number;
   limit: number;
   searchTrim?: string;
-};
+  sort?: SortOptions;
+  minPrice?: string | number;
+  maxPrice?: string | number;
+  category?: string;
+  brand?: string;
+  rating?: string;
+  // any more you want
+}
