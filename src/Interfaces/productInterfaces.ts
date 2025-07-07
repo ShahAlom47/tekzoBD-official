@@ -1,6 +1,9 @@
 import { ObjectId } from "mongodb";
 
-export type ProductFormInput = Omit<ProductType, "_id" | "createdAt" | "updatedAt">;
+export type ProductFormInput = Omit<
+  ProductType,
+  "_id" | "createdAt" | "updatedAt"
+>;
 
 export interface MediaItem {
   type: "image" | "video";
@@ -8,6 +11,16 @@ export interface MediaItem {
   thumbnail?: string;
   publicId?: string;
 }
+
+export interface ReviewsType {
+
+      userId: string;
+      rating: number;
+      comment?: string;
+      createdAt: string;
+    }
+
+
 export interface ProductType {
   _id: string | ObjectId;
   title: string;
@@ -16,6 +29,12 @@ export interface ProductType {
   price: number;
   discount: number;
   stock: number;
+  ratings: {
+    avg: number;
+    count: number;
+    reviews:ReviewsType [];
+  };
+
   media: MediaItem[];
   categoryId: string;
   isPublished: boolean;
@@ -36,9 +55,7 @@ export interface ProductType {
   };
 }
 
-
 export type SortOptions = "asc" | "desc" | "newest" | "popular";
-
 
 export interface GetAllProductParams {
   currentPage: number;

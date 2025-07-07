@@ -1,6 +1,7 @@
 "use client";
 
 import { ProductType } from "@/Interfaces/productInterfaces";
+import ProductCard from "./ProductCard";
 
 
 interface Props {
@@ -8,13 +9,12 @@ interface Props {
 }
 
 const ShopProductGrid: React.FC<Props> = ({ products }) => {
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-black">
-      {products.map((product) => (
+      {products?.map((product) => (
         <div key={String(product._id)} className="p-4 border rounded">
-          <p>{product.title}</p>
-          <p>${product.price}</p>
-          {/* Add image, button, etc. */}
+          <ProductCard item={product} ></ProductCard>
         </div>
       ))}
     </div>
