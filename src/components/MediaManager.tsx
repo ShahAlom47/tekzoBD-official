@@ -5,12 +5,12 @@ import React, { useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
 import { CiWarning } from "react-icons/ci";
-import Image from "next/image";
 import { uploadToCloudinary } from "@/utils/cloudinaryUpload";
 import toast from "react-hot-toast";
 import { useConfirm } from "@/hooks/useConfirm";
 import { ObjectId } from "mongodb";
 import PrimaryButton from "./PrimaryButton";
+import SafeImage from "./SafeImage";
 
 export interface MediaItem {
   type: "image" | "video";
@@ -226,7 +226,8 @@ const MediaManager: React.FC<Props> = ({
           {/* Show image preview with loading and status */}
           {media.type === "image" && media.url && (
             <div className="relative w-fit">
-              <Image
+              <SafeImage
+              unoptimized
                 src={media.url}
                 alt="Preview"
                 width={100}

@@ -7,7 +7,7 @@ interface RatingDisplayProps {
 }
 
 const RatingDisplay: React.FC<RatingDisplayProps> = ({
-  avgRating,
+  avgRating=0,
   maxRating = 5,
   starSize = 20,
 }) => {
@@ -30,7 +30,7 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       {/* পূর্ণ স্টার */}
-      {[...Array(fullStars)].map((_, i) => (
+      {[...Array(fullStars)]?.map((_, i) => (
         <svg
           key={"full-" + i}
           xmlns="http://www.w3.org/2000/svg"

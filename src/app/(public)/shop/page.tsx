@@ -24,7 +24,7 @@ export default async function ShopPage({ searchParams }: Props) {
   const params = await searchParams;
 
   const currentPage = Number(params?.page) || 1;
-  const limit = 6;
+  const limit = 9;
 
   // Access params after awaiting
   const searchTrim = params?.searchTrim;
