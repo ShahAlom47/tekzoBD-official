@@ -110,15 +110,17 @@ export async function GET(req: NextRequest) {
       filter["offer.endDate"] = { $gte: isoNow };
     }
 
+    console.log(sort);
     // Sorting logic
     const sortQuery: any = {};
     if (sort === "asc") sortQuery.price = 1;
     else if (sort === "desc") sortQuery.price = -1;
     else if (sort === "newest") sortQuery.createdAt = -1;
     else if (sort === "popular") sortQuery["ratings.count"] = -1;
-    else if (sort === "offer") {
-      sortQuery["offer.isActive"] = -1;
-      sortQuery["offer.startDate"] = 1;
+    if (offerOnly || sort === "offer") {
+      filter["offer.isActive"] = true;
+      filter["offer.startDate"] = { $lte: isoNow };
+      filter["offer.endDate"] = { $gte: isoNow };
     }
 
     const [data, total] = await Promise.all([

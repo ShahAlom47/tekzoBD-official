@@ -5,10 +5,9 @@ import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import { useCategories } from "@/hooks/useCategory";
 
-// Props with generic
 interface CategorySelectProps<T extends FieldValues = FieldValues> {
   control?: Control<T>;
-  name?: Path<T>; // more strict type
+  name?: Path<T>;
   placeholder?: string;
   className?: string;
   value?: string;
@@ -16,7 +15,6 @@ interface CategorySelectProps<T extends FieldValues = FieldValues> {
   allCategory?: boolean;
 }
 
-// Generic component
 export function CategorySelect<T extends FieldValues = FieldValues>({
   control,
   name,
@@ -39,14 +37,21 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
         </option>
       )}
       {categories.map((cat: CategoryType) => (
-        <option key={cat._id?.toString()} value={cat._id?.toString()}>
+        <option key={cat._id?.toString() || cat.name} value={cat._id?.toString() || ""}>
           {cat.name}
         </option>
       ))}
     </>
   );
 
-  // Form mode
+  if (loading) {
+    return (
+      <select disabled className={`my-input ${className}`}>
+        <option>Loading categories...</option>
+      </select>
+    );
+  }
+
   if (control && name) {
     return (
       <Controller
@@ -55,8 +60,8 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
         render={({ field }) => (
           <select
             {...field}
-            disabled={loading}
             className={`my-input ${className}`}
+            value={field.value || ""}
           >
             {renderOptions()}
           </select>
@@ -65,24 +70,13 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
     );
   }
 
-  // Standalone (state-based) mode
   return (
     <select
-      value={value}
+      value={value || ""}
       onChange={(e) => onChange?.(e.target.value)}
-      disabled={loading}
       className={`my-input ${className}`}
     >
       {renderOptions()}
     </select>
   );
 }
-
-// use form
-//  <CategorySelect<ProductType> control={control} name="categoryId" />
-// use State
-//  <CategorySelect
-//  value={selectedCategory}
-//  onChange={(value) => setSelectedCategory(value)}
-//  placeholder="Filter by category"
-//  />

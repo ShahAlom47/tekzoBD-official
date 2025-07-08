@@ -75,7 +75,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
       toast.error("All required fields must be filled");
       return;
     }
-
+    if (data.offer?.isActive) {
+      data.offer.startDate = data.offer.startDate
+        ? new Date(data.offer.startDate).toISOString()
+        : "";
+      data.offer.endDate = data.offer.endDate
+        ? new Date(data.offer.endDate).toISOString()
+        : "";
+    }
     const submitData =
       mode === "edit" && defaultData && (defaultData as ProductType)._id
         ? { ...data, _id: (defaultData as ProductType)._id }

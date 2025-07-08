@@ -1,79 +1,26 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
 import CategoryFilter from "./CategoryFilter";
+import SortFilter from "./SortFiltering";
 
-const brands = ["Samsung", "Apple", "Nike", "Adidas"];
-const sortOptions = [
-  { label: "Default", value: "" },
-  { label: "Price: Low to High", value: "asc" },
-  { label: "Price: High to Low", value: "desc" },
-  { label: "Newest", value: "newest" },
-  { label: "Most Popular", value: "popular" },
-  { label: "Only Offers", value: "offer" },
-];
 
 const ShopFilterSidebar = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [filters, setFilters] = useState({
-    minPrice: "",
-    maxPrice: "",
-    category: "",
-    brand: "",
-    rating: "",
-    sort: "",
-  });
-
-  useEffect(() => {
-    // Initialize filter from URL
-    setFilters({
-      minPrice: searchParams.get("minPrice") || "",
-      maxPrice: searchParams.get("maxPrice") || "",
-      category: searchParams.get("category") || "",
-      brand: searchParams.get("brand") || "",
-      rating: searchParams.get("rating") || "",
-      sort: searchParams.get("sort") || "",
-    });
-  }, [searchParams]);
-
-  const handleChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleApply = () => {
-    const params = new URLSearchParams();
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.set(key, value);
-    });
-
-    params.set("page", "1");
-    router.push(`/shop?${params.toString()}`);
-  };
-
-  const handleReset = () => {
-    router.push("/shop");
-  };
+ 
+  
 
   return (
     <div className="p-4 rounded-lg shadow-md border text-sm space-y-5 bg-white text-blackMid">
-   
-
-      {/* Price Range */}
-
-      <PriceFilter></PriceFilter>
-
+      {/* sort  */}
+      <SortFilter/>
       {/* Category */}
       <CategoryFilter></CategoryFilter>
 
-     
+      {/* Price Range */}
+      <PriceFilter></PriceFilter>
 
       {/* Brand */}
-      <div>
+      {/* <div>
         <label className="block font-medium mb-1">Brand</label>
         <select
           value={filters.brand}
@@ -87,10 +34,10 @@ const ShopFilterSidebar = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
       {/* Rating */}
-      <div>
+      {/* <div>
         <label className="block font-medium mb-1">Minimum Rating</label>
         <select
           value={filters.rating}
@@ -104,10 +51,10 @@ const ShopFilterSidebar = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
       {/* Sort */}
-      <div>
+      {/* <div>
         <label className="block font-medium mb-1">Sort By</label>
         <select
           value={filters.sort}
@@ -120,10 +67,10 @@ const ShopFilterSidebar = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
       {/* Buttons */}
-      <div className="flex flex-col gap-2">
+      {/* <div className="flex flex-col gap-2">
         <button
           onClick={handleApply}
           className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
@@ -136,7 +83,7 @@ const ShopFilterSidebar = () => {
         >
           🔄 Reset Filters
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
