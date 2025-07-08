@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import PriceFilter from "./PriceFilter";
+import CategoryFilter from "./CategoryFilter";
 
-const categories = ["Electronics", "Clothing", "Shoes", "Accessories"];
 const brands = ["Samsung", "Apple", "Nike", "Adidas"];
 const sortOptions = [
   { label: "Default", value: "" },
@@ -61,30 +61,16 @@ const ShopFilterSidebar = () => {
 
   return (
     <div className="p-4 rounded-lg shadow-md border text-sm space-y-5 bg-white text-blackMid">
-      <h2 className="text-lg font-semibold text-gray-700">
-        🔍 Filter Products
-      </h2>
+   
 
       {/* Price Range */}
 
       <PriceFilter></PriceFilter>
 
       {/* Category */}
-      <div>
-        <label className="block font-medium mb-1">Category</label>
-        <select
-          value={filters.category}
-          onChange={(e) => handleChange("category", e.target.value)}
-          className="w-full border px-3 py-2 rounded"
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-      </div>
+      <CategoryFilter></CategoryFilter>
+
+     
 
       {/* Brand */}
       <div>

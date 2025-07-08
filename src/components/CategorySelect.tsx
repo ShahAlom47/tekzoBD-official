@@ -13,6 +13,7 @@ interface CategorySelectProps<T extends FieldValues = FieldValues> {
   className?: string;
   value?: string;
   onChange?: (value: string) => void;
+  allCategory?: boolean;
 }
 
 // Generic component
@@ -23,6 +24,7 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
   className = "",
   value,
   onChange,
+  allCategory,
 }: CategorySelectProps<T>) {
   const { categories, loading } = useCategories();
 
@@ -31,6 +33,11 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
       <option value="">
         {loading ? "Loading categories..." : placeholder}
       </option>
+      {allCategory && (
+        <option key="allCategory" value="all-category">
+          All Categories
+        </option>
+      )}
       {categories.map((cat: CategoryType) => (
         <option key={cat._id?.toString()} value={cat._id?.toString()}>
           {cat.name}

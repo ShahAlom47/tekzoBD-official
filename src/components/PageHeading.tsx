@@ -3,53 +3,29 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-interface PageHeadingProps {
-  backgroundImage?: string;
-  title?: string; // Optional prop for custom title
-  isDetailsPage?: boolean; // Optional flag to check if it's a details page
-}
-
-const PageHeading: React.FC<PageHeadingProps> = ({ title, isDetailsPage }) => {
-  const pathname = usePathname();
-  const pathSegments = pathname.split("/").filter((segment) => segment);
+const PageHeading = ({ title, isDetailsPage }: { title?: string; isDetailsPage?: boolean }) => {
+  const pathname = usePathname() || "/";
+  const pathSegments = pathname.split("/").filter(Boolean);
   const lastIndex = pathSegments.length - 1;
 
-  // If the page is a details page and a title is provided, use the custom title
   const currentPage = isDetailsPage
     ? title || "Details"
-    : pathSegments[pathSegments.length - 1] || "Home";
+    : pathSegments[lastIndex] || "Home";
 
   return (
-    <div className="relative w-full h-20 flex flex-col   border-b border-brandNeutral">
-
-      {/* Page Title */}
-      <h1 className="relative text-grayDeep text-4xl font-semibold capitalize">
-        {currentPage.replace("-", " ")}
-      </h1>
-
-      {/* Breadcrumb Navigation */}
-      <nav className="relative text-brandNeutral text-sm mt-2 capitalize">
-        <Link href="/" className="hover:underline">
-          Home
-        </Link>
+    <div className=" text-grayDeep">
+      <h1 className=" text-brandNeutral text-xl font-semibold capitalize">{currentPage.replace(/-/g, " ")}</h1>
+      <nav>
+        <Link href="/">Home</Link>
         {pathSegments.map((segment, index) =>
           lastIndex === index && isDetailsPage ? (
-            <span key={index} className="mx-1 text-brandPrimary">
-              / {title}
-            </span>
+            <span key={index}> / {title}</span>
           ) : lastIndex === index ? (
-            <span key={index} className="mx-1 text-brandPrimary ">
-              / {segment.replace("-", " ")}
-            </span>
+            <span key={index}> / {segment.replace(/-/g, " ")}</span>
           ) : (
-            <span key={index} className="mx-1 capitalize">
-              /{" "}
-              <Link
-                href={`/${segment}`}
-                className="hover:underline capitalize text-brandNeutral"
-              >
-                {segment.replace("-", " ")}
-              </Link>
+            <span key={index}>
+              {" "}
+              / <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`}>{segment.replace(/-/g, " ")}</Link>
             </span>
           )
         )}

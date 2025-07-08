@@ -39,7 +39,7 @@ const PriceFilter = () => {
 
   return (
     <div className=" p-1 rounded-md space-y-3">
-      <h3 className="font-semibold text-lg text-gray-700">Filter by Price</h3>
+      <h3 className="font-semibold  text-gray-700">Filter by Price</h3>
 
       <div>
         <PriceRangeSlider

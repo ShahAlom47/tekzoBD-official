@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dar">
-      <body className="min-h-screen bg-white bb">
+      <body className="min-h-screen bg-white ">
         <Providers>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
