@@ -1,4 +1,5 @@
 "use client";
+
 import { ProductType } from "@/Interfaces/productInterfaces";
 import React from "react";
 import SafeImage from "./SafeImage";
@@ -21,14 +22,25 @@ const ProductCard = ({ item }: ProductCardProps) => {
     console.log("Added to cart:", item.title);
   };
 
-  // 🔢 Calculate discounted price
-  const hasDiscount = item.discount > 0;
+  // 🕒 Offer Time Validation (Frontend)
+  const isOfferActive = (() => {
+    const offer = item.offer;
+    if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
+
+    const now = new Date().getTime();
+    const start = new Date(offer.startDate).getTime();
+    const end = new Date(offer.endDate).getTime();
+
+    return now >= start && now <= end;
+  })();
+
+  const hasDiscount = isOfferActive && item.discount > 0;
   const originalPrice = item.price;
   const discountedPrice = hasDiscount
     ? Math.round(originalPrice - (originalPrice * item.discount) / 100)
     : originalPrice;
 
-  const isOutOfStock = item.stock == 0;
+  const isOutOfStock = item.stock === 0;
 
   return (
     <div
@@ -49,6 +61,7 @@ const ProductCard = ({ item }: ProductCardProps) => {
         </div>
       )}
 
+      {/* ✅ Product Image */}
       <div className="relative p-4 w-full aspect-square overflow-hidden bg-gray-100">
         <SafeImage
           src={item?.media[0]?.url}
@@ -60,12 +73,13 @@ const ProductCard = ({ item }: ProductCardProps) => {
         />
       </div>
 
+      {/* ✅ Product Info */}
       <div className="p-4 space-y-2 flex flex-col justify-center items-center">
         <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">
           {item?.title}
         </h2>
 
-        {/* ✅ Price Display */}
+        {/* ✅ Price Section */}
         <div className="flex items-center space-x-2">
           {hasDiscount && (
             <span className="text-gray-400 line-through text-sm">
