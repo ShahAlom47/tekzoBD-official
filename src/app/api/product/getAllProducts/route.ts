@@ -97,7 +97,23 @@ export async function GET(req: NextRequest) {
       filter.categoryId = categoryId;
     }
 
-    if (brand) filter.brand = brand;
+    if (brand && brand !== "All Brands") {
+      const brandTrim = brand.trim().toLowerCase();
+      const brandRegex = { $regex: brandTrim, $options: "i" };
+
+      // Inject brand search into the existing $or OR create new $or
+      const brandSearchConditions = [
+        { title: brandRegex },
+        { description: brandRegex },
+        { "sourceInfo.supplierName": brandRegex },
+      ];
+
+      if (filter.$or && Array.isArray(filter.$or)) {
+        filter.$or.push(...brandSearchConditions);
+      } else {
+        filter.$or = brandSearchConditions;
+      }
+    }
     if (rating) filter["ratings.avg"] = { $gte: Number(rating) };
 
     // Offer logic

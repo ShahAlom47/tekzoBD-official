@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
+import { SelectBrand } from "./SelectBrand";
 
 interface ProductFormProps {
   onSubmit: (data: ProductType) => Promise<{ success: boolean }>;
@@ -33,6 +34,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         description: "",
         price: 0,
         stock: 0,
+        brand:'',
         media: [],
         categoryId: "",
         isPublished: false,
@@ -144,6 +146,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
             {...register("discount")}
             className="my-input w-full"
           />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm">Brand</label>
+          <SelectBrand control={control} name="brand" />
         </div>
         <div>
           <label className="block mb-1 text-sm">Stock</label>
