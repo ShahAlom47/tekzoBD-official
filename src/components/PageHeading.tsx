@@ -21,15 +21,14 @@ const PageHeading: React.FC<PageHeadingProps> = ({ title, isDetailsPage }) => {
 
   return (
     <div className="relative w-full h-20 flex flex-col   border-b border-brandNeutral">
-      <div className="absolute inset-0 z-[40] bg-white/30 blur-2xl"></div>
 
       {/* Page Title */}
-      <h1 className="relative z-[50]  text-grayDeep text-4xl font-semibold capitalize">
+      <h1 className="relative text-grayDeep text-4xl font-semibold capitalize">
         {currentPage.replace("-", " ")}
       </h1>
 
       {/* Breadcrumb Navigation */}
-      <nav className="relative z-[50] text-brandNeutral text-sm mt-2 capitalize">
+      <nav className="relative text-brandNeutral text-sm mt-2 capitalize">
         <Link href="/" className="hover:underline">
           Home
         </Link>

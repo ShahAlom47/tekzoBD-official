@@ -33,7 +33,7 @@ const ProductCard = ({ item }: ProductCardProps) => {
   return (
     <div
       onClick={handleCardClick}
-      className="border rounded-lg overflow-hidden shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative"
+      className="border border-brandNeutral rounded-sm overflow-hidden shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative"
     >
       {/* ✅ Discount Badge */}
       {hasDiscount && (

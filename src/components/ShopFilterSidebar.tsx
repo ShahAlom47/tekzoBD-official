@@ -1,113 +1,81 @@
 "use client";
 
-// import { useCategories } from "@/hooks/useCategory";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import PriceFilter from "./PriceFilter";
 
 const categories = ["Electronics", "Clothing", "Shoes", "Accessories"];
 const brands = ["Samsung", "Apple", "Nike", "Adidas"];
 const sortOptions = [
   { label: "Default", value: "" },
-  { label: "Price: Low to High", value: "price-asc" },
-  { label: "Price: High to Low", value: "price-desc" },
+  { label: "Price: Low to High", value: "asc" },
+  { label: "Price: High to Low", value: "desc" },
   { label: "Newest", value: "newest" },
   { label: "Most Popular", value: "popular" },
+  { label: "Only Offers", value: "offer" },
 ];
 
 const ShopFilterSidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-//   const {categories}= useCategories()
 
-  // States
-  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
-  const [category, setCategory] = useState(searchParams.get("category") || "");
-  const [brand, setBrand] = useState(searchParams.get("brand") || "");
-  const [rating, setRating] = useState(searchParams.get("rating") || "");
-  const [sort, setSort] = useState(searchParams.get("sort") || "");
+  const [filters, setFilters] = useState({
+    minPrice: "",
+    maxPrice: "",
+    category: "",
+    brand: "",
+    rating: "",
+    sort: "",
+  });
 
-  // Handle Apply Filters
+  useEffect(() => {
+    // Initialize filter from URL
+    setFilters({
+      minPrice: searchParams.get("minPrice") || "",
+      maxPrice: searchParams.get("maxPrice") || "",
+      category: searchParams.get("category") || "",
+      brand: searchParams.get("brand") || "",
+      rating: searchParams.get("rating") || "",
+      sort: searchParams.get("sort") || "",
+    });
+  }, [searchParams]);
+
+  const handleChange = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleApply = () => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams();
 
-    if (minPrice) {
-      params.set("minPrice", minPrice);
-    } else {
-      params.delete("minPrice");
-    }
-    if (maxPrice) {
-      params.set("maxPrice", maxPrice);
-    } else {
-      params.delete("maxPrice");
-    }
-    if (category) {
-      params.set("category", category);
-    } else {
-      params.delete("category");
-    }
-    if (brand) {
-      params.set("brand", brand);
-    } else {
-      params.delete("brand");
-    }
-    if (rating) {
-      params.set("rating", rating);
-    } else {
-      params.delete("rating");
-    }
-    if (sort) {
-      params.set("sort", sort);
-    } else {
-      params.delete("sort");
-    }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
 
-    params.set("page", "1"); // Reset page
-
+    params.set("page", "1");
     router.push(`/shop?${params.toString()}`);
   };
 
-  // Handle Reset
   const handleReset = () => {
     router.push("/shop");
-    setMinPrice("");
-    setMaxPrice("");
-    setCategory("");
-    setBrand("");
-    setRating("");
-    setSort("");
   };
 
   return (
-    <div className="p-4 border rounded space-y-4">
-      {/* Price Filter */}
-      <div>
-        <h3 className="font-semibold mb-2">Price Range</h3>
-        <div className="flex gap-2">
-          <input
-            type="number"
-            placeholder="Min"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            className="w-1/2 border px-2 py-1"
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            className="w-1/2 border px-2 py-1"
-          />
-        </div>
-      </div>
+    <div className="p-4 rounded-lg shadow-md border text-sm space-y-5 bg-white text-blackMid">
+      <h2 className="text-lg font-semibold text-gray-700">
+        🔍 Filter Products
+      </h2>
 
-      {/* Category Filter */}
+      {/* Price Range */}
+
+      <PriceFilter></PriceFilter>
+
+      {/* Category */}
       <div>
-        <h3 className="font-semibold mb-2">Category</h3>
+        <label className="block font-medium mb-1">Category</label>
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full border px-2 py-1"
+          value={filters.category}
+          onChange={(e) => handleChange("category", e.target.value)}
+          className="w-full border px-3 py-2 rounded"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -118,13 +86,13 @@ const ShopFilterSidebar = () => {
         </select>
       </div>
 
-      {/* Brand Filter */}
+      {/* Brand */}
       <div>
-        <h3 className="font-semibold mb-2">Brand</h3>
+        <label className="block font-medium mb-1">Brand</label>
         <select
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-          className="w-full border px-2 py-1"
+          value={filters.brand}
+          onChange={(e) => handleChange("brand", e.target.value)}
+          className="w-full border px-3 py-2 rounded"
         >
           <option value="">All Brands</option>
           {brands.map((b) => (
@@ -135,30 +103,30 @@ const ShopFilterSidebar = () => {
         </select>
       </div>
 
-      {/* Rating Filter */}
+      {/* Rating */}
       <div>
-        <h3 className="font-semibold mb-2">Minimum Rating</h3>
+        <label className="block font-medium mb-1">Minimum Rating</label>
         <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          className="w-full border px-2 py-1"
+          value={filters.rating}
+          onChange={(e) => handleChange("rating", e.target.value)}
+          className="w-full border px-3 py-2 rounded"
         >
           <option value="">All</option>
           {[5, 4, 3, 2, 1].map((r) => (
-            <option key={r} value={r}>
-              {r} & up
+            <option key={r} value={String(r)}>
+              {r} ★ & Up
             </option>
           ))}
         </select>
       </div>
 
-      {/* Sort Option */}
+      {/* Sort */}
       <div>
-        <h3 className="font-semibold mb-2">Sort By</h3>
+        <label className="block font-medium mb-1">Sort By</label>
         <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="w-full border px-2 py-1"
+          value={filters.sort}
+          onChange={(e) => handleChange("sort", e.target.value)}
+          className="w-full border px-3 py-2 rounded"
         >
           {sortOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -169,18 +137,18 @@ const ShopFilterSidebar = () => {
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col gap-2 mt-4">
+      <div className="flex flex-col gap-2">
         <button
           onClick={handleApply}
-          className="bg-brandPrimary text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
-          Apply Filters
+          ✅ Apply Filters
         </button>
         <button
           onClick={handleReset}
-          className="border text-brandPrimary border-brandPrimary px-4 py-2 rounded"
+          className="border border-blue-600 text-blue-600 py-2 rounded hover:bg-blue-50 transition"
         >
-          Reset Filters
+          🔄 Reset Filters
         </button>
       </div>
     </div>

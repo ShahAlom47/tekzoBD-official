@@ -111,11 +111,11 @@ const config = {
           boxShadow: "1px -2px 8px rgba(107, 105, 105, 0.39)",
         },
         ".btn-base": {
-          "@apply inline-flex items-center justify-center font-medium text-white bg-brandPrimary px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-700":
+          "@apply inline-flex items-center justify-center font-normal text-white bg-brandPrimary px-4 py-1 my-1 rounded transition duration-300 ease-in-out hover:bg-blue-700":
             {},
         },
         ".btn-bordered": {
-          "@apply inline-flex items-center justify-center font-normal  text-black border border-brandPrimary px-3 py-0 my-1 rounded-full transition duration-300 ease-in-out hover:bg-brandPrimary hover:text-white":
+          "@apply inline-flex items-center justify-center font-normal  text-black border border-brandPrimary px-3 py-1 my-1 rounded-full transition duration-300 ease-in-out hover:bg-brandPrimary hover:text-white":
             {},
         },
         // default input filed  style 

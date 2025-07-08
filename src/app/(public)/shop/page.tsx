@@ -55,7 +55,7 @@ export default async function ShopPage({ searchParams }: Props) {
     <section className="max-w-6xl mx-auto p-6">
       <PageHeading title="Our Product" />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 my-3 ">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 my-6 ">
         <div className="md:col-span-3 space-y-6">
           <ShopProductGrid products={products} />
 

@@ -17,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="min-h-screen bg-white">
+    <html lang="en" className="dar">
+      <body className="min-h-screen bg-white bb">
         <Providers>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
