@@ -3,9 +3,12 @@
 import { CategorySelect } from "@/components/CategorySelect";
 import DashPageTitle from "@/components/DashPageTitle";
 import MediaManager from "@/components/MediaManager";
-import { MediaItem, ProductFormInput, ProductType } from "@/Interfaces/productInterfaces";
+import {
+  MediaItem,
+  ProductFormInput,
+  ProductType,
+} from "@/Interfaces/productInterfaces";
 import { useRouter } from "next/navigation";
-
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -21,7 +24,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   defaultData = {},
   mode = "add",
 }) => {
-  const router= useRouter()
+  const router = useRouter();
   const { register, handleSubmit, setValue, reset, control, watch } =
     useForm<ProductFormInput>({
       defaultValues: {
@@ -34,6 +37,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
         categoryId: "",
         isPublished: false,
         discount: 0,
+        offer: {
+          isActive: false,
+          startDate: "",
+          endDate: "",
+        },
         sourceInfo: {
           sourceType: "self",
           supplierName: "",
@@ -49,12 +57,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
       },
     });
 
-  // Reset when edit mode and data is updated
   React.useEffect(() => {
     if (mode === "edit" && defaultData) {
       reset(defaultData);
     }
   }, [defaultData, mode, reset]);
+
+  const isOfferActive = watch("offer.isActive");
 
   const handleFormSubmit: SubmitHandler<ProductFormInput> = async (data) => {
     if (!data.media || data.media.length === 0) {
@@ -67,20 +76,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
       return;
     }
 
-    // Attach _id if present in defaultData (for edit mode)
-    const submitData = mode === "edit" && defaultData && (defaultData as ProductType)._id
-      ? { ...data, _id: (defaultData as ProductType)._id }
-      : data;
+    const submitData =
+      mode === "edit" && defaultData && (defaultData as ProductType)._id
+        ? { ...data, _id: (defaultData as ProductType)._id }
+        : data;
 
-     const res = await onSubmit(submitData as ProductType);
+    const res = await onSubmit(submitData as ProductType);
 
-  
-  if (mode === "add" && res?.success) {
-    reset();
-  }
-  if (mode === "edit" && res?.success) {
-    router?.push("/dashboard/manageProducts")
-  }
+    if (mode === "add" && res?.success) {
+      reset();
+    }
+    if (mode === "edit" && res?.success) {
+      router?.push("/dashboard/manageProducts");
+    }
   };
 
   return (
@@ -151,9 +159,51 @@ const ProductForm: React.FC<ProductFormProps> = ({
         folderName="products"
         defaultMedia={mode === "edit" ? watch("media") : []}
         onChange={(media: MediaItem[]) => setValue("media", media)}
-        dataId={mode==="edit"?defaultData?._id:''}
+        dataId={mode === "edit" ? defaultData?._id : ""}
         mediaCategory={"productMedia"}
       />
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          {...register("isPublished")}
+          className="w-5 h-5"
+        />
+        <label className="font-medium">Publish Product?</label>
+      </div>
+
+      {/* ✅ Offer Section */}
+      <div className="border p-4 rounded-md space-y-3  my-input">
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            {...register("offer.isActive")}
+            className="w-5 h-5"
+          />
+          <label className="font-medium">Activate Offer?</label>
+        </div>
+
+        {isOfferActive && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm">Offer Start Date</label>
+              <input
+                type="date"
+                {...register("offer.startDate")}
+                className="my-input w-full bg-grayLight"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm">Offer End Date</label>
+              <input
+                type="date"
+                {...register("offer.endDate")}
+                className="my-input w-full bg-grayLight"
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       <div>
         <label className="block mb-1 text-sm">Product Source</label>
@@ -167,14 +217,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            {...register("isPublished")}
-            className="w-5 h-5"
-          />
-          <label>Publish Product?</label>
-        </div>
         <input
           {...register("sourceInfo.supplierName")}
           placeholder="Supplier Name"

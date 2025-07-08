@@ -22,6 +22,8 @@ export const getAllProduct = async (params: GetAllProductParams) => {
     category,
     brand,
     rating,
+    offerOnly,
+    isDashboardRequest,
   } = params;
 
   const queryParams = new URLSearchParams();
@@ -36,11 +38,16 @@ export const getAllProduct = async (params: GetAllProductParams) => {
   if (category) queryParams.set("category", category);
   if (brand) queryParams.set("brand", brand);
   if (rating) queryParams.set("rating", String(rating));
+  if (offerOnly) queryParams.set("offerOnly", "true");
 
   const url = `/product/getAllProducts?${queryParams.toString()}`;
 
-  return request("GET", url);
+  // ✅ Only set customHeaders if isDashboardRequest is true
+  const customHeaders: Record<string, string> | undefined = isDashboardRequest ? { "x-from-dashboard": "true" } : undefined;
+
+  return request("GET", url, undefined, undefined, customHeaders);
 };
+
 
 
 export const getSingleProduct = async (id:string|ObjectId,)=>{

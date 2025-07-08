@@ -29,6 +29,12 @@ export interface ProductType {
   price: number;
   discount: number;
   stock: number;
+  offer?: {
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+};
+
   ratings: {
     avg: number;
     count: number;
@@ -67,5 +73,7 @@ export interface GetAllProductParams {
   category?: string;
   brand?: string;
   rating?: string;
+   offerOnly?: boolean;         // ✅ new: only active offer products
+  isDashboardRequest?: boolean;
   // any more you want
 }

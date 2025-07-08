@@ -46,6 +46,7 @@ const ManageProduct = () => {
         currentPage: page,
         limit,
         searchTrim: searchValue,
+        isDashboardRequest:true,
       });
       if (!response || !response.success) {
         throw new Error(response.message || "Failed to fetch product data");

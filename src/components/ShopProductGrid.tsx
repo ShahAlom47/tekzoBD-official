@@ -9,6 +9,7 @@ interface Props {
 }
 
 const ShopProductGrid: React.FC<Props> = ({ products }) => {
+  console.log(products)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-black">
