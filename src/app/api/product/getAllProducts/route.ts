@@ -35,6 +35,8 @@ export async function GET(req: NextRequest) {
     const rating = url.searchParams.get("rating");
     const offerOnly = url.searchParams.get("offerOnly") === "true";
 
+    const stockParam = url.searchParams.get("stock"); // "in-stock", "out-of-stock", or null
+
     if (isNaN(currentPage) || isNaN(pageSize)) {
       return NextResponse.json(
         { message: "Invalid query parameters", success: false },
@@ -92,6 +94,16 @@ export async function GET(req: NextRequest) {
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
 
+    // Stock filter
+    if (stockParam === "in-stock") {
+      filter.stock = { $gt: 0 };
+    } else if (stockParam === "out-of-stock") {
+      filter.stock = { $lte: 0 };
+    } else if (stockParam && !isNaN(Number(stockParam))) {
+      // যদি stockParam একটা সংখ্যা হয়
+      const numericStock = Number(stockParam);
+      filter.stock = { $gte: numericStock };
+    }
     // Important: filter by categoryId instead of slug
     if (categoryId) {
       filter.categoryId = categoryId;

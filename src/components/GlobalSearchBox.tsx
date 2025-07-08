@@ -19,7 +19,7 @@ const GlobalSearchBox: React.FC = () => {
   const searchTerm = useAppSelector(
     (state) => state.globalSearch.globalSearchValue
   );
-console.log(searchTerm)
+
   // ✅ Handle search & redirect
   const handleSearch = () => {
     const trimmed = searchText.trim();

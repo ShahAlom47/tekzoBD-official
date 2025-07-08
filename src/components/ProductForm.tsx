@@ -34,7 +34,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         description: "",
         price: 0,
         stock: 0,
-        brand:'',
+        brand: "",
         media: [],
         categoryId: "",
         isPublished: false,
@@ -84,6 +84,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
       data.offer.endDate = data.offer.endDate
         ? new Date(data.offer.endDate).toISOString()
         : "";
+    }
+    if (data.stock !== undefined) {
+      data.stock = Number(data.stock);
+      if (isNaN(data.stock)) {
+        data.stock = 0; 
+      }
     }
     const submitData =
       mode === "edit" && defaultData && (defaultData as ProductType)._id

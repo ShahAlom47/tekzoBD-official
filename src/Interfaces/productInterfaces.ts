@@ -76,5 +76,6 @@ export interface GetAllProductParams {
   rating?: string;
    offerOnly?: boolean;         // ✅ new: only active offer products
   isDashboardRequest?: boolean;
+  stock?:"in-stock"| "out-of-stock";
   // any more you want
 }

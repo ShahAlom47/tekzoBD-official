@@ -24,6 +24,7 @@ export const getAllProduct = async (params: GetAllProductParams) => {
     rating,
     offerOnly,
     isDashboardRequest,
+    stock,
   } = params;
 
   const queryParams = new URLSearchParams();
@@ -39,6 +40,7 @@ export const getAllProduct = async (params: GetAllProductParams) => {
   if (brand) queryParams.set("brand", brand);
   if (rating) queryParams.set("rating", String(rating));
   if (offerOnly) queryParams.set("offerOnly", "true");
+  if (stock) queryParams.set("stock", stock);
 
   const url = `/product/getAllProducts?${queryParams.toString()}`;
 

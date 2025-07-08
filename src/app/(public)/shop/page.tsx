@@ -16,6 +16,7 @@ interface Props {
     rating?: string;
     sort?: SortOptions;
     searchTrim?: string;
+    stock?:"in-stock"| "out-of-stock";
   }>;
 }
 
@@ -32,6 +33,7 @@ export default async function ShopPage({ searchParams }: Props) {
   const category = params?.category;
   const brand = params?.brand;
   const rating = params?.rating;
+  const stock= params?.stock;
 
   let products = [];
   let total = 0;
@@ -49,6 +51,7 @@ export default async function ShopPage({ searchParams }: Props) {
       brand,
       rating,
       searchTrim,
+      stock,
     });
 
     if (!response.success) {
