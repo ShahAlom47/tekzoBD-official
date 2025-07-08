@@ -1,3 +1,4 @@
+import MobileScreenFilteringSection from "@/components/MobileScreenFilteringSection";
 import PageHeading from "@/components/PageHeading";
 import PublicPagePaginationButton from "@/components/PublicPagePaginationButton";
 import ShopFilterSidebar from "@/components/ShopFilterSidebar";
@@ -66,8 +67,12 @@ export default async function ShopPage({ searchParams }: Props) {
   }
 
   return (
-    <section className="max-w-6xl mx-auto p-6">
+    <section className="max-w-6xl mx-auto md:p-6 p-2 py-7">
       <PageHeading title="Our Product" />
+
+      <div className="md:hidden block">
+        <MobileScreenFilteringSection></MobileScreenFilteringSection>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 my-6">
         <div className="md:col-span-3 space-y-6">
@@ -92,7 +97,7 @@ export default async function ShopPage({ searchParams }: Props) {
           )}
         </div>
 
-        <div className="md:col-span-1 space-y-4">
+        <div className="md:col-span-1 md:block hidden space-y-4">
           <Suspense fallback={<div>Loading filters...</div>}>
             <ShopFilterSidebar />
           </Suspense>

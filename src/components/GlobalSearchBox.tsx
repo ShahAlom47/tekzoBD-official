@@ -4,9 +4,9 @@ import {
   setGlobalSearchValue,
   clearGlobalSearchValue,
 } from "@/redux/features/search/GlobalSearchSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks/reduxHook";
+import { useAppDispatch } from "@/redux/hooks/reduxHook";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, KeyboardEvent } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
@@ -15,10 +15,6 @@ const GlobalSearchBox: React.FC = () => {
   const router = useRouter();
 
   const [searchText, setSearchText] = useState<string>("");
-
-  const searchTerm = useAppSelector(
-    (state) => state.globalSearch.globalSearchValue
-  );
 
   // ✅ Handle search & redirect
   const handleSearch = () => {
@@ -41,18 +37,28 @@ const GlobalSearchBox: React.FC = () => {
     setSearchText(e.target.value);
   };
 
+  // ✅ Handle Enter key press inside input
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
   return (
     <div className="relative w-full max-w-screen-md mx-auto rounded-full border-2 border-brandPrimary">
       <input
         type="text"
         value={searchText}
         onChange={handleSearchChange}
+        onKeyDown={handleKeyDown} // ✅ Now handles Enter press
         placeholder="Search products..."
         className="w-full px-4 py-1 bg-transparent focus:outline-none rounded-full text-black focus:ring-2 focus:ring-brandPrimary transition duration-300"
       />
 
       {/* Search Button */}
       <button
+        type="button"
         onClick={handleSearch}
         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brandPrimary"
       >
@@ -62,6 +68,7 @@ const GlobalSearchBox: React.FC = () => {
       {/* Clear (X) Button */}
       {searchText && (
         <button
+          type="button"
           onClick={handleClearSearch}
           className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition"
         >
@@ -73,3 +80,4 @@ const GlobalSearchBox: React.FC = () => {
 };
 
 export default GlobalSearchBox;
+

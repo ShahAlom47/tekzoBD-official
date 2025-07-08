@@ -31,9 +31,9 @@ const StockFilter = () => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1 text-sm">
       <label className="block font-medium text-gray-700"> Availability</label>
-      <div className="flex  gap-2">
+      <div className="flex md:flex-row flex-col  gap-2">
         <label className="inline-flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"

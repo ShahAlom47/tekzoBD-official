@@ -39,7 +39,7 @@ const SortFilter = () => {
   };
 
   return (
-    <div className="mb-4">
+    <div className="p-1 space-y-2 ">
       <label className="font-medium  text-gray-700">Sort By</label>
       <select
         value={selectedSort}
