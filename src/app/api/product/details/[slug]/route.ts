@@ -55,7 +55,6 @@ export async function PATCH(
   try {
     const { id } = params;
     const body = await req.json();
-    console.log(body)
 
     if (!body || typeof body !== "object") {
       return NextResponse.json(

@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const productId = searchParams.get("id");
 
-  console.log(searchParams,"idsssss")
+
 
   if (!productId) {
     return NextResponse.json(

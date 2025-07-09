@@ -10,7 +10,6 @@ export async function DELETE(
   try {
     const { id } = await params;
     const productCollection = await getProductCollection();
-    console.log("Valid ObjectId?", ObjectId.isValid(id));
 
     if (!id) {
       return NextResponse.json(
@@ -22,7 +21,6 @@ export async function DELETE(
     // MongoDB এর ObjectId তে রূপান্তর
     const filter = { _id: new ObjectId(id) };
     const result = await productCollection.deleteOne(filter);
-    console.log("Delete result:", result);
 
     if (result.deletedCount === 0) {
       return NextResponse.json(

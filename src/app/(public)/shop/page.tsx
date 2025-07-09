@@ -2,6 +2,7 @@ import MobileScreenFilteringSection from "@/components/MobileScreenFilteringSect
 import PageHeading from "@/components/PageHeading";
 import ProductCountInfo from "@/components/ProductCountInfo";
 import PublicPagePaginationButton from "@/components/PublicPagePaginationButton";
+import RecentViewProducts from "@/components/RecentViewProducts";
 import ShopFilterSidebar from "@/components/ShopFilterSidebar";
 import ShopProductGrid from "@/components/ShopProductGrid";
 import { SortOptions } from "@/Interfaces/productInterfaces";
@@ -77,8 +78,8 @@ export default async function ShopPage({ searchParams }: Props) {
         <MobileScreenFilteringSection></MobileScreenFilteringSection>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 my-6 ">
-        <div className="md:col-span-3 lg:col-span-4 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 my-6 ">
+        <div className="md:col-span-9  space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
               ❌ {errorMessage}
@@ -100,12 +101,15 @@ export default async function ShopPage({ searchParams }: Props) {
           )}
         </div>
 
-        <div className=" md:block hidden space-y-4">
+        <div className=" md:block hidden col-span-3 space-y-4">
           <Suspense fallback={<div>Loading filters...</div>}>
             <ShopFilterSidebar />
           </Suspense>
         </div>
       </div>
+     <div className=" block md:hidden"> 
+      <RecentViewProducts></RecentViewProducts>
+     </div>
     </section>
   );
 }

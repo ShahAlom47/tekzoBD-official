@@ -27,7 +27,9 @@ const ShopFilterSidebar = () => {
           <StockFilter />
         </div>
       </div>
-       <RecentViewProducts></RecentViewProducts>
+      <div className="md:block hidden">
+        <RecentViewProducts></RecentViewProducts>
+      </div>
     </div>
   );
 };

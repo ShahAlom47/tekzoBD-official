@@ -138,7 +138,6 @@ export async function GET(req: NextRequest) {
       filter["offer.endDate"] = { $gte: isoNow };
     }
 
-    console.log(sort);
     // Sorting logic
     const sortQuery: any = {};
     if (sort === "asc") sortQuery.price = 1;

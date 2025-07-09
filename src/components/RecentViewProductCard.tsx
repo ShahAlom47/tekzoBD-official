@@ -19,27 +19,28 @@ const RecentViewProductCard: React.FC<Props> = ({ product }) => {
   return (
     <div
       onClick={handleClick}
-      className="bg-white flex rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg border hover:border-brandPrimary p-1 transition duration-300 group"
+      className="bg-white grid grid-cols-3 gap-2 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg border hover:border-brandPrimary transition duration-300 group p-1 md:p-2"
     >
-      <div className="relative max-h-20 w-1/2 bg-gray-100  rounded-md h-fit my-auto min-h-11">
+      {/* Image Section */}
+      <div className="relative col-span-1 w-full h-28 md:h-16 bg-gray-100 rounded-md overflow-hidden">
         <SafeImage
-          src={product.media[0]?.url}
+          src={product.media?.[0]?.url}
           alt={product.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
-       
       </div>
 
-      <div className="p-3 space-y-1">
-        <h3 className="text-xs font-medium text-gray-800 line-clamp-2">
+      {/* Info Section */}
+      <div className="p-1 flex flex-col justify-center gap-1 col-span-2">
+        <h3 className="text-base font-medium text-gray-800 line-clamp-1">
           {product.title}
         </h3>
-        <div className="text-gray-600 text-xs">
-          ৳ {product.price}
+        <div className="text-gray-600 md:text-[10px]  ">
+          ৳ {product.price - (product.price * product.discount) / 100}
           {product.discount > 0 && (
-            <span className="ml-2 text-red-500 line-through text-xs">
-              ৳ {product.price + product.discount}
+            <span className="ml-2 text-red-500 line-through md:text-[10px] font-normal">
+              ৳ {product.price}
             </span>
           )}
         </div>

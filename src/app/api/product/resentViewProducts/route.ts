@@ -6,9 +6,7 @@ import { ObjectId } from "mongodb";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  console.log(searchParams)
   const ids = searchParams.getAll("ids");
-  console.log(ids,'id')
 
   if (!ids.length) {
     return NextResponse.json(
