@@ -28,7 +28,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
 
   return (
     <div className="space-y-4 mt-6">
-      <h2 className="text-xl font-semibold">Customer Reviews</h2>
+      <h2 className="text-xl font-semibold"> Reviews( {reviews?.length})</h2>
       {reviews.length === 0 ? (
         <p className="text-gray-500">No reviews yet. Be the first to review!</p>
       ) : (
@@ -38,16 +38,16 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
               key={review._id}
               className="border p-4 rounded shadow-sm bg-white"
             >
-              {/* <div className="flex items-center justify-between mb-1">
-                <p className="text-sm font-medium">{review.userEmail}</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm font-medium">{review.userName|| "User Name"}</p>
                 <div className="text-yellow-500 text-sm">
-                  {"★".repeat(review.) + "☆".repeat(5 - review.rating)}
+                  {"★".repeat(review.rating ?? 0) + "☆".repeat(5 - (review.rating ?? 0))}
                 </div>
               </div>
               <p className="text-sm text-gray-700">{review.comment}</p>
               <p className="text-xs text-gray-400 mt-1">
-                {new Date(review.createdAt).toLocaleDateString()}
-              </p> */}
+                {new Date(review.createdAt ?? "").toLocaleDateString()}
+              </p>
             </li>
           ))}
         </ul>

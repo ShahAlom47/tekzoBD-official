@@ -10,9 +10,9 @@ const ReviewContent =async ({product}:ReviewContentType) => {
 
    
     return (
-        <div>
-            <ReviewList productId={product?._id.toString()}></ReviewList>
+        <div className='  '>
             <ReviewForm productId={product?._id.toString()}></ReviewForm>
+            <ReviewList productId={product?._id.toString()}></ReviewList>
             
         </div>
     );

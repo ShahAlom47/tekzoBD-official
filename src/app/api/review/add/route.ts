@@ -13,13 +13,14 @@ export async function POST(req: NextRequest) {
     const {
       productId,
       userEmail,
+      userName,
       comment,
       rating,
       parentId = null,
       createdAt ,
       updatedAt
     } = body;
-
+console.log(productId,userEmail,rating)
     // Basic validation
     if (!productId || !userEmail || typeof rating !== "number") {
       return NextResponse.json(
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
     const newReview: ReviewsType = {
       productId,
       userEmail,
+      userName,
       comment,
       parentId,
       isPublished: true,
