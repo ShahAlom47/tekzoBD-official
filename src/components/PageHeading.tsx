@@ -13,7 +13,7 @@ const PageHeading = ({ title, isDetailsPage }: { title?: string; isDetailsPage?:
     : pathSegments[lastIndex] || "Home";
 
   return (
-    <div className=" text-grayDeep">
+    <div className=" text-grayDeep border-b border-brandNeutral ">
       <h1 className=" text-brandNeutral text-xl font-semibold capitalize">{currentPage.replace(/-/g, " ")}</h1>
       <nav>
         <Link href="/">Home</Link>

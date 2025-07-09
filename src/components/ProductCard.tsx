@@ -5,12 +5,14 @@ import React from "react";
 import SafeImage from "./SafeImage";
 import RatingDisplay from "./ui/RatingDisplay";
 import { useRouter } from "next/navigation";
+import { FaHeart } from "react-icons/fa";
 
 type ProductCardProps = {
   item: ProductType;
+  layout: "list" | "grid-3" | "grid-4";
 };
 
-const ProductCard = ({ item }: ProductCardProps) => {
+const ProductCard = ({ item, layout }: ProductCardProps) => {
   const router = useRouter();
 
   const handleCardClick = () => {
@@ -22,7 +24,6 @@ const ProductCard = ({ item }: ProductCardProps) => {
     console.log("Added to cart:", item.title);
   };
 
-  // 🕒 Offer Time Validation (Frontend)
   const isOfferActive = (() => {
     const offer = item.offer;
     if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
@@ -45,7 +46,10 @@ const ProductCard = ({ item }: ProductCardProps) => {
   return (
     <div
       onClick={handleCardClick}
-      className="border border-brandNeutral rounded-sm overflow-hidden shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative"
+      className={`
+        border border-brandNeutral rounded-sm shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative overflow-hidden
+        ${layout === "list" ? "flex flex-row md:flex-row items-center gap-4 p-4" : ""}
+      `}
     >
       {/* ✅ Discount Badge */}
       {hasDiscount && (
@@ -61,34 +65,42 @@ const ProductCard = ({ item }: ProductCardProps) => {
         </div>
       )}
 
+      {/* Wishlist Button */}
+      <button className="absolute top-8 right-2 z-20 group-hover:-translate-x-0 translate-x-[200%] transition-all duration-500 btn-bordered p-1 text-sm text-brandPrimary rounded-sm">
+        <FaHeart />
+      </button>
+
       {/* ✅ Product Image */}
-      <div className="relative p-4 w-full aspect-square overflow-hidden bg-gray-100">
+      <div
+        className={`
+          relative bg-gray-100 overflow-hidden
+          ${layout === "list" ? "w-24 md:w-48 lg:w-1/3 aspect-square" : "p-3 w-full aspect-square"}
+        `}
+      >
         <SafeImage
           src={item?.media[0]?.url}
           alt={item?.title}
-          width={400}
-          height={400}
+          width={300}
+          height={300}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           unoptimized
         />
       </div>
 
       {/* ✅ Product Info */}
-      <div className="p-4 space-y-2 flex flex-col justify-center items-center">
-        <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">
-          {item?.title}
-        </h2>
+      <div
+        className={`
+          ${layout === "list" ? "flex-1 md:pl-4 space-y-2 text-left w-full" : "p-4 space-y-2 flex flex-col justify-center items-center"}
+        `}
+      >
+        <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">{item?.title}</h2>
 
         {/* ✅ Price Section */}
         <div className="flex items-center space-x-2">
           {hasDiscount && (
-            <span className="text-gray-400 line-through text-sm">
-              TK {originalPrice}
-            </span>
+            <span className="text-gray-400 line-through text-sm">TK {originalPrice}</span>
           )}
-          <span className="text-brandPrimary text-base font-semibold">
-            TK {discountedPrice}
-          </span>
+          <span className="text-brandPrimary text-base font-semibold">TK {discountedPrice}</span>
         </div>
 
         {/* ✅ Rating */}

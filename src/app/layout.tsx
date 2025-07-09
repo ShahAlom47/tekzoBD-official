@@ -23,7 +23,7 @@ export default function RootLayout({
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
           </ConditionalWrapper>
-          <MainWrapper>{children}</MainWrapper>{" "}
+          <MainWrapper>{children}</MainWrapper>
           <ConditionalWrapper hideOn={["dashboard", "login"]}>
             <Footer />
           </ConditionalWrapper>

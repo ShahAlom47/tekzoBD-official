@@ -10,25 +10,18 @@ const CategoryFilter = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Get initial selected slug from URL
-  const initialSlug = searchParams.get("category") || "";
+  // Selected category ID (null initially to avoid hydration mismatch)
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Get the _id of the category based on current slug
-  const getIdFromSlug = (slug: string): string => {
-    const category = categories.find((cat) => cat.slug === slug);
-    return category?._id?.toString() || "";
-  };
-
-  // local state for dropdown
-  const [selectedId, setSelectedId] = useState<string>("");
-
-  // Sync selected ID with URL slug (when categories loaded or URL changes)
+  // When categories loaded or URL changes, sync category ID
   useEffect(() => {
     if (categories.length > 0) {
-      const currentId = getIdFromSlug(initialSlug);
+      const slug = searchParams.get("category") || "";
+      const category = categories.find((cat) => cat.slug === slug);
+      const currentId = category?._id?.toString() || "all-category";
       setSelectedId(currentId);
     }
-  }, [categories, initialSlug]);
+  }, [categories, searchParams]);
 
   // Handle dropdown change
   const handleChange = (categoryId: string) => {
@@ -37,7 +30,7 @@ const CategoryFilter = () => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (categoryId === "all-category") {
-      params.delete("category"); // Remove filter
+      params.delete("category");
     } else {
       const selectedCategory = categories.find((cat) => cat._id === categoryId);
       const selectedSlug = selectedCategory?.slug;
@@ -46,22 +39,24 @@ const CategoryFilter = () => {
       params.set("category", selectedSlug);
     }
 
-    params.set("page", "1");
-
+    params.set("page", "1"); // Reset to first page when filter changes
     router.push(`/shop?${params.toString()}`);
   };
 
   return (
-     <div className=" p-1 rounded-md space-y-2 ">
-      <h3 className="font-medium  text-gray-700">Filter by Category</h3>
-    <div className="mb-4">
-      <CategorySelect
-        value={selectedId}
-        onChange={handleChange}
-        placeholder="Filter by category"
-        allCategory={true}
-      />
-    </div>
+    <div className="p-1 rounded-md space-y-2">
+      <h3 className="font-medium text-gray-700">Filter by Category</h3>
+      <div className="mb-4">
+        {/* Render CategorySelect only after selectedId is initialized */}
+        {selectedId !== null && (
+          <CategorySelect
+            value={selectedId}
+            onChange={handleChange}
+            placeholder="Filter by category"
+            allCategory={true}
+          />
+        )}
+      </div>
     </div>
   );
 };

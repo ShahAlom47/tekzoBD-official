@@ -1,5 +1,6 @@
 import MobileScreenFilteringSection from "@/components/MobileScreenFilteringSection";
 import PageHeading from "@/components/PageHeading";
+import ProductCountInfo from "@/components/ProductCountInfo";
 import PublicPagePaginationButton from "@/components/PublicPagePaginationButton";
 import ShopFilterSidebar from "@/components/ShopFilterSidebar";
 import ShopProductGrid from "@/components/ShopProductGrid";
@@ -67,15 +68,17 @@ export default async function ShopPage({ searchParams }: Props) {
   }
 
   return (
-    <section className="max-w-6xl mx-auto md:p-6 p-2 py-7">
+    <section className="max-w mx-auto md:p-6 p-2 py-7 space-y-5">
       <PageHeading title="Our Product" />
+
+      <ProductCountInfo currentPage={currentPage} perPage={limit} total={total} />
 
       <div className="md:hidden block">
         <MobileScreenFilteringSection></MobileScreenFilteringSection>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 my-6">
-        <div className="md:col-span-3 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 my-6 ">
+        <div className="md: col-span-3 lg:col-span- space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
               ❌ {errorMessage}
