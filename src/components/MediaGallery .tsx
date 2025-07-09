@@ -3,65 +3,86 @@
 import React, { useState } from "react";
 import SafeImage from "./SafeImage";
 import SafeVideo from "./SafeVideo";
-import { MediaItem } from "@/Interfaces/portfolioInterfaces";
 import { CgPlayButton } from "react-icons/cg";
+import { MediaItem } from "@/Interfaces/productInterfaces";
+import ZoomImage from "./ui/ZoomImage";
 
 interface MediaGalleryProps {
   media: MediaItem[];
 }
 
 const MediaGallery: React.FC<MediaGalleryProps> = ({ media }) => {
-  const [activeMedia, setActiveMedia] = useState<MediaItem>(media[0]);
+  const [activeMedia, setActiveMedia] = useState<MediaItem | null>(
+    media.length > 0 ? media[0] : null
+  );
+console.log(media)
+  if (!activeMedia) {
+   
+    return null;
+  }
 
   return (
     <div className="space-y-6">
-      {/* Large Preview Area */}
-      <div className="w-full aspect-video   rounded overflow-hidden shadow-lg">
+      {/* Main Preview */}
+      <div
+        className={`w-full ${
+          activeMedia.type === "image" ? "h-auto" : "aspect-[16/9]"
+        } rounded overflow-hidden shadow-lg bg-white`}
+      >
         {activeMedia.type === "image" ? (
-          <SafeImage
+          <ZoomImage
             src={activeMedia.url}
             alt="active-media"
-            width={300}
-            height={200}
-            className=" w-full object-cover rounded"
+            width={600}
+            height={300}
+            className="w-full h-auto max-h-[450px] object-contain"
           />
         ) : (
           <SafeVideo
             url={activeMedia.url}
-            className="w-full h-full object-cover rounded"
+            className="w-full h-full object-cover"
           />
         )}
       </div>
 
-      {/* Thumbnails */}
-      <div className="flex flex-wrap sm:flex-nowrap gap-3 overflow-x-auto">
-        {media.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => setActiveMedia(item)}
-            className={`relative group cursor-pointer overflow-hidden rounded border-2 transition-all duration-300 ${
-              item.url === activeMedia.url
-                ? "border-primaryRed scale-105"
-                : "border-transparent hover:border-white"
-            } min-w-[80px] sm:min-w-[120px] aspect-video`}
-          >
-            {item.type === "image" ? (
-              <SafeImage
-                src={item.url}
-                alt={`thumb-${index}`}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full relative">
-             
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center pointer-events-none">
-                  <CgPlayButton className="text-white text-4xl" />
-                </div>
+      {/* Thumbnail Gallery */}
+      <div className="flex gap-3 overflow-x-auto scroll-hide">
+        {media
+          .filter((item) => !!item.url && item.url.trim() !== "")
+          .map((item, index) => {
+            const isActive = item.url === activeMedia.url;
+            return (
+              <div
+                key={index}
+                onClick={() => setActiveMedia(item)}
+                className={`relative cursor-pointer rounded overflow-hidden border-2 min-w-[80px] aspect-video group
+                transition-transform duration-200 ${
+                  isActive
+                    ? "border-brandPrimary scale-105"
+                    : "border-transparent hover:border-gray-300"
+                }`}
+              >
+                {item.type === "image" ? (
+                  <SafeImage
+                    src={item.url}
+                    alt={`media-thumb-${index}`}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-200"
+                  />
+                ) : (
+                  <div className="relative w-full h-full bg-black">
+                    <SafeVideo
+                      url={item.url || "/video-placeholder.jpg"}
+                      className="object-cover opacity-70 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <CgPlayButton className="text-white text-3xl" />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            );
+          })}
       </div>
     </div>
   );

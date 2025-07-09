@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-const PageHeading = ({ title, isDetailsPage }: { title?: string; isDetailsPage?: boolean }) => {
+const PageHeading = ({ title, isDetailsPage, subTitle }: { title?: string; isDetailsPage?: boolean; subTitle?: string }) => {
   const pathname = usePathname() || "/";
   const pathSegments = pathname.split("/").filter(Boolean);
   const lastIndex = pathSegments.length - 1;
@@ -13,22 +13,53 @@ const PageHeading = ({ title, isDetailsPage }: { title?: string; isDetailsPage?:
     : pathSegments[lastIndex] || "Home";
 
   return (
-    <div className=" text-grayDeep border-b border-brandNeutral ">
-      <h1 className=" text-brandNeutral text-xl font-semibold capitalize">{currentPage.replace(/-/g, " ")}</h1>
-      <nav>
-        <Link href="/">Home</Link>
-        {pathSegments.map((segment, index) =>
-          lastIndex === index && isDetailsPage ? (
-            <span key={index}> / {title}</span>
-          ) : lastIndex === index ? (
-            <span key={index}> / {segment.replace(/-/g, " ")}</span>
+    <div className="text-grayDeep border-b border-brandNeutral pb-4">
+      <h1 className="text-brandNeutral text-xl font-semibold capitalize">
+        {currentPage.replace(/-/g, " ")}
+        {isDetailsPage && subTitle && (
+          <>
+            {" "}
+            / <span className="text-gray-600 font-normal capitalize">{subTitle}</span>
+          </>
+        )}
+      </h1>
+      <nav className="text-sm mt-1">
+        <Link href="/" className="text-gray-500 hover:text-brandPrimary">
+          Home
+        </Link>
+        {pathSegments.map((segment, index) => {
+          const isCurrent =
+            (lastIndex === index && !isDetailsPage) ||
+            (lastIndex === index && isDetailsPage);
+
+          const segmentText =
+            index === lastIndex && isDetailsPage
+              ? title
+              : segment.replace(/-/g, " ");
+
+          const segmentHref = `/${pathSegments.slice(0, index + 1).join("/")}`;
+
+          return isCurrent ? (
+            <span
+              key={index}
+              className="text-brandPrimary font-medium capitalize"
+            >
+              {" "}
+              / {segmentText}
+            </span>
           ) : (
             <span key={index}>
               {" "}
-              / <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`}>{segment.replace(/-/g, " ")}</Link>
+              /{" "}
+              <Link
+                href={segmentHref}
+                className="text-gray-500 hover:text-brandPrimary capitalize"
+              >
+                {segmentText}
+              </Link>
             </span>
-          )
-        )}
+          );
+        })}
       </nav>
     </div>
   );

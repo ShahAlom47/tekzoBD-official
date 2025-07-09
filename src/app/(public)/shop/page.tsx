@@ -78,7 +78,7 @@ export default async function ShopPage({ searchParams }: Props) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 my-6 ">
-        <div className="md: col-span-3 lg:col-span- space-y-6">
+        <div className="md:col-span-3 lg:col-span-4 space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
               ❌ {errorMessage}
@@ -100,7 +100,7 @@ export default async function ShopPage({ searchParams }: Props) {
           )}
         </div>
 
-        <div className="md:col-span-1 md:block hidden space-y-4">
+        <div className=" md:block hidden space-y-4">
           <Suspense fallback={<div>Loading filters...</div>}>
             <ShopFilterSidebar />
           </Suspense>

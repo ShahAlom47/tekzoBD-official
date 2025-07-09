@@ -1,5 +1,3 @@
-// components/SafeImage.tsx
-
 import Image, { ImageProps, StaticImageData } from "next/image";
 import React from "react";
 import defaultImage from "@/assets/image/default-image.jpg";
@@ -24,17 +22,24 @@ const SafeImage: React.FC<Props> = ({
   className,
   ...rest
 }) => {
-  const isValidString = (val: unknown): val is string =>
-    typeof val === "string" && val.trim() !== "";
+  // Check if src is a non-empty string or StaticImageData object
+  const isValidSrc = (val: unknown): val is string | StaticImageData => {
+    if (typeof val === "string") {
+      return val.trim().length > 0;
+    }
+    // StaticImageData check (next/image static import)
+    if (typeof val === "object" && val !== null && "src" in val) {
+      return true;
+    }
+    return false;
+  };
 
-  const validSrc: string | StaticImageData =
-    src && (isValidString(src) || src instanceof Object)
-      ? (src as string | StaticImageData)
-      : (fallback as string | StaticImageData);
+  // Determine which src to use
+  const finalSrc = isValidSrc(src) ? src : isValidSrc(fallback) ? fallback : defaultImage;
 
   return (
     <Image
-      src={validSrc}
+      src={finalSrc}
       alt={alt}
       width={width}
       height={height}

@@ -16,7 +16,7 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
   const router = useRouter();
 
   const handleCardClick = () => {
-    router.push(`/product/${item.slug}`);
+    router.push(`/shop/${item.slug}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {

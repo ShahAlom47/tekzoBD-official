@@ -55,6 +55,9 @@ export const getAllProduct = async (params: GetAllProductParams) => {
 export const getSingleProduct = async (id:string|ObjectId,)=>{
   return request("GET",`/product/${id}`)
 }
+export const getSingleProductBySlug = async (slug:string)=>{
+  return request("GET",`/product/details/${slug}`)
+}
 
 export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
   return request("PATCH",`/product/${id}`,{...data})
@@ -62,4 +65,7 @@ export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
 
 export const deleteProduct= async (id: string|ObjectId ) => {
   return request("DELETE", `/product/deleteProduct/${id}`);
+}
+export const getRecentProductsByIds= async (ids: string[]) => {
+  return request("GET", `/product/resentViewProducts/${ids}`);
 }

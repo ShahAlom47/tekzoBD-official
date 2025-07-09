@@ -2,10 +2,10 @@
 
 import React from "react";
 import { notFound } from "next/navigation";
-import { getSinglePortfolio } from "@/lib/allApiRequest/portfolioRequest/porfolioRequest";
-import { Project } from "@/Interfaces/portfolioInterfaces";
+import { getSingleProductBySlug } from "@/lib/allApiRequest/productRequest/productRequest";
+import { ProductType } from "@/Interfaces/productInterfaces";
 import PageHeading from "@/components/PageHeading";
-import PortfolioDetailContent from "@/components/PortfolioDetailsContent";
+import ProductDetailsContent from "@/components/ProductDetailsContent";
 
 interface Props {
   params: {
@@ -15,17 +15,18 @@ interface Props {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = params;
-  const response = await getSinglePortfolio(slug);
-  const portfolio = response?.data as Project;
+  const response = await getSingleProductBySlug(slug);
+  const product = response?.data as ProductType;
 
-  if (!portfolio) {
+  if (!product) {
     notFound();
   }
 
   return (
-    <section className="max-w mx-auto p-6 pt-1 ">
-      <PageHeading title="Project Details" />
-      <PortfolioDetailContent portfolio={portfolio} />
+    <section className="max-w mx-auto p-2 pt-5  ">
+      <PageHeading title="Details" isDetailsPage={true}  subTitle={product?.title} />
+      <ProductDetailsContent product={product}></ProductDetailsContent>
+
     </section>
   );
 }
