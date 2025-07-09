@@ -70,3 +70,7 @@ export const getRecentProductsByIds = async (ids: string[]) => {
   const query = ids.map((id) => `ids=${id}`).join("&");
   return request("GET", `/product/resentViewProducts?${query}`);
 };
+
+export const getRelatedProductsById = async (id: string) => {
+  return request("GET", `/product/relatedProducts?id=${id}`);
+};

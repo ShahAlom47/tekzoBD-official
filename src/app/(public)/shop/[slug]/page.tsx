@@ -6,6 +6,7 @@ import { getSingleProductBySlug } from "@/lib/allApiRequest/productRequest/produ
 import { ProductType } from "@/Interfaces/productInterfaces";
 import PageHeading from "@/components/PageHeading";
 import ProductDetailsContent from "@/components/ProductDetailsContent";
+import RelatedProducts from "@/components/RelatedProducts";
 
 interface Props {
   params: {
@@ -26,6 +27,7 @@ export default async function ProductDetailPage({ params }: Props) {
     <section className="max-w mx-auto p-2 pt-5  ">
       <PageHeading title="Details" isDetailsPage={true}  subTitle={product?.title} />
       <ProductDetailsContent product={product}></ProductDetailsContent>
+      <RelatedProducts productId={product?._id.toString()}></RelatedProducts>
 
     </section>
   );
