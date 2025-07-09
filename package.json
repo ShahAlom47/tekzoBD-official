@@ -20,6 +20,7 @@
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "daisyui": "^5.0.43",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.19.2",
     "lucide-react": "^0.513.0",
     "mongodb": "^6.17.0",

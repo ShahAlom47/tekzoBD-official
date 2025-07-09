@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { addReview } from "@/lib/allApiRequest/reviewRequest/reviewRequest";
 import toast from "react-hot-toast";
+import { queryClient } from "@/Providers/QueryProvider";
 
 interface ReviewFormProps {
   productId: string;
@@ -57,7 +58,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ productId }) => {
         setRating(0);
         setComment("");
         toast.success("Review submitted successfully!");
-        // চাইলে এখানে callback দিয়ে প্যারেন্ট component কে notify করো
+        queryClient.invalidateQueries({
+           queryKey: ["reviews", productId],
+        });
       } else {
         setError(res.message || "Failed to submit review.");
       }
