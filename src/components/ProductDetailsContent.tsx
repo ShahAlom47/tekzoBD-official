@@ -52,6 +52,8 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
     }
   };
 
+ 
+
   return (
    <div className=" md:grid gap-2  grid-cols-12">
 
@@ -70,7 +72,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           <p className="text-sm text-gray-500">Brand: {product.brand}</p>
           <RatingDisplay avgRating={product.ratings?.avg || 0} />
           <p className="text-sm text-gray-500 mt-1">
-            {product.ratings?.reviews?.length || 0} reviews
+            {product.ratings?.count|| 0} reviews
           </p>
         </div>
 

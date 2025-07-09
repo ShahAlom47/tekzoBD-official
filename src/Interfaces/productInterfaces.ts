@@ -12,13 +12,13 @@ export interface MediaItem {
   publicId?: string;
 }
 
-export interface ReviewsType {
+// export interface ReviewsType {
 
-      userId: string;
-      rating: number;
-      comment?: string;
-      createdAt: string;
-    }
+//       userId: string;
+//       rating: number;
+//       comment?: string;
+//       createdAt: string;
+//     }
 
 
 export interface ProductType {
@@ -39,7 +39,7 @@ export interface ProductType {
   ratings: {
     avg: number;
     count: number;
-    reviews:ReviewsType [];
+    // ReviewsType Available in ReviewCollection
   };
 
   media: MediaItem[];

@@ -4,6 +4,7 @@ import clientPromise from "./db_connection";
 import { Users } from "../../Interfaces/userInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
+import { ReviewsType } from "@/Interfaces/reviewInterfaces";
 
 
 // Define the User type (you can extend it as needed)
@@ -24,4 +25,9 @@ export const getCategoryCollection = async (): Promise<Collection<CategoryType>>
   const client = await clientPromise;
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<CategoryType>("Categories");
+};
+export const getReviewCollection = async (): Promise<Collection<ReviewsType>> => {
+  const client = await clientPromise;
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
+  return db.collection<ReviewsType>("Reviews");
 };
