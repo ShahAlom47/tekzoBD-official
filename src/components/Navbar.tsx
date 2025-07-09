@@ -17,7 +17,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 w-full  z-50  duration-500 transition-all  backdrop-blur-sm bg-white   ${
         !showShadow
-          ? " bg-blackLigh  shadow-lg shadow-backdrop"
+          ? "   shadow-lg shadow-backdrop"
           : "shadow-none  "
       } `}
     >

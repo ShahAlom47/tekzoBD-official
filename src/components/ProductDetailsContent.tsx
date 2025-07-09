@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import MediaGallery from "./MediaGallery ";
 import { addToRecentView } from "@/utils/recentViewHelper";
+import RecentViewProducts from "./RecentViewProducts";
 
 interface Props {
   product: ProductType;
@@ -52,7 +53,10 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 bg-white rounded-lg shadow p-4">
+   <div className=" md:grid gap-2  grid-cols-12">
+
+    {/* main content  */}
+     <div className="col-span-9  grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 bg-white rounded-lg shadow p-4">
       {/* Left: Image */}
       <div className="w-full max-w-md mx-auto">
         <MediaGallery media={product?.media || []}></MediaGallery>
@@ -184,6 +188,10 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
         </div>
       </div>
     </div>
+    <aside className=" col-span-3 md:block hidden">
+      <RecentViewProducts></RecentViewProducts>
+    </aside>
+   </div>
   );
 };
 
