@@ -2,9 +2,10 @@
 
 import { ProductType } from "@/Interfaces/productInterfaces";
 import RatingDisplay from "./ui/RatingDisplay";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import MediaGallery from "./MediaGallery ";
+import { addToRecentView } from "@/utils/recentViewHelper";
 
 interface Props {
   product: ProductType;
@@ -12,7 +13,11 @@ interface Props {
 
 const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
-
+  useEffect(() => {
+    if (product?._id) {
+      addToRecentView(product._id.toString());
+    }
+  }, [product]);
   const isOfferActive = (() => {
     const offer = product.offer;
     if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
@@ -41,7 +46,6 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 bg-white rounded-lg shadow p-4">
       {/* Left: Image */}
       <div className="w-full max-w-md mx-auto">
-       
         <MediaGallery media={product?.media || []}></MediaGallery>
       </div>
 

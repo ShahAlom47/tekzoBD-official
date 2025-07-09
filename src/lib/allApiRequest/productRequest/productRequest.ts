@@ -66,6 +66,7 @@ export const updateProduct = async (id:string|ObjectId,data:ProductType)=>{
 export const deleteProduct= async (id: string|ObjectId ) => {
   return request("DELETE", `/product/deleteProduct/${id}`);
 }
-export const getRecentProductsByIds= async (ids: string[]) => {
-  return request("GET", `/product/resentViewProducts/${ids}`);
-}
+export const getRecentProductsByIds = async (ids: string[]) => {
+  const query = ids.map((id) => `ids=${id}`).join("&");
+  return request("GET", `/product/resentViewProducts?${query}`);
+};

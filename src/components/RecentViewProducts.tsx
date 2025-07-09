@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { ProductType } from "@/Interfaces/productInterfaces";
-import ProductCard from "./ProductCard";
 import { getRecentViewedIds } from "@/utils/recentViewHelper";
 import { getRecentProductsByIds } from "@/lib/allApiRequest/productRequest/productRequest";
+import RecentViewProductCard from "./RecentViewProductCard";
 
 const RecentViewProducts = () => {
   const [recentProducts, setRecentProducts] = useState<ProductType[]>([]);
@@ -26,10 +26,10 @@ const RecentViewProducts = () => {
 
   return (
     <div className="my-8 py-4">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Recently Viewed</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <h2 className="md:text-lg  font-semibold mb-4 text-gray-700">Recently Viewed</h2>
+      <div className="grid grid-cols-1  gap-4">
         {recentProducts.map((item) => (
-          <ProductCard key={String(item._id)} item={item} layout="grid-4" />
+        <RecentViewProductCard key={item?._id?.toString()} product={item}></RecentViewProductCard>
         ))}
       </div>
     </div>
