@@ -27,7 +27,7 @@ const RecentViewProducts = () => {
   return (
     <div className="my-8 py-4">
       <h2 className="md:text-lg  font-semibold mb-4 text-gray-700">Recently Viewed</h2>
-      <div className="grid grid-cols-1  gap-4">
+      <div className="grid grid-cols-1  gap-4 max-h-64 overflow-y-scroll">
         {recentProducts.map((item) => (
         <RecentViewProductCard key={item?._id?.toString()} product={item}></RecentViewProductCard>
         ))}

@@ -18,6 +18,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
       addToRecentView(product._id.toString());
     }
   }, [product]);
+
   const isOfferActive = (() => {
     const offer = product.offer;
     if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
@@ -40,6 +41,14 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     console.log(`Added ${quantity} item(s) of ${product.title} to cart`);
+  };
+
+  const handleQuantity = (type: string) => {
+    if (type === "increment" && quantity < product?.stock) {
+      setQuantity((prev) => prev + 1);
+    } else if (type === "decrement" && quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
   };
 
   return (
@@ -94,14 +103,28 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           <label htmlFor="quantity" className="text-sm">
             Quantity:
           </label>
-          <input
-            type="number"
-            id="quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-            min={1}
-            className="w-20 border rounded px-2 py-1 text-center"
-          />
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => handleQuantity("decrement")}
+              className="btn-bordered rounded-sm px-3 py-1 text-lg"
+              disabled={quantity <= 1}
+            >
+              -
+            </button>
+
+            <p className="my-input text-black text-lg font-medium px-3">
+              {quantity}
+            </p>
+
+            <button
+              onClick={() => handleQuantity("increment")}
+              className="btn-bordered rounded-sm px-3 py-1 text-lg"
+              disabled={quantity >= product?.stock}
+            >
+              +
+            </button>
+          </div>
         </div>
 
         {/* Actions */}
@@ -109,13 +132,13 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className={`px-4 py-2 rounded bg-brandPrimary text-white font-semibold transition hover:bg-brandDark ${
+            className={`btn-base ${
               isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             Add to Cart
           </button>
-          <button className="p-2 border rounded hover:text-red-500 transition">
+          <button className=" btn-bordered rounded-sm">
             <FaHeart />
           </button>
         </div>
@@ -130,13 +153,13 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
             {product.sourceInfo.deliveryTime && (
               <p>Delivery: {product.sourceInfo.deliveryTime}</p>
             )}
-            {product.sourceInfo.shippingCost && (
-              <p>Shipping: TK {product.sourceInfo.shippingCost}</p>
-            )}
+            {/* {product.sourceInfo.shippingCost && (
+              <p className="bb">Shipping: TK {product.sourceInfo.shippingCost}</p>
+            )} */}
             {product.sourceInfo.returnPolicy && (
               <p>Return: {product.sourceInfo.returnPolicy}</p>
             )}
-            {product.sourceInfo.productSourceLink && (
+            {/* {product.sourceInfo.productSourceLink && (
               <p>
                 Source Link:{" "}
                 <a
@@ -148,7 +171,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
                   View Original
                 </a>
               </p>
-            )}
+            )} */}
           </div>
         )}
 
