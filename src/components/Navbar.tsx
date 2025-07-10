@@ -22,14 +22,14 @@ const Navbar = () => {
       } `}
     >
       <div
-        className={`bg-gray-300  text-sm  duration-500 transition-all overflow-hidden
+        className={`bg-gray-100  text-sm  duration-500 transition-all overflow-hidden
           ${showNavbar ? " px-4 py-1 " : "  px-4 p-0"} `}
         style={{
           maxHeight: showNavbar ? "200px  " : "0px",
         }}
       >
         <div className="max-w flex justify-between items-center gap-3">
-          <div className=" flex-center gap-3 ">
+          <div className=" flex-center  flex-1 gap-3 px-3">
             <h1 className=" text-brandNeutral">Welcome to TekzoBD</h1>
             <h1 className="text-blackDeep">Contact: 01747291486</h1>
           </div>

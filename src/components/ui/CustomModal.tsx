@@ -41,3 +41,12 @@ const CustomModal: React.FC<CustomModalProps> = ({
 };
 
 export default CustomModal;
+
+
+
+  // <CustomModal
+  //   open={open}
+  //   onOpenChange={setOpen}
+  //   title="Edit Your Review"
+  //   description="You can change your rating and comment"
+  // ></CustomModal>

@@ -2,10 +2,18 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getReviewByProductId } from "@/lib/allApiRequest/reviewRequest/reviewRequest";
+import {
+  deleteReview,
+  getReviewByProductId,
+} from "@/lib/allApiRequest/reviewRequest/reviewRequest";
 import { ReviewsType } from "@/Interfaces/reviewInterfaces";
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@/hooks/useUser";
+import { useConfirm } from "@/hooks/useConfirm";
+import toast from "react-hot-toast";
+import { queryClient } from "@/Providers/QueryProvider";
+import CustomModal from "./ui/CustomModal";
+import EditReviewForm from "./EditReviewForm";
 
 interface ReviewListProps {
   productId: string;
@@ -15,6 +23,10 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
   const { user } = useUser();
   const currentEmail = user?.email;
   const currentRole = user?.role;
+
+  const { confirm, ConfirmModal } = useConfirm();
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedReview,setSelectedReview]= useState<ReviewsType|null>(null)
 
   const [showAll, setShowAll] = useState(false);
 
@@ -32,24 +44,33 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
   });
 
   const handleDelete = async (reviewId: string) => {
-    const confirm = window.confirm("Are you sure you want to delete this review?");
-    if (!confirm) return;
-    try {
-      // await deleteReview(reviewId);
-      console.log("Deleting review ID:", reviewId);
-    } catch (err) {
-      console.error("Failed to delete review:", err);
+    const ok = await confirm({
+      title: "Delete Category",
+      message: "Are you sure you want to delete this category?",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+    });
+
+    if (ok) {
+      await deleteReview(reviewId);
+      toast.success("Category deleted!");
+      queryClient.fetchQuery({
+        queryKey: ["reviews", productId],
+      });
+    } else {
+      console.log("User cancelled delete");
     }
   };
 
   const handleEdit = (review: ReviewsType) => {
-    console.log("Editing review:", review);
+    setShowModal(!showModal);
+    setSelectedReview(review)
   };
 
   if (isLoading) return <p>Loading reviews...</p>;
   if (error) return <p>Failed to load reviews.</p>;
 
-  const visibleReviews = showAll ? reviews : reviews.slice(0, 4);
+  const visibleReviews = showAll ? reviews : reviews.slice(0, 2);
 
   return (
     <div className="space-y-4 mt-6">
@@ -66,7 +87,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
 
               return (
                 <li
-                  key={review._id}
+                  key={review._id?.toString()}
                   className="border p-4 rounded shadow-sm bg-white"
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -112,7 +133,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
             })}
           </ul>
 
-          {reviews.length > 4 && !showAll && (
+          {reviews.length > 2 && !showAll && (
             <div className="pt-2 text-center">
               <button
                 onClick={() => setShowAll(true)}
@@ -124,6 +145,17 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
           )}
         </>
       )}
+      {ConfirmModal}
+      <CustomModal
+        open={showModal}
+        onOpenChange={setShowModal}
+        title={"Edit Review"}
+      >
+        <EditReviewForm
+          review={selectedReview&& selectedReview}
+          onClose={() => setShowModal(false)}
+        />
+      </CustomModal>
     </div>
   );
 };
