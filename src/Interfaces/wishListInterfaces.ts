@@ -1,13 +1,15 @@
+import { ObjectId } from 'mongodb';
 // interfaces/wishlistInterfaces.ts
 
 export interface WishlistProduct {
-  productId: string;
-  addedAt: string; // ISO string for consistency across systems
+  productId: string | ObjectId;
+  addedAt: string | Date; // ISO string for consistency across systems
 }
 
 export interface WishlistType {
-  _id?: string;
+  _id?:  string | ObjectId;
   userEmail: string;
   products: WishlistProduct[];
   updatedAt?: string;
+  createdAt?:string;
 }

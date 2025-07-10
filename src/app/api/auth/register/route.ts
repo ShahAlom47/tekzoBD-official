@@ -20,6 +20,7 @@ export const POST = async (req: Request): Promise<NextResponse> => {
     const { email, password, name,  } = body;
     console.log( email, password, name);
 
+
     // Validation
     if (!email || !password || !name) {
       return NextResponse.json(
