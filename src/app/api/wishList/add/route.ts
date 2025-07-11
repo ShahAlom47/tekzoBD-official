@@ -47,7 +47,7 @@ export const POST = async (req: Request): Promise<NextResponse> => {
         {
           $push: {
             products: {
-              productId: new ObjectId(productId),
+              productId: productId,
               addedAt,
             },
           },

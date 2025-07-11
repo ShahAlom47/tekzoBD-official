@@ -18,6 +18,7 @@ const Login: React.FC = () => {
 
   const session = useSession();
 
+
   console.log(session);
 
   const {
@@ -39,6 +40,7 @@ const Login: React.FC = () => {
       if (res?.ok) {
         toast.success("Logged in successfully!");
         router.push("/");
+        // await addWishlistToDB( data.email);
       } else {
         const rawError = res?.error || "";
 

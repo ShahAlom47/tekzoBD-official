@@ -6,6 +6,7 @@ import SafeImage from "./SafeImage";
 import RatingDisplay from "./ui/RatingDisplay";
 import { useRouter } from "next/navigation";
 import { FaHeart } from "react-icons/fa";
+import { useWishlist } from "@/hooks/useWishlist";
 
 type ProductCardProps = {
   item: ProductType;
@@ -14,6 +15,15 @@ type ProductCardProps = {
 
 const ProductCard = ({ item, layout }: ProductCardProps) => {
   const router = useRouter();
+
+  const { isWishlisted, toggleWishlist } = useWishlist();
+
+  const handleWishClick=(e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+     toggleWishlist(item._id.toString())
+
+
+  }
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);
@@ -48,7 +58,11 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
       onClick={handleCardClick}
       className={`
         border border-brandNeutral rounded-sm shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative overflow-hidden
-        ${layout === "list" ? "flex flex-row md:flex-row items-center gap-4 p-4" : ""}
+        ${
+          layout === "list"
+            ? "flex flex-row md:flex-row items-center gap-4 p-4"
+            : ""
+        }
       `}
     >
       {/* ✅ Discount Badge */}
@@ -66,15 +80,24 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
       )}
 
       {/* Wishlist Button */}
-      <button className="absolute top-8 right-2 z-20 group-hover:-translate-x-0 translate-x-[200%] transition-all duration-500 btn-bordered p-1 text-sm text-brandPrimary rounded-sm">
-        <FaHeart />
+
+      <button
+        onClick={handleWishClick}
+        className="absolute top-8 right-2 z-20 group-hover:-translate-x-0 translate-x-[200%] transition-all duration-500 btn-bordered p-1 text-sm text-brandPrimary rounded-sm"
+      >
+        
+        {isWishlisted(item._id.toString()) ?<FaHeart />: "❤️"}
       </button>
 
       {/* ✅ Product Image */}
       <div
         className={`
           relative bg-gray-100 overflow-hidden
-          ${layout === "list" ? "w-24 md:w-48 lg:w-1/3 aspect-square" : "p-3 w-full aspect-square"}
+          ${
+            layout === "list"
+              ? "w-24 md:w-48 lg:w-1/3 aspect-square"
+              : "p-3 w-full aspect-square"
+          }
         `}
       >
         <SafeImage
@@ -90,17 +113,27 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
       {/* ✅ Product Info */}
       <div
         className={`
-          ${layout === "list" ? "flex-1 md:pl-4 space-y-2 text-left w-full" : "p-4 space-y-2 flex flex-col justify-center items-center"}
+          ${
+            layout === "list"
+              ? "flex-1 md:pl-4 space-y-2 text-left w-full"
+              : "p-4 space-y-2 flex flex-col justify-center items-center"
+          }
         `}
       >
-        <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">{item?.title}</h2>
+        <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">
+          {item?.title}
+        </h2>
 
         {/* ✅ Price Section */}
         <div className="flex items-center space-x-2">
           {hasDiscount && (
-            <span className="text-gray-400 line-through text-sm">TK {originalPrice}</span>
+            <span className="text-gray-400 line-through text-sm">
+              TK {originalPrice}
+            </span>
           )}
-          <span className="text-brandPrimary text-base font-semibold">TK {discountedPrice}</span>
+          <span className="text-brandPrimary text-base font-semibold">
+            TK {discountedPrice}
+          </span>
         </div>
 
         {/* ✅ Rating */}
