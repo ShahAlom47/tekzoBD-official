@@ -1,7 +1,7 @@
 
 
 import { request } from "../apiRequests";
-import { AddRequestWistDataType, WishlistType } from "@/Interfaces/wishListInterfaces";
+import { AddRequestWistDataType } from "@/Interfaces/wishListInterfaces";
 
 
 
@@ -11,12 +11,13 @@ export const addWishList = async (data:AddRequestWistDataType) => {
 export const removeWishData = async (productId:string,userEmail:string) => {
   return request("DELETE", `/wishList/removeWishListData`,{productId,userEmail} );
 }
-export const deleteReview = async (reviewId:string) => {
-  return request("DELETE", `/review/delete?reviewId=${reviewId}` );
+export const syncWishlist = async (productIds:string[],userEmail:string) => {
+  return request("POST", `/wishList/sync-wishlist`,{productIds,userEmail} );
 }
-export const editReview = async (data:WishlistType) => {
-  return request("PATCH", `/review/edit`,{ ...data } );
+export const getUserWishList = async (userEmail:string) => {
+  return request("GET", `/wishList/sync-wishlist?userEmail=${userEmail}` );
 }
+
 
 // export const getAllCategories = async ({ currentPage, limit, searchTrim }: GetAllCategoryParams) => {
 //   const url = `/category/getAllCategory?currentPage=${currentPage}&pageSize=${limit}` +

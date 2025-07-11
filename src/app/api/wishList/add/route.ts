@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getWishlistCollection } from "@/lib/database/db_collections";
-import { ObjectId } from "mongodb";
 
 interface RequestBody {
   userEmail: string;
@@ -63,7 +62,7 @@ export const POST = async (req: Request): Promise<NextResponse> => {
       // Create new wishlist document with createdAt and updatedAt
       await wishlistCollection.insertOne({
         userEmail,
-        products: [{ productId: new ObjectId(productId), addedAt }],
+        products: [{productId, addedAt }],
         createdAt,
         updatedAt,
       });

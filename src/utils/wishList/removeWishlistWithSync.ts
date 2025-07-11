@@ -15,6 +15,7 @@ export const removeWishlistWithSync = async (
     try {
      const res= await removeWishData(productId,userEmail)
       console.log(res)
+      return res
       
     } catch (err) {
       console.error("DB remove failed:", err);

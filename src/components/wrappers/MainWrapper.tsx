@@ -1,6 +1,7 @@
 "use client";
 
 import { useCategories } from "@/hooks/useCategory";
+import { useWishlist } from "@/hooks/useWishlist";
 import { usePathname } from "next/navigation";
 import React from "react";
 
@@ -13,6 +14,7 @@ export default function MainWrapper({
 }) {
   const pathname = usePathname();
     useCategories();  // first time data load in the redux store 
+    useWishlist()
 
   
 
