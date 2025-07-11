@@ -7,6 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import MediaGallery from "./MediaGallery ";
 import { addToRecentView } from "@/utils/recentViewHelper";
 import RecentViewProducts from "./RecentViewProducts";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface Props {
   product: ProductType;
@@ -14,6 +15,9 @@ interface Props {
 
 const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
+  const { isWishlisted, toggleWishlist } = useWishlist();
+
+
   useEffect(() => {
     if (product?._id) {
       addToRecentView(product._id.toString());
@@ -52,6 +56,10 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
     }
   };
 
+
+  const handleWishClick=()=>{
+  toggleWishlist(product._id.toString())
+  }
  
 
   return (
@@ -144,8 +152,10 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           >
             Add to Cart
           </button>
-          <button className=" btn-bordered rounded-sm">
-            <FaHeart />
+          <button
+              onClick={handleWishClick}
+          className=" btn-bordered rounded-sm">
+            {isWishlisted(product._id.toString()) ? "❤️":<FaHeart />}
           </button>
         </div>
 

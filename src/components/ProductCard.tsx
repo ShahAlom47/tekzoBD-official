@@ -86,7 +86,7 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
         className="absolute top-8 right-2 z-20 group-hover:-translate-x-0 translate-x-[200%] transition-all duration-500 btn-bordered p-1 text-sm text-brandPrimary rounded-sm"
       >
         
-        {isWishlisted(item._id.toString()) ?<FaHeart />: "❤️"}
+        {isWishlisted(item._id.toString()) ? "❤️":<FaHeart />}
       </button>
 
       {/* ✅ Product Image */}

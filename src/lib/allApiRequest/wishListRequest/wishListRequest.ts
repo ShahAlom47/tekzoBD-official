@@ -15,7 +15,7 @@ export const syncWishlist = async (productIds:string[],userEmail:string) => {
   return request("POST", `/wishList/sync-wishlist`,{productIds,userEmail} );
 }
 export const getUserWishList = async (userEmail:string) => {
-  return request("GET", `/wishList/sync-wishlist?userEmail=${userEmail}` );
+  return request("GET", `/wishList/user-wishlist?userEmail=${userEmail}` );
 }
 
 
