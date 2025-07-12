@@ -5,9 +5,15 @@ import { useWishlist } from "@/hooks/useWishlist";
 
 const NavWihList = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const {NavWishList}= useWishlist()
 
- 
+
+  const {wishlistIds}= useWishlist()
+  console.log(wishlistIds,"redux")
+
+const wishCount = () => {
+  const count = wishlistIds?.length || 0;
+  return count > 98 ? "99+" : `${count}`;
+};
 
 
   return (
@@ -21,7 +27,7 @@ const NavWihList = () => {
         <BsBookmarkHeart />
 
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
-          99+
+         {wishCount()}
         </span>
       </button>
 
