@@ -4,7 +4,7 @@ import {
   getLocalWishlist,
   WISHLIST_NAME,
 } from "@/utils/wishList/getLocalWishList";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "./useUser";
 import { addWishlistWithSync } from "@/utils/wishList/addWishlistWithSync";
 import { removeWishlistWithSync } from "@/utils/wishList/removeWishlistWithSync";
@@ -14,16 +14,19 @@ import {
 } from "@/utils/wishList/syncLocalWishlistToDB";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/reduxHook";
-import { clearWishlistRedux, setWishlistRedux } from "@/redux/features/wishList/wishlistSlice";
+import {
+  clearWishlistRedux,
+  setWishlistRedux,
+} from "@/redux/features/wishList/wishlistSlice";
+import { queryClient } from "@/Providers/QueryProvider";
 
 const WISHLIST_KEY = WISHLIST_NAME;
 
 export interface WishlistProduct {
   productId: string;
-  addedAt: string; // ISO format
+  addedAt: string;
 }
 
-// ✅ LocalStorage থেকে ডেটা আনা
 const getWishlistFromStorage = (): WishlistProduct[] => {
   try {
     const stored = localStorage.getItem(WISHLIST_KEY);
@@ -36,114 +39,129 @@ const getWishlistFromStorage = (): WishlistProduct[] => {
 export const useWishlist = () => {
   const [wishlist, setWishlist] = useState<WishlistProduct[]>([]);
   const { user } = useUser();
-  const userEmail = user?.email || undefined;
+  const userEmail = user?.email;
   const dispatch = useAppDispatch();
+  const wishlistIds = useAppSelector((state) => state.wishlist.wishlistIds);
 
-  // ✅ Component load এ localStorage থেকে ডেটা সেট করো
+  // ✅ Helper to update all sources consistently
+  const updateWishlist = useCallback(
+    (newWishlist: WishlistProduct[], showToast = true) => {
+      setWishlist(newWishlist);
+      localStorage.setItem(WISHLIST_KEY, JSON.stringify(newWishlist));
+      dispatch(setWishlistRedux(newWishlist.map((item) => item.productId)));
+      queryClient.invalidateQueries({ queryKey: ["wishlistData"] });
+      if (showToast) toast.success("Wishlist updated!");
+    },
+    [dispatch]
+  );
+
+  // ✅ Initial load from localStorage
   useEffect(() => {
     const local = getWishlistFromStorage();
-    setWishlist(local);
-    dispatch(setWishlistRedux(local.map((item) => item.productId)));
-  }, []);
+    updateWishlist(local, false);
+  }, [updateWishlist]);
 
-  // ✅ DB থেকে sync করে local এ বসাও (login অবস্থায়)
+  // ✅ Sync local wishlist with DB when user logs in
   useEffect(() => {
-    if (userEmail) {
-      const localWishlist = getLocalWishlist();
+    if (!userEmail) return;
 
-      if (localWishlist.length > 0) {
-        syncLocalWishlistToDB(userEmail).then((fresh) => {
-          if (fresh) {
-            setWishlist(fresh);
-            dispatch(setWishlistRedux(fresh.map((item) => item.productId)));
-          }
-        });
-      } else {
-        fetchWishlistFromDB(userEmail).then((fresh) => {
-          if (fresh) {
-            setWishlist(fresh);
-            dispatch(setWishlistRedux(fresh.map((item) => item.productId)));
-          }
-        });
+    const localWishlist = getLocalWishlist();
+
+    const syncOrFetch = async () => {
+      try {
+        const freshWishlist = localWishlist.length
+          ? await syncLocalWishlistToDB(userEmail)
+          : await fetchWishlistFromDB(userEmail);
+
+        if (freshWishlist) {
+          updateWishlist(freshWishlist, false);
+        }
+      } catch (error) {
+        console.error("Wishlist sync error:", error);
+        toast.error("Failed to sync wishlist.");
       }
-    }
-  }, [userEmail, dispatch]);
+    };
 
-  // ✅ Add to wishlist
-  const addToWishlist = async (productId: string) => {
-    const stored = getWishlistFromStorage();
-    const exists = stored.find((item) => item.productId === productId);
-    if (!exists) {
+    syncOrFetch();
+  }, [userEmail, updateWishlist]);
+
+  // ✅ Add item to wishlist
+  const addToWishlist = useCallback(
+    async (productId: string) => {
+      if (wishlist.find((item) => item.productId === productId)) {
+        toast("Already in wishlist");
+        return;
+      }
+
       const updated = [
-        ...stored,
+        ...wishlist,
         { productId, addedAt: new Date().toISOString() },
       ];
-      localStorage.setItem(WISHLIST_KEY, JSON.stringify(updated));
-      setWishlist(updated);
 
-      const productIdList = updated.map((item) => item.productId);
-      dispatch(setWishlistRedux(productIdList));
-    }
-    if (userEmail) {
-      const res = await addWishlistWithSync(productId, userEmail);
-      if (res?.success) {
-        toast.success(res?.message);
+      updateWishlist(updated, false);
+
+      if (userEmail) {
+        try {
+          const res = await addWishlistWithSync(productId, userEmail);
+          if (res?.success) toast.success(res.message);
+        } catch {
+          toast.error("Failed to add wishlist on server");
+        }
       }
-    }
-  };
+    },
+    [wishlist, userEmail, updateWishlist]
+  );
 
-  // ✅ Remove from wishlist
-  const removeFromWishlist = async (productId: string) => {
-    const stored = getWishlistFromStorage();
-    const updated = stored.filter((item) => item.productId !== productId);
-    localStorage.setItem(WISHLIST_KEY, JSON.stringify(updated));
-    setWishlist(updated);
+  // ✅ Remove item from wishlist
+  const removeFromWishlist = useCallback(
+    async (productId: string) => {
+      const updated = wishlist.filter((item) => item.productId !== productId);
 
-    dispatch(setWishlistRedux(updated.map((item) => item.productId)));
+      updateWishlist(updated, false);
 
-    if (userEmail) {
-      const res = await removeWishlistWithSync(productId, userEmail);
-      if (res?.success) {
-        toast.success(res?.message);
+      if (userEmail) {
+        try {
+          const res = await removeWishlistWithSync(productId, userEmail);
+          if (res?.success) toast.success(res.message);
+        } catch {
+          toast.error("Failed to remove wishlist on server");
+        }
       }
-    }
-  };
+    },
+    [wishlist, userEmail, updateWishlist]
+  );
 
-  // ✅ Toggle Wishlist
-  const toggleWishlist = (productId: string) => {
-    const stored = getWishlistFromStorage();
-    const exists = stored.some((item) => item.productId === productId);
-    let updated: WishlistProduct[];
-
-    if (exists) {
-      updated = stored.filter((item) => item.productId !== productId);
-      if (userEmail) removeWishlistWithSync(productId, userEmail);
-    } else {
-      updated = [...stored, { productId, addedAt: new Date().toISOString() }];
-      if (userEmail) addWishlistWithSync(productId, userEmail);
-    }
-
-    setWishlist(updated);
-    localStorage.setItem(WISHLIST_KEY, JSON.stringify(updated));
-
-    dispatch(setWishlistRedux(updated.map((item) => item.productId)));
-  };
+  // ✅ Toggle wishlist state for a product
+  const toggleWishlist = useCallback(
+    async (productId: string) => {
+      if (wishlist.some((item) => item.productId === productId)) {
+        await removeFromWishlist(productId);
+      } else {
+        await addToWishlist(productId);
+      }
+    },
+    [wishlist, addToWishlist, removeFromWishlist]
+  );
 
   // ✅ Check if product is wishlisted
-  const isWishlisted = (productId: string) => {
-    return wishlist.some((item) => item.productId === productId);
-  };
+  const isWishlisted = useCallback(
+    (productId: string) => {
+      return wishlist.some((item) => item.productId === productId);
+    },
+    [wishlist]
+  );
 
-  // ✅ Clear wishlist
-  const clearWishlist = () => {
-    localStorage.removeItem(WISHLIST_KEY);
+  // ✅ Clear wishlist completely
+  const clearWishlist = useCallback(() => {
     setWishlist([]);
+    localStorage.removeItem(WISHLIST_KEY);
     dispatch(clearWishlistRedux());
-  };
+    queryClient.invalidateQueries({ queryKey: ["wishlistData"] });
+    toast.success("Wishlist cleared");
+  }, [dispatch]);
 
-  // ✅ Product ID array
+  // ✅ Derived data: productId list
   const productIdList = wishlist.map((item) => item.productId);
-   const wishlistIds = useAppSelector((state) => state.wishlist.wishlistIds)
 
   return {
     wishlist,

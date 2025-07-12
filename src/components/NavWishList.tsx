@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import Drawer from "./Drawer"; // Custom drawer component
+import Drawer from "./Drawer";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { useWishlist } from "@/hooks/useWishlist";
 import WishListContent from "./WishListContent";
@@ -13,21 +13,23 @@ const NavWishList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { wishlistIds } = useWishlist();
 
-  const {
-    data: products,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["wishlistData", wishlistIds],
-    queryFn: async () => {
-      if (!wishlistIds || wishlistIds.length === 0) return [];
-      const res = await getWishListProductByIds(wishlistIds);
-      return res.data as ProductType[];
-    },
-    enabled: isOpen, // Fetch only when drawer is open
-    staleTime: 1000 * 60 * 5, // 5 mins cache
-  });
+const {
+  data: products,
+  isLoading,
+  isError,
+  refetch,
+} = useQuery({
+  queryKey: ["wishlistData"], // Remove wishlistIds from here!
+  queryFn: async () => {
+    const res = await getWishListProductByIds(wishlistIds);
+    return res.data as ProductType[];
+  },
+  enabled: isOpen && !!wishlistIds.length, // only on open
+  staleTime: 1000 * 60 * 10, // cache for 10 mins
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
+});
+
 
   const wishCount = () => {
     const count = wishlistIds?.length || 0;
