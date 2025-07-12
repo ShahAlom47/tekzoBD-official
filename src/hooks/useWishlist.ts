@@ -124,6 +124,7 @@ const toggleWishlist = (productId: string) => {
 
   // ✅ Product ID array
   const productIdList = wishlist.map((item) => item.productId);
+  console.log(productIdList,)
 
   return {
     wishlist,

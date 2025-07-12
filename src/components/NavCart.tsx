@@ -18,10 +18,11 @@ const NavCart = () => {
       {/* Cart Button */}
       <button
         onClick={onOpen}
-        className="text-black md:text-3xl text-2xl font-light relative "
+        title="Your Cart"
+        className="text-black md:text-3xl text-2xl font-light relative hover:scale-90 "
       >
         <PiShoppingCartThin />
-        <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-1 -right-1 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
+        <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
           99+
         </span>
       </button>

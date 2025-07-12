@@ -10,6 +10,7 @@ import AuthMenu from "./AuthMenu";
 import GlobalSearchBox from "./GlobalSearchBox";
 import { MdCancel } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
+import NavWihList from "./NavWishList";
 
 const MobileNavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,7 @@ const MobileNavBar = () => {
         <button onClick={()=> setOpenSearchBox(!openSearchBox)} className=" text-brandPrimary text-lg">
          {openSearchBox?<MdCancel size={25} />: <FaSearch></FaSearch>}
         </button>
+             <NavWihList></NavWihList>
         <NavCart></NavCart>
         <button
           onClick={() => setIsOpen(true)}

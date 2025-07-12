@@ -8,6 +8,7 @@ import AuthMenu from "./AuthMenu";
 import AuthButton from "./AuthButton";
 import GlobalSearchBox from "./GlobalSearchBox";
 import NavCart from "./NavCart";
+import NavWihList from "./NavWishList";
 const Navbar = () => {
   const { scrollY, scrollDirection } = useScreenInfo();
   const showNavbar = scrollDirection === "up" || scrollY < 100;
@@ -44,6 +45,7 @@ const Navbar = () => {
           <GlobalSearchBox></GlobalSearchBox>
         </div>
         <div className="flex items-center justify-center gap-4   px-2 ">
+          <NavWihList></NavWihList>
           <NavCart></NavCart>
           <AuthMenu />
         </div>
