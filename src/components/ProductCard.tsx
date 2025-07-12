@@ -5,28 +5,35 @@ import React from "react";
 import SafeImage from "./SafeImage";
 import RatingDisplay from "./ui/RatingDisplay";
 import { useRouter } from "next/navigation";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaTrashAlt } from "react-icons/fa";
 import { useWishlist } from "@/hooks/useWishlist";
 
 type ProductCardProps = {
   item: ProductType;
   layout: "list" | "grid-3" | "grid-4";
+  isWishList?: boolean; // ✅ optional prop
 };
 
-const ProductCard = ({ item, layout }: ProductCardProps) => {
+const ProductCard = ({
+  item,
+  layout,
+  isWishList = false,
+}: ProductCardProps) => {
   const router = useRouter();
-
-  const { isWishlisted, toggleWishlist } = useWishlist();
-
-  const handleWishClick=(e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-     toggleWishlist(item._id.toString())
-
-
-  }
+  const { isWishlisted, toggleWishlist,removeFromWishlist } = useWishlist();
+ 
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);
+  };
+
+  const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    toggleWishlist(item._id.toString());
+  };
+
+  const handleRemoveFromWishlist =async (e: React.MouseEvent<HTMLButtonElement>) => {
+     e.stopPropagation();await removeFromWishlist(item?._id.toString())
   };
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,11 +65,7 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
       onClick={handleCardClick}
       className={`
         border border-brandNeutral rounded-sm shadow hover:shadow-md transition duration-300 cursor-pointer bg-white group hover:border-brandPrimary relative overflow-hidden
-        ${
-          layout === "list"
-            ? "flex flex-row md:flex-row items-center gap-4 p-4"
-            : ""
-        }
+        ${layout === "list" ? "flex flex-row items-center gap-4 p-4" : ""}
       `}
     >
       {/* ✅ Discount Badge */}
@@ -79,25 +82,27 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
         </div>
       )}
 
-      {/* Wishlist Button */}
-
+      {/* ✅ Wishlist or Delete Button */}
+      {isWishList===false &&
       <button
-        onClick={handleWishClick}
+        onClick={handleWishlistClick}
         className="absolute top-8 right-2 z-20 group-hover:-translate-x-0 translate-x-[200%] transition-all duration-500 btn-bordered p-1 text-sm text-brandPrimary rounded-sm"
+        title={isWishList ? "Remove from wishlist" : "Add to wishlist"}
       >
-        
-        {isWishlisted(item._id.toString()) ? "❤️":<FaHeart />}
+        {  isWishlisted(item._id.toString()) ? "❤️" : <FaHeart />}
       </button>
-
+}
       {/* ✅ Product Image */}
       <div
         className={`
           relative bg-gray-100 overflow-hidden
+          
           ${
             layout === "list"
-              ? "w-24 md:w-48 lg:w-1/3 aspect-square"
+              ?isWishList?"w-24": `w-24 md:w-48 lg:w-1/3 aspect-square`
               : "p-3 w-full aspect-square"
           }
+          
         `}
       >
         <SafeImage
@@ -112,13 +117,11 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
 
       {/* ✅ Product Info */}
       <div
-        className={`
-          ${
-            layout === "list"
-              ? "flex-1 md:pl-4 space-y-2 text-left w-full"
-              : "p-4 space-y-2 flex flex-col justify-center items-center"
-          }
-        `}
+        className={`${
+          layout === "list"
+            ? "flex-1 md:pl-4 space-y-2 text-left w-full"
+            : "p-4 space-y-2 flex flex-col justify-center items-center"
+        }`}
       >
         <h2 className="text-lg font-semibold text-gray-800 line-clamp-1">
           {item?.title}
@@ -137,18 +140,37 @@ const ProductCard = ({ item, layout }: ProductCardProps) => {
         </div>
 
         {/* ✅ Rating */}
-        <RatingDisplay avgRating={item?.ratings?.avg || 0} starSize={16} />
+        {isWishList == false && (
+          <RatingDisplay avgRating={item?.ratings?.avg || 0} starSize={16} />
+        )}
 
         {/* ✅ Add to Cart Button */}
-        <button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock}
-          className={`mt-2 btn-bordered text-sm px-4 py-1 w-full transition ${
-            isOutOfStock ? "cursor-not-allowed opacity-50" : ""
-          }`}
-        >
-          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </button>
+        <div className={`flex gap-1 ${isWishList?" md:flex-row  flex-col ":" flex-col "}`}>
+          <button
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+            className={` btn-bordered text-sm md:px-4 px-2 text-xm md:text-base py-1  transition w-fit  
+              ${isOutOfStock ? "cursor-not-allowed opacity-50" : ""}
+              ${isWishList?"h-6":""}
+              
+              `}
+          >
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+          </button>
+
+          {/* wish emve  button  */}
+          {  
+          isWishList===true &&
+            <button
+              onClick={handleRemoveFromWishlist}
+             
+              className={` btn-bordered   px-4 py-1 w-fit transition text-xs md:text-base  h-6 `}
+            >
+              <FaTrashAlt className=" text-red-500 mr-2" />
+              <span className="hidden sm:inline">Remove</span>
+            </button>
+          }
+        </div>
       </div>
     </div>
   );

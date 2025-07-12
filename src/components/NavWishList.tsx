@@ -1,33 +1,50 @@
+"use client"
 import React, { useState } from "react";
-import Drawer from "./Drawer"; // তুমি যেটা কাস্টম Drawer বানিয়েছো
+import Drawer from "./Drawer"; // Custom drawer component
 import { BsBookmarkHeart } from "react-icons/bs";
 import { useWishlist } from "@/hooks/useWishlist";
+import WishListContent from "./WishListContent";
+import { useQuery } from "@tanstack/react-query";
+import { getWishListProductByIds } from "@/lib/allApiRequest/wishListRequest/wishListRequest";
+import { ProductType } from "@/Interfaces/productInterfaces";
+import Loading from "@/app/loading";
 
-const NavWihList = () => {
+const NavWishList = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { wishlistIds } = useWishlist();
 
+  const {
+    data: products,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["wishlistData", wishlistIds],
+    queryFn: async () => {
+      if (!wishlistIds || wishlistIds.length === 0) return [];
+      const res = await getWishListProductByIds(wishlistIds);
+      return res.data as ProductType[];
+    },
+    enabled: isOpen, // Fetch only when drawer is open
+    staleTime: 1000 * 60 * 5, // 5 mins cache
+  });
 
-  const {wishlistIds}= useWishlist()
-  console.log(wishlistIds,"redux")
-
-const wishCount = () => {
-  const count = wishlistIds?.length || 0;
-  return count > 98 ? "99+" : `${count}`;
-};
-
+  const wishCount = () => {
+    const count = wishlistIds?.length || 0;
+    return count > 98 ? "99+" : `${count}`;
+  };
 
   return (
-    <div className="relative flex items-center ">
-      {/* Cart Button */}
+    <div className="relative flex items-center">
+      {/* Wishlist Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="text-gray-700 md:text-3xl text-xl font-light relative hover:scale-90 "
+        className="text-gray-700 md:text-3xl text-xl font-light relative hover:scale-90"
         title="Wishlist"
       >
         <BsBookmarkHeart />
-
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
-         {wishCount()}
+          {wishCount()}
         </span>
       </button>
 
@@ -36,15 +53,46 @@ const wishCount = () => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         direction="right"
-        width="w-[50%]"
+        width="w-[90%] md:w-[40%]"
       >
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">Your wishlist</h3>
-          <p className="text-sm text-gray-500">Cart content will go here.</p>
+          <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
+            My Wishlist
+          </h3>
+
+          <div className="max-h-[86vh] overflow-y-scroll">
+            {/* Loading State */}
+            {isLoading && <Loading></Loading>}
+
+            {/* Error State */}
+            {isError && (
+              <div className="text-red-500 text-sm text-center">
+                Failed to load wishlist.{" "}
+                <button
+                  onClick={() => refetch()}
+                  className="underline text-brandPrimary hover:text-red-600"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!isLoading && !isError && products?.length === 0 && (
+              <div className="text-center text-gray-500 mt-6">
+                No products in your wishlist.
+              </div>
+            )}
+
+            {/* Success Content */}
+            {!isLoading && !isError && products && products.length > 0 && (
+              <WishListContent products={products} contentType="drawer" />
+            )}
+          </div>
         </div>
       </Drawer>
     </div>
   );
 };
 
-export default NavWihList;
+export default NavWishList;

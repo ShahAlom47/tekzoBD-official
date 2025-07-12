@@ -17,6 +17,9 @@ export const syncWishlist = async (productIds:string[],userEmail:string) => {
 export const getUserWishList = async (userEmail:string) => {
   return request("GET", `/wishList/user-wishlist?userEmail=${userEmail}` );
 }
+export const getWishListProductByIds = async (wishIds:string[]) => {
+  return request("POST", `/wishList/products`,{wishListIds:wishIds} );
+}
 
 
 // export const getAllCategories = async ({ currentPage, limit, searchTrim }: GetAllCategoryParams) => {

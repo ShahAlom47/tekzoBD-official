@@ -72,13 +72,14 @@ const Drawer: React.FC<DrawerProps> = ({
           fixed bg-white  z-50 shadow-lg
           border border-[var(--border)]
           transform transition-transform duration-700 h-full
+      
           ${getPositionClasses()} ${className}
         `}
       >
         <div className="flex justify-end px-3">
           <button
             onClick={onClose}
-            className="text-xl font-bold hover:text-red-500 text-gray-600"
+            className="text-xl font-bold hover:text-red-500 text-gray-600 absolute  top-2 right-3"
           >
             ✕
           </button>
