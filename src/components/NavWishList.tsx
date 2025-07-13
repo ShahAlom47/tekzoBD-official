@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import Drawer from "./Drawer";
 import { BsBookmarkHeart } from "react-icons/bs";
@@ -11,28 +11,26 @@ import Loading from "@/app/loading";
 
 const NavWishList = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { wishlistIds } = useWishlist();
+  const { productIdList } = useWishlist();
+  console.log(productIdList);
 
-const {
-  data: products,
-  isLoading,
-  isError,
-  refetch,
-} = useQuery({
-  queryKey: ["wishlistData"], // Remove wishlistIds from here!
-  queryFn: async () => {
-    const res = await getWishListProductByIds(wishlistIds);
-    return res.data as ProductType[];
-  },
-  enabled: isOpen && !!wishlistIds.length, // only on open
-  staleTime: 1000 * 60 * 10, // cache for 10 mins
-  refetchOnWindowFocus: false,
-  refetchOnMount: false,
-});
-
+  const {
+    data: products,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["wishlistData", productIdList],
+    queryFn: async () => {
+      const res = await getWishListProductByIds(productIdList);
+      return res.data as ProductType[];
+    },
+    enabled: isOpen && productIdList.length > 0,
+    staleTime: 1000 * 60 * 2, // 2 minutes stale time - data considered fresh for 2 mins
+  });
 
   const wishCount = () => {
-    const count = wishlistIds?.length || 0;
+    const count = productIdList?.length || 0;
     return count > 98 ? "99+" : `${count}`;
   };
 
@@ -64,7 +62,7 @@ const {
 
           <div className="max-h-[86vh] overflow-y-scroll">
             {/* Loading State */}
-            {isLoading && <Loading></Loading>}
+            {isLoading && !products && <Loading />}
 
             {/* Error State */}
             {isError && (

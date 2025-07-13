@@ -1,82 +1,103 @@
 import { NextResponse } from "next/server";
 import { getWishlistCollection } from "@/lib/database/db_collections";
 
+
 interface RequestBody {
   userEmail: string;
   productId: string;
-  addedAt: string;      
-  createdAt: string;   
-  updatedAt: string;    
+  addedAt: string;
+  createdAt:string;
+  updatedAt:string;
 }
 
+// ⏫ Helper to format response
+const jsonResponse = (data: unknown, status = 200) =>
+  NextResponse.json(data, { status });
+
+// ✅ POST: Add Product to Wishlist
 export const POST = async (req: Request): Promise<NextResponse> => {
   try {
     const wishlistCollection = await getWishlistCollection();
     const body: RequestBody = await req.json();
-    const { userEmail, productId, addedAt, createdAt, updatedAt } = body;
+    const { userEmail, productId, addedAt , createdAt,
+        updatedAt,} = body;
 
-    if (!userEmail || !productId || !addedAt || !createdAt || !updatedAt) {
-      return NextResponse.json(
-        { success: false, message: "userEmail, productId, addedAt, createdAt and updatedAt are required" },
-        { status: 400 }
+    if (!userEmail || !productId || !addedAt) {
+      return jsonResponse(
+        { success: false, message: "Missing required fields" },
+        400
       );
     }
 
-    // Check if wishlist for userEmail exists
+    // 🔍 Step 1: Check if user already has a wishlist
     const existingWishlist = await wishlistCollection.findOne({ userEmail });
 
+    // 🟡 Step 2: If wishlist exists
     if (existingWishlist) {
-      // Check if productId already in products array
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const productExists = existingWishlist.products.some((p: any) => {
-        const pid = typeof p.productId === "string" ? p.productId : p.productId.toString();
+      const alreadyExists = existingWishlist.products?.some((p: any) => {
+        const pid =
+          typeof p.productId === "string" ? p.productId : p.productId?.toString();
         return pid === productId;
       });
 
-      if (productExists) {
-        return NextResponse.json(
+      if (alreadyExists) {
+        return jsonResponse(
           { success: false, message: "Product already in wishlist" },
-          { status: 409 }
+          409
         );
       }
 
-      // Add product to products array & update updatedAt
-      await wishlistCollection.updateOne(
+      // ✅ Update existing wishlist
+      const updateRes = await wishlistCollection.updateOne(
         { userEmail },
         {
           $push: {
-            products: {
-              productId: productId,
-              addedAt,
-            },
+            products: { productId, addedAt },
           },
           $set: { updatedAt },
         }
       );
 
-      return NextResponse.json(
-        { success: true, message: "Product added to wishlist" },
-        { status: 200 }
-      );
-    } else {
-      // Create new wishlist document with createdAt and updatedAt
-      await wishlistCollection.insertOne({
-        userEmail,
-        products: [{productId, addedAt }],
-        createdAt,
-        updatedAt,
-      });
+      if (updateRes.modifiedCount > 0) {
+        return jsonResponse({
+          success: true,
+          message: "Product added to wishlist",
+        });
+      } else {
+        return jsonResponse(
+          { success: false, message: "Failed to update wishlist" },
+          500
+        );
+      }
+    }
 
-      return NextResponse.json(
-        { success: true, message: "Wishlist created and product added" },
-        { status: 201 }
+    // 🔵 Step 3: No existing wishlist — create new one
+    const newWishlist = {
+      userEmail,
+      products: [{ productId, addedAt }],
+      createdAt,
+      updatedAt
+    };
+
+    const insertRes = await wishlistCollection.insertOne(newWishlist);
+
+    if (insertRes.insertedId) {
+      return jsonResponse({
+        success: true,
+        message: "Wishlist created and product added",
+      }, 201);
+    } else {
+      return jsonResponse(
+        { success: false, message: "Failed to create wishlist" },
+        500
       );
     }
   } catch (error) {
-    console.error("Add to wishlist error:", error);
-    return NextResponse.json(
+    console.error("❌ Add to wishlist error:", error);
+    return jsonResponse(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      500
     );
   }
 };

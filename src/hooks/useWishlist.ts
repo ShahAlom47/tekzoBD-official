@@ -1,172 +1,166 @@
 "use client";
 
-import {
-  getLocalWishlist,
-  WISHLIST_NAME,
-} from "@/utils/wishList/getLocalWishList";
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useUser } from "./useUser";
-import { addWishlistWithSync } from "@/utils/wishList/addWishlistWithSync";
-import { removeWishlistWithSync } from "@/utils/wishList/removeWishlistWithSync";
-import {
-  fetchWishlistFromDB,
-  syncLocalWishlistToDB,
-} from "@/utils/wishList/syncLocalWishlistToDB";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/reduxHook";
 import {
-  clearWishlistRedux,
   setWishlistRedux,
+  clearWishlistRedux,
 } from "@/redux/features/wishList/wishlistSlice";
 import { queryClient } from "@/Providers/QueryProvider";
-
-const WISHLIST_KEY = WISHLIST_NAME;
-
-export interface WishlistProduct {
-  productId: string;
-  addedAt: string;
-}
-
-const getWishlistFromStorage = (): WishlistProduct[] => {
-  try {
-    const stored = localStorage.getItem(WISHLIST_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-};
+import { WishlistType } from "@/Interfaces/wishListInterfaces";
+import {
+  addWishList,
+  getUserWishList,
+  removeWishData,
+} from "@/lib/allApiRequest/wishListRequest/wishListRequest";
+import { ProductType } from "@/Interfaces/productInterfaces";
 
 export const useWishlist = () => {
-  const [wishlist, setWishlist] = useState<WishlistProduct[]>([]);
   const { user } = useUser();
   const userEmail = user?.email;
   const dispatch = useAppDispatch();
-  const wishlistIds = useAppSelector((state) => state.wishlist.wishlistIds);
+  const wishlistData = useAppSelector((state) => state.wishlist.data); // WishlistType | null
 
-  // ✅ Helper to update all sources consistently
-  const updateWishlist = useCallback(
-    (newWishlist: WishlistProduct[], showToast = true) => {
-      setWishlist(newWishlist);
-      localStorage.setItem(WISHLIST_KEY, JSON.stringify(newWishlist));
-      dispatch(setWishlistRedux(newWishlist.map((item) => item.productId)));
-      queryClient.invalidateQueries({ queryKey: ["wishlistData"] });
-      if (showToast) toast.success("Wishlist updated!");
-    },
-    [dispatch]
-  );
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Initial load from localStorage
-  useEffect(() => {
-    const local = getWishlistFromStorage();
-    updateWishlist(local, false);
-  }, [updateWishlist]);
-
-  // ✅ Sync local wishlist with DB when user logs in
+  // ✅ Load wishlist for logged-in user
   useEffect(() => {
     if (!userEmail) return;
 
-    const localWishlist = getLocalWishlist();
-
-    const syncOrFetch = async () => {
+    const loadWishlist = async () => {
+      setLoading(true);
       try {
-        const freshWishlist = localWishlist.length
-          ? await syncLocalWishlistToDB(userEmail)
-          : await fetchWishlistFromDB(userEmail);
-
-        if (freshWishlist) {
-          updateWishlist(freshWishlist, false);
+        const result = await getUserWishList(userEmail);
+        const data = result?.data as WishlistType;
+        if (result) {
+          dispatch(setWishlistRedux(data));
+        } else {
+          dispatch(clearWishlistRedux());
         }
-      } catch (error) {
-        console.error("Wishlist sync error:", error);
-        toast.error("Failed to sync wishlist.");
+      } catch {
+        toast.error("Failed to load wishlist");
+      } finally {
+        setLoading(false);
       }
     };
 
-    syncOrFetch();
-  }, [userEmail, updateWishlist]);
+    loadWishlist();
+  }, [userEmail, dispatch]);
 
-  // ✅ Add item to wishlist
+  // ✅ Add a product to wishlist
   const addToWishlist = useCallback(
     async (productId: string) => {
-      if (wishlist.find((item) => item.productId === productId)) {
+      if (!userEmail) {
+        toast.error("Login required to add wishlist");
+        return;
+      }
+
+      const exists = wishlistData?.products.find(
+        (p) => p.productId === productId
+      );
+      if (exists) {
         toast("Already in wishlist");
         return;
       }
 
-      const updated = [
-        ...wishlist,
-        { productId, addedAt: new Date().toISOString() },
-      ];
-
-      updateWishlist(updated, false);
-
-      if (userEmail) {
-        try {
-          const res = await addWishlistWithSync(productId, userEmail);
-          if (res?.success) toast.success(res.message);
-        } catch {
-          toast.error("Failed to add wishlist on server");
+      try {
+        const res = await addWishList({
+          productId,
+          addedAt: new Date().toISOString(),
+          userEmail,
+        });
+        if (res?.success) {
+          const updated: WishlistType = {
+            ...(wishlistData || { userEmail, products: [] }),
+            products: [
+              ...(wishlistData?.products || []),
+              { productId, addedAt: new Date().toISOString() },
+            ],
+          };
+          dispatch(setWishlistRedux(updated));
+          queryClient.invalidateQueries({ queryKey: ["wishlistData"] });
+          toast.success(res.message || "Added to wishlist");
         }
+      } catch {
+        toast.error("Failed to add to wishlist");
       }
     },
-    [wishlist, userEmail, updateWishlist]
+    [userEmail, wishlistData, dispatch]
   );
 
-  // ✅ Remove item from wishlist
+  // ✅ Remove a product from wishlist
   const removeFromWishlist = useCallback(
     async (productId: string) => {
-      const updated = wishlist.filter((item) => item.productId !== productId);
+      if (!userEmail) {
+        toast.error("Login required");
+        return;
+      }
 
-      updateWishlist(updated, false);
+      try {
+        const res = await removeWishData(productId, userEmail);
+        if (res?.success) {
+          const updated: WishlistType = {
+            ...(wishlistData || { userEmail, products: [] }),
+            products:
+              wishlistData?.products.filter((p) => p.productId !== productId) ||
+              [],
+          };
+          dispatch(setWishlistRedux(updated));
 
-      if (userEmail) {
-        try {
-          const res = await removeWishlistWithSync(productId, userEmail);
-          if (res?.success) toast.success(res.message);
-        } catch {
-          toast.error("Failed to remove wishlist on server");
+          // Update local cached query UI
+          queryClient.setQueryData(
+            ["wishlistData"],
+            (old: ProductType[] = []) => old.filter((p) => p._id !== productId)
+          );
+          toast.success(res.message || "Removed from wishlist");
         }
+      } catch {
+        toast.error("Failed to remove from wishlist");
       }
     },
-    [wishlist, userEmail, updateWishlist]
+    [userEmail, wishlistData, dispatch]
   );
 
-  // ✅ Toggle wishlist state for a product
+  // ✅ Toggle wishlist
   const toggleWishlist = useCallback(
     async (productId: string) => {
-      if (wishlist.some((item) => item.productId === productId)) {
+      const exists = wishlistData?.products.find(
+        (p) => p.productId === productId
+      );
+      if (exists) {
         await removeFromWishlist(productId);
       } else {
         await addToWishlist(productId);
       }
     },
-    [wishlist, addToWishlist, removeFromWishlist]
+    [wishlistData, addToWishlist, removeFromWishlist]
   );
 
-  // ✅ Check if product is wishlisted
+  // ✅ Check if wishlisted
   const isWishlisted = useCallback(
     (productId: string) => {
-      return wishlist.some((item) => item.productId === productId);
+      return (
+        wishlistData?.products.some((p) => p.productId === productId) || false
+      );
     },
-    [wishlist]
+    [wishlistData]
   );
 
-  // ✅ Clear wishlist completely
+  // ✅ Clear wishlist from Redux
   const clearWishlist = useCallback(() => {
-    setWishlist([]);
-    localStorage.removeItem(WISHLIST_KEY);
     dispatch(clearWishlistRedux());
     queryClient.invalidateQueries({ queryKey: ["wishlistData"] });
-    toast.success("Wishlist cleared");
   }, [dispatch]);
 
-  // ✅ Derived data: productId list
-  const productIdList = wishlist.map((item) => item.productId);
+  const productIdList = wishlistData?.products.map((p) => p.productId) || [];
 
   return {
-    wishlist,
-    wishlistIds,
+    wishlist: wishlistData,
+    wishlistProducts: wishlistData?.products || [],
     productIdList,
+    loading,
     addToWishlist,
     removeFromWishlist,
     toggleWishlist,

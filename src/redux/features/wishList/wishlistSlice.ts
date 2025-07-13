@@ -1,24 +1,24 @@
-// redux/features/wishlist/wishlistSlice.ts
 
+import { WishlistType } from "@/Interfaces/wishListInterfaces";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface WishlistState {
-  wishlistIds: string[];
+  data: WishlistType | null;
 }
 
 const initialState: WishlistState = {
-  wishlistIds: [],
+  data: null,
 };
 
 const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
-    setWishlistRedux: (state, action: PayloadAction<string[]>) => {
-      state.wishlistIds = action.payload;
+    setWishlistRedux: (state, action: PayloadAction<WishlistType>) => {
+      state.data = action.payload;
     },
     clearWishlistRedux: (state) => {
-      state.wishlistIds = [];
+      state.data = null;
     },
   },
 });
