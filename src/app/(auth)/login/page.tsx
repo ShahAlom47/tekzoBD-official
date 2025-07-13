@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import "../../../style/authpage.css";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PrimaryButton from "@/components/PrimaryButton";
 
