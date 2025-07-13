@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import CustomModal from "./CustomModal";
+import { useRouter } from "next/navigation";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 interface LoginMsgModalProps {
   open: boolean;
@@ -8,16 +10,44 @@ interface LoginMsgModalProps {
 }
 
 const LoginMsgModal: React.FC<LoginMsgModalProps> = ({ open, setOpen }) => {
+  const router = useRouter();
+
+  const handleLoginRedirect = () => {
+    const currentPath = window.location.pathname;
+    router.push(`/login?redirect=${currentPath}`);
+    setOpen(false);
+  };
+
   return (
     <CustomModal
       open={open}
       onOpenChange={setOpen}
       title="Login Required"
-      description="You need to login first to use this feature."
     >
-      {/* Modal body content */}
-      <div className="py-4">Please log in to continue.</div>
-      {/* Optionally, you can add buttons here to redirect user to login page */}
+      <div className="py-4 px-2 text-center text-gray-600 space-y-4">
+        <div className="flex items-center justify-center text-brandPrimary text-4xl">
+          <HiOutlineExclamationCircle />
+        </div>
+        <p className="text-base font-medium">
+          You need to be logged in to use this feature.
+        </p>
+      </div>
+
+      <div className="flex justify-end gap-4 pt-6 px-4">
+        <button
+          className="btn-bordered rounded-sm "
+          onClick={() => setOpen(false)}
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleLoginRedirect}
+          className="btn-base"
+        >
+          Login
+        </button>
+      </div>
     </CustomModal>
   );
 };
