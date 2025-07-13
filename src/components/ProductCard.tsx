@@ -1,12 +1,14 @@
 "use client";
 
 import { ProductType } from "@/Interfaces/productInterfaces";
-import React from "react";
+import React, { useState } from "react";
 import SafeImage from "./SafeImage";
 import RatingDisplay from "./ui/RatingDisplay";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaTrashAlt } from "react-icons/fa";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useUser } from "@/hooks/useUser";
+import LoginMsgModal from "./ui/LoginMsgModal";
 
 type ProductCardProps = {
   item: ProductType;
@@ -21,6 +23,8 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const router = useRouter();
   const { isWishlisted, toggleWishlist, removeFromWishlist } = useWishlist();
+  const [showLoginModal, setLoginModal] = useState<boolean>(false);
+  const { user } = useUser();
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);
@@ -28,6 +32,10 @@ const ProductCard = ({
 
   const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
     toggleWishlist(item._id.toString());
   };
 
@@ -159,9 +167,7 @@ const ProductCard = ({
         {/* ✅ Button Group */}
         <div
           className={`flex gap-1 ${
-            isWishList
-              ? "md:flex-row flex-co items-center"
-              : "flex-col w-full"
+            isWishList ? "md:flex-row flex-co items-center" : "flex-col w-full"
           }`}
         >
           <button
@@ -186,6 +192,7 @@ const ProductCard = ({
           )}
         </div>
       </div>
+      <LoginMsgModal open={showLoginModal} setOpen={setLoginModal} />
     </div>
   );
 };

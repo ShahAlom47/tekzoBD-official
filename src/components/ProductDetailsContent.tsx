@@ -8,6 +8,8 @@ import MediaGallery from "./MediaGallery ";
 import { addToRecentView } from "@/utils/recentViewHelper";
 import RecentViewProducts from "./RecentViewProducts";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useUser } from "@/hooks/useUser";
+import LoginMsgModal from "./ui/LoginMsgModal";
 
 interface Props {
   product: ProductType;
@@ -16,7 +18,8 @@ interface Props {
 const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const { isWishlisted, toggleWishlist } = useWishlist();
-
+  const [showLoginModal, setLoginModal] = useState<boolean>(false);
+  const { user } = useUser();
 
   useEffect(() => {
     if (product?._id) {
@@ -56,126 +59,130 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
     }
   };
 
-
-  const handleWishClick=()=>{
-  toggleWishlist(product._id.toString())
-  }
- 
+  const handleWishClick = () => {
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
+    toggleWishlist(product._id.toString());
+  };
 
   return (
-   <div className=" md:grid gap-2  grid-cols-12">
-
-    {/* main content  */}
-     <div className="col-span-9  grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 bg-white rounded-lg shadow p-4">
-      {/* Left: Image */}
-      <div className="w-full max-w-md mx-auto">
-        <MediaGallery media={product?.media || []}></MediaGallery>
-      </div>
-
-      {/* Right: Product Details */}
-      <div className="flex flex-col space-y-4 justify-between">
-        {/* Title & Rating */}
-        <div>
-          <h1 className="text-2xl font-bold text-brandDark">{product.title}</h1>
-          <p className="text-sm text-gray-500">Brand: {product.brand}</p>
-          <RatingDisplay avgRating={product.ratings?.avg || 0} />
-          <p className="text-sm text-gray-500 mt-1">
-            {product.ratings?.count|| 0} reviews
-          </p>
+    <div className=" md:grid gap-2  grid-cols-12">
+      {/* main content  */}
+      <div className="col-span-9  grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800 bg-white rounded-lg shadow p-4">
+        {/* Left: Image */}
+        <div className="w-full max-w-md mx-auto">
+          <MediaGallery media={product?.media || []}></MediaGallery>
         </div>
 
-        {/* Price */}
-        <div>
-          {hasDiscount && (
-            <p className="text-sm text-gray-500 line-through">
-              TK {originalPrice}
+        {/* Right: Product Details */}
+        <div className="flex flex-col space-y-4 justify-between">
+          {/* Title & Rating */}
+          <div>
+            <h1 className="text-2xl font-bold text-brandDark">
+              {product.title}
+            </h1>
+            <p className="text-sm text-gray-500">Brand: {product.brand}</p>
+            <RatingDisplay avgRating={product.ratings?.avg || 0} />
+            <p className="text-sm text-gray-500 mt-1">
+              {product.ratings?.count || 0} reviews
             </p>
-          )}
-          <p className="text-xl font-semibold text-brandPrimary">
-            TK {discountedPrice}
-          </p>
-          {hasDiscount && (
-            <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">
-              {product.discount}% OFF
+          </div>
+
+          {/* Price */}
+          <div>
+            {hasDiscount && (
+              <p className="text-sm text-gray-500 line-through">
+                TK {originalPrice}
+              </p>
+            )}
+            <p className="text-xl font-semibold text-brandPrimary">
+              TK {discountedPrice}
+            </p>
+            {hasDiscount && (
+              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">
+                {product.discount}% OFF
+              </span>
+            )}
+          </div>
+
+          {/* Stock */}
+          <div>
+            <span
+              className={`text-sm font-medium ${
+                isOutOfStock ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {isOutOfStock ? "Out of Stock" : `In Stock (${product.stock})`}
             </span>
-          )}
-        </div>
+          </div>
 
-        {/* Stock */}
-        <div>
-          <span
-            className={`text-sm font-medium ${
-              isOutOfStock ? "text-red-600" : "text-green-600"
-            }`}
-          >
-            {isOutOfStock ? "Out of Stock" : `In Stock (${product.stock})`}
-          </span>
-        </div>
+          {/* Quantity Selector */}
+          <div className="flex items-center space-x-2">
+            <label htmlFor="quantity" className="text-sm">
+              Quantity:
+            </label>
 
-        {/* Quantity Selector */}
-        <div className="flex items-center space-x-2">
-          <label htmlFor="quantity" className="text-sm">
-            Quantity:
-          </label>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => handleQuantity("decrement")}
+                className="btn-bordered rounded-sm px-3 py-1 text-lg"
+                disabled={quantity <= 1}
+              >
+                -
+              </button>
 
-          <div className="flex items-center gap-1">
+              <p className="my-input text-black text-lg font-medium px-3">
+                {quantity}
+              </p>
+
+              <button
+                onClick={() => handleQuantity("increment")}
+                className="btn-bordered rounded-sm px-3 py-1 text-lg"
+                disabled={quantity >= product?.stock}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4">
             <button
-              onClick={() => handleQuantity("decrement")}
-              className="btn-bordered rounded-sm px-3 py-1 text-lg"
-              disabled={quantity <= 1}
+              onClick={handleAddToCart}
+              disabled={isOutOfStock}
+              className={`btn-base ${
+                isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              -
+              Add to Cart
             </button>
-
-            <p className="my-input text-black text-lg font-medium px-3">
-              {quantity}
-            </p>
-
             <button
-              onClick={() => handleQuantity("increment")}
-              className="btn-bordered rounded-sm px-3 py-1 text-lg"
-              disabled={quantity >= product?.stock}
+              onClick={handleWishClick}
+              className=" btn-bordered rounded-sm"
             >
-              +
+              {isWishlisted(product._id.toString()) ? "❤️" : <FaHeart />}
             </button>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex gap-4">
-          <button
-            onClick={handleAddToCart}
-            disabled={isOutOfStock}
-            className={`btn-base ${
-              isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            Add to Cart
-          </button>
-          <button
-              onClick={handleWishClick}
-          className=" btn-bordered rounded-sm">
-            {isWishlisted(product._id.toString()) ? "❤️":<FaHeart />}
-          </button>
-        </div>
-
-        {/* Source Info */}
-        {product.sourceInfo && (
-          <div className="text-sm space-y-1 mt-4 border-t pt-3">
-            <h3 className="font-medium text-brandDark">
-              Shipping & Source Info
-            </h3>
-            <p>Source: {product.sourceInfo.supplierName || "Unknown"}</p>
-            {product.sourceInfo.deliveryTime && (
-              <p>Delivery: {product.sourceInfo.deliveryTime}</p>
-            )}
-            {/* {product.sourceInfo.shippingCost && (
+          {/* Source Info */}
+          {product.sourceInfo && (
+            <div className="text-sm space-y-1 mt-4 border-t pt-3">
+              <h3 className="font-medium text-brandDark">
+                Shipping & Source Info
+              </h3>
+              <p>Source: {product.sourceInfo.supplierName || "Unknown"}</p>
+              {product.sourceInfo.deliveryTime && (
+                <p>Delivery: {product.sourceInfo.deliveryTime}</p>
+              )}
+              {/* {product.sourceInfo.shippingCost && (
               <p className="bb">Shipping: TK {product.sourceInfo.shippingCost}</p>
             )} */}
-            {product.sourceInfo.returnPolicy && (
-              <p>Return: {product.sourceInfo.returnPolicy}</p>
-            )}
-            {/* {product.sourceInfo.productSourceLink && (
+              {product.sourceInfo.returnPolicy && (
+                <p>Return: {product.sourceInfo.returnPolicy}</p>
+              )}
+              {/* {product.sourceInfo.productSourceLink && (
               <p>
                 Source Link:{" "}
                 <a
@@ -188,22 +195,23 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
                 </a>
               </p>
             )} */}
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* Description */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Description</h3>
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">
-            {product.description || "No description available."}
-          </p>
+          {/* Description */}
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold">Description</h3>
+            <p className="text-sm text-gray-700 whitespace-pre-wrap">
+              {product.description || "No description available."}
+            </p>
+          </div>
         </div>
       </div>
+      <aside className=" col-span-3 md:block hidden">
+        <RecentViewProducts></RecentViewProducts>
+      </aside>
+      <LoginMsgModal open={showLoginModal} setOpen={setLoginModal} />
     </div>
-    <aside className=" col-span-3 md:block hidden">
-      <RecentViewProducts></RecentViewProducts>
-    </aside>
-   </div>
   );
 };
 
