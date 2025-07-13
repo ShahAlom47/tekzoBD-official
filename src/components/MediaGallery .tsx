@@ -15,9 +15,7 @@ const MediaGallery: React.FC<MediaGalleryProps> = ({ media }) => {
   const [activeMedia, setActiveMedia] = useState<MediaItem | null>(
     media.length > 0 ? media[0] : null
   );
-console.log(media)
   if (!activeMedia) {
-   
     return null;
   }
 

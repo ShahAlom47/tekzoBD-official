@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Drawer from "./Drawer";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -8,11 +8,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getWishListProductByIds } from "@/lib/allApiRequest/wishListRequest/wishListRequest";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import Loading from "@/app/loading";
+import { queryClient } from "@/Providers/QueryProvider";
+import { useUser } from "@/hooks/useUser";
 
 const NavWishList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { productIdList } = useWishlist();
-  console.log(productIdList);
+  const { user } = useUser();
+  const [isClient, setIsClient] = useState(false);
+
+   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const queryEnabled = isClient && !!user && isOpen && productIdList.length > 0;
 
   const {
     data: products,
@@ -20,14 +29,18 @@ const NavWishList = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["wishlistData", productIdList],
+    queryKey: ["wishlistData", productIdList.join(",")],
     queryFn: async () => {
       const res = await getWishListProductByIds(productIdList);
       return res.data as ProductType[];
     },
-    enabled: isOpen && productIdList.length > 0,
-    staleTime: 1000 * 60 * 2, // 2 minutes stale time - data considered fresh for 2 mins
+    enabled: queryEnabled,
+    staleTime: 1000 * 60 * 2,
+    placeholderData: () =>
+      queryClient.getQueryData<ProductType[]>(["wishlistData", productIdList.join(",")]),
   });
+
+  if (!isClient || !user) return null;
 
   const wishCount = () => {
     const count = productIdList?.length || 0;
@@ -36,7 +49,6 @@ const NavWishList = () => {
 
   return (
     <div className="relative flex items-center">
-      {/* Wishlist Button */}
       <button
         onClick={() => setIsOpen(true)}
         className="text-gray-700 md:text-3xl text-xl font-light relative hover:scale-90"
@@ -48,7 +60,6 @@ const NavWishList = () => {
         </span>
       </button>
 
-      {/* Drawer */}
       <Drawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -56,15 +67,11 @@ const NavWishList = () => {
         width="w-[90%] md:w-[40%]"
       >
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
-            My Wishlist
-          </h3>
+          <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">My Wishlist</h3>
 
           <div className="max-h-[86vh] overflow-y-scroll">
-            {/* Loading State */}
             {isLoading && !products && <Loading />}
 
-            {/* Error State */}
             {isError && (
               <div className="text-red-500 text-sm text-center">
                 Failed to load wishlist.{" "}
@@ -77,14 +84,10 @@ const NavWishList = () => {
               </div>
             )}
 
-            {/* Empty State */}
             {!isLoading && !isError && products?.length === 0 && (
-              <div className="text-center text-gray-500 mt-6">
-                No products in your wishlist.
-              </div>
+              <div className="text-center text-gray-500 mt-6">No products in your wishlist.</div>
             )}
 
-            {/* Success Content */}
             {!isLoading && !isError && products && products.length > 0 && (
               <WishListContent products={products} contentType="drawer" />
             )}
