@@ -43,7 +43,8 @@ const NavCart = () => {
     queryKey: ["cartProducts", itemIds.join(",")],
     queryFn: async () => {
       const res = await getCartProducts(cartItems, userEmail); // ✅ এখানে sure করে বলছি
-      return res.data as ProductType[];
+      console.log(res)
+      return (res.data || []) as ProductType[];
     },
     enabled: queryEnabled,
     staleTime: 1000 * 60 * 2,

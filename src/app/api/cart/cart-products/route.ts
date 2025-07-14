@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       message: "Cart products fetched",
-      products,
+      data:products,
     });
   } catch (error) {
     console.error("Cart product fetch error:", error);

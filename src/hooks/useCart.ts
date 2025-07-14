@@ -52,7 +52,6 @@ export const useCart = () => {
 
         const res = await getUserCart(userEmail);
         const data = res?.data as Cart;
-        console.log(data)
 
         setCartItems(data?.items);
         dispatch(setCartIds(data?.items?.map((item) => item.productId)));
@@ -167,6 +166,6 @@ const addToCart = useCallback(
     updateQuantity,
     clearCart,
     useIsInCart,
-    
+
   };
 };
