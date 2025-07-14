@@ -9,6 +9,7 @@ import { FaHeart, FaTrashAlt } from "react-icons/fa";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useUser } from "@/hooks/useUser";
 import LoginMsgModal from "./ui/LoginMsgModal";
+import { useCart } from "@/hooks/useCart";
 
 type ProductCardProps = {
   item: ProductType;
@@ -25,6 +26,7 @@ const ProductCard = ({
   const { isWishlisted, toggleWishlist, removeFromWishlist } = useWishlist();
   const [showLoginModal, setLoginModal] = useState<boolean>(false);
   const { user } = useUser();
+  const {addToCart}=useCart()
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);
@@ -48,6 +50,7 @@ const ProductCard = ({
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    addToCart(item?._id.toString())
     console.log("Added to cart:", item.title);
   };
 

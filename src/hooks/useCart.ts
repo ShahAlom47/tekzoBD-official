@@ -1,13 +1,30 @@
-// hooks/useCart.ts
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { useUser } from "./useUser";
 import toast from "react-hot-toast";
 import { Cart, CartItem } from "@/Interfaces/cartInterface";
-import { clearLocalCart, getLocalCart, saveLocalCart } from "@/utils/cart/cartLocalHelper";
-import { addToCartDB, getUserCart, removeFromCartDB, syncCartToDB, updateCartItemQty } from "@/lib/allApiRequest/cartRequest/cartRequest";
+import {
+  clearLocalCart,
+  getLocalCart,
+  saveLocalCart,
+} from "@/utils/cart/cartLocalHelper";
+import {
+  addToCartDB,
+  getUserCart,
+  removeFromCartDB,
+  syncCartToDB,
+  updateCartItemQty,
+} from "@/lib/allApiRequest/cartRequest/cartRequest";
 
+// Redux
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/reduxHook";
+import {
+  addCartId,
+  clearCartIds,
+  removeCartId,
+  setCartIds,
+} from "@/redux/features/cartSlice/cartSlice";
 
 export const useCart = () => {
   const { user } = useUser();
@@ -15,6 +32,12 @@ export const useCart = () => {
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const dispatch = useAppDispatch();
+
+  // 🟢 Redux from state
+  const itemIds = useAppSelector((state) => state.cart.itemIds);
+  const itemCount = itemIds.length;
 
   // ✅ Load cart on mount
   useEffect(() => {
@@ -28,51 +51,60 @@ export const useCart = () => {
         }
 
         const res = await getUserCart(userEmail);
-        const data = res?.data as Cart
-        setCartItems(data.items);
+        const data = res?.data as Cart;
+
+        setCartItems(data?.items);
+        dispatch(setCartIds(data?.items?.map((item) => item.productId)));
       } else {
         const local = getLocalCart();
         setCartItems(local);
+        dispatch(setCartIds(local.map((item) => item.productId)));
       }
       setLoading(false);
     };
     init();
-  }, [userEmail]);
+  }, [userEmail, dispatch]);
 
   // ✅ Add to cart
-  const addToCart = useCallback(
-    async (productId: string) => {
-      const updatedCart = [...cartItems];
-      const existing = updatedCart.find((item) => item.productId === productId);
+// ✅ Add to cart
+const addToCart = useCallback(
+  async (productId: string) => {
+    // If already in cart, just show toast and return
+    if (itemIds?.includes(productId)) {
+      toast.error("Already in cart");
+      return;
+    }
 
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        updatedCart.push({
-          productId,
-          quantity: 1,
-          addedAt: new Date().toISOString(),
-        });
-      }
+    const updatedCart = [...cartItems];
+    updatedCart.push({
+      productId,
+      quantity: 1,
+      addedAt: new Date().toISOString(),
+    });
 
-      setCartItems(updatedCart);
+    setCartItems(updatedCart);
+    dispatch(addCartId(productId));
 
-      if (userEmail) {
-        await addToCartDB({ productId, quantity: 1, userEmail });
-      } else {
-        saveLocalCart(updatedCart);
-      }
+    if (userEmail) {
+      await addToCartDB({ productId, quantity: 1, userEmail });
+    } else {
+      saveLocalCart(updatedCart);
+    }
 
-      toast.success("Added to cart");
-    },
-    [cartItems, userEmail]
-  );
+    toast.success("Added to cart");
+  },
+  [cartItems, userEmail, itemIds, dispatch]
+);
+
 
   // ✅ Remove from cart
   const removeFromCart = useCallback(
     async (productId: string) => {
-      const filtered = cartItems.filter((item) => item.productId !== productId);
+      const filtered = cartItems.filter(
+        (item) => item.productId !== productId
+      );
       setCartItems(filtered);
+      dispatch(removeCartId(productId));
 
       if (userEmail) {
         await removeFromCartDB(productId, userEmail);
@@ -82,7 +114,7 @@ export const useCart = () => {
 
       toast.success("Removed from cart");
     },
-    [cartItems, userEmail]
+    [cartItems, userEmail, dispatch]
   );
 
   // ✅ Update quantity
@@ -108,20 +140,31 @@ export const useCart = () => {
   // ✅ Clear cart
   const clearCart = useCallback(() => {
     setCartItems([]);
+    dispatch(clearCartIds());
+
     if (userEmail) {
       toast.success("Cart cleared from DB");
     } else {
       clearLocalCart();
       toast.success("Local cart cleared");
     }
-  }, [userEmail]);
+  }, [userEmail, dispatch]);
+
+  // check Cart 
+ const useIsInCart = (productId: string): boolean => {
+  const itemIds = useAppSelector((state) => state.cart.itemIds);
+  return itemIds.includes(productId);
+};
 
   return {
-    cartItems,
+    cartItems,    // full cart item object with qty
+    itemIds,      // only productId array from Redux
+    itemCount,    // number of items in cart
     loading,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
+    useIsInCart
   };
 };
