@@ -37,7 +37,7 @@ export const useCart = () => {
 
   // 🟢 Redux from state
   const itemIds = useAppSelector((state) => state.cart.itemIds);
-  const itemCount = itemIds.length;
+  const itemCount = itemIds?.length;
 
   // ✅ Load cart on mount
   useEffect(() => {
@@ -52,6 +52,7 @@ export const useCart = () => {
 
         const res = await getUserCart(userEmail);
         const data = res?.data as Cart;
+        console.log(data)
 
         setCartItems(data?.items);
         dispatch(setCartIds(data?.items?.map((item) => item.productId)));
