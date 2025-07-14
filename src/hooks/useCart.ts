@@ -166,6 +166,7 @@ const addToCart = useCallback(
     removeFromCart,
     updateQuantity,
     clearCart,
-    useIsInCart
+    useIsInCart,
+    
   };
 };

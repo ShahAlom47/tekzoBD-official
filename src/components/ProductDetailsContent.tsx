@@ -10,16 +10,18 @@ import RecentViewProducts from "./RecentViewProducts";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useUser } from "@/hooks/useUser";
 import LoginMsgModal from "./ui/LoginMsgModal";
+import { useCart } from "@/hooks/useCart";
 
 interface Props {
   product: ProductType;
 }
 
 const ProductDetailsContent: React.FC<Props> = ({ product }) => {
-  const [quantity, setQuantity] = useState(1);
+  // const [quantity, setQuantity] = useState(1);
   const { isWishlisted, toggleWishlist } = useWishlist();
   const [showLoginModal, setLoginModal] = useState<boolean>(false);
   const { user } = useUser();
+  const {addToCart}= useCart()
 
   useEffect(() => {
     if (product?._id) {
@@ -48,16 +50,16 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
-    console.log(`Added ${quantity} item(s) of ${product.title} to cart`);
+    addToCart(product?._id.toString())
   };
 
-  const handleQuantity = (type: string) => {
-    if (type === "increment" && quantity < product?.stock) {
-      setQuantity((prev) => prev + 1);
-    } else if (type === "decrement" && quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
+  // const handleQuantity = (type: string) => {
+  //   if (type === "increment" && quantity < product?.stock) {
+  //     setQuantity((prev) => prev + 1);
+  //   } else if (type === "decrement" && quantity > 1) {
+  //     setQuantity((prev) => prev - 1);
+  //   }
+  // };
 
   const handleWishClick = () => {
     if (!user) {
@@ -119,7 +121,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           </div>
 
           {/* Quantity Selector */}
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <label htmlFor="quantity" className="text-sm">
               Quantity:
             </label>
@@ -145,7 +147,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
                 +
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Actions */}
           <div className="flex gap-4">

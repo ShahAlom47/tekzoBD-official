@@ -17,6 +17,8 @@ export const addToCartDB = async (data: { productId: string; quantity: number; u
   return request("POST", `/cart/add`, data);
 };
 
+
+// baki ei  2 ta 
 export const removeFromCartDB = async (productId: string, userEmail: string) => {
   return request("DELETE", `/cart/remove`, { productId, userEmail });
 };
@@ -24,3 +26,9 @@ export const removeFromCartDB = async (productId: string, userEmail: string) => 
 export const updateCartItemQty = async (productId: string, quantity: number, userEmail: string) => {
   return request("PATCH", `/cart/update`, { productId, quantity, userEmail });
 };
+
+
+export const getCartProducts = async (items: CartItem[], userEmail: string) => {
+  return request("POST", `/cart/cart-products`, { items, userEmail });
+};
+
