@@ -25,6 +25,8 @@ import {
   removeCartId,
   setCartIds,
 } from "@/redux/features/cartSlice/cartSlice";
+import { ProductType } from "@/Interfaces/productInterfaces";
+import { queryClient } from "@/Providers/QueryProvider";
 
 export const useCart = () => {
   const { user } = useUser();
@@ -66,56 +68,61 @@ export const useCart = () => {
   }, [userEmail, dispatch]);
 
   // ✅ Add to cart
-// ✅ Add to cart
-const addToCart = useCallback(
-  async (productId: string) => {
-    // If already in cart, just show toast and return
-    if (itemIds?.includes(productId)) {
-      toast.error("Already in cart");
-      return;
-    }
-
-    const updatedCart = [...cartItems];
-    updatedCart.push({
-      productId,
-      quantity: 1,
-      addedAt: new Date().toISOString(),
-    });
-
-    setCartItems(updatedCart);
-    dispatch(addCartId(productId));
-
-    if (userEmail) {
-      await addToCartDB({ productId, quantity: 1, userEmail });
-    } else {
-      saveLocalCart(updatedCart);
-    }
-
-    toast.success("Added to cart");
-  },
-  [cartItems, userEmail, itemIds, dispatch]
-);
-
-
-  // ✅ Remove from cart
-  const removeFromCart = useCallback(
+  // ✅ Add to cart
+  const addToCart = useCallback(
     async (productId: string) => {
-      const filtered = cartItems.filter(
-        (item) => item.productId !== productId
-      );
-      setCartItems(filtered);
-      dispatch(removeCartId(productId));
-
-      if (userEmail) {
-        await removeFromCartDB(productId, userEmail);
-      } else {
-        saveLocalCart(filtered);
+      // If already in cart, just show toast and return
+      if (itemIds?.includes(productId)) {
+        toast.error("Already in cart");
+        return;
       }
 
-      toast.success("Removed from cart");
+      const updatedCart = [...cartItems];
+      updatedCart.push({
+        productId,
+        quantity: 1,
+        addedAt: new Date().toISOString(),
+      });
+
+      setCartItems(updatedCart);
+      dispatch(addCartId(productId));
+
+      if (userEmail) {
+        await addToCartDB({ productId, quantity: 1, userEmail });
+      } else {
+        saveLocalCart(updatedCart);
+      }
+
+      toast.success("Added to cart");
     },
-    [cartItems, userEmail, dispatch]
+    [cartItems, userEmail, itemIds, dispatch]
   );
+
+
+  // remove 
+ const removeFromCart = useCallback(
+  async (productId: string) => {
+    const filtered = cartItems.filter((item) => item.productId !== productId);
+    setCartItems(filtered);
+    dispatch(removeCartId(productId));
+
+    if (userEmail) {
+      const res = await removeFromCartDB(productId, userEmail);
+      if (res?.success) {
+        queryClient.setQueryData(
+          ["cartProducts", filtered.map(i => i.productId).join(",")],
+          (old: ProductType[] = []) => old.filter((p) => p._id !== productId)
+        );
+      }
+    } else {
+      saveLocalCart(filtered);
+    }
+
+    toast.success("Removed from cart");
+  },
+  [cartItems, userEmail, dispatch]
+);
+
 
   // ✅ Update quantity
   const updateQuantity = useCallback(
@@ -150,22 +157,21 @@ const addToCart = useCallback(
     }
   }, [userEmail, dispatch]);
 
-  // check Cart 
- const useIsInCart = (productId: string): boolean => {
-  const itemIds = useAppSelector((state) => state.cart.itemIds);
-  return itemIds.includes(productId);
-};
+  // check Cart
+  const useIsInCart = (productId: string): boolean => {
+    const itemIds = useAppSelector((state) => state.cart.itemIds);
+    return itemIds.includes(productId);
+  };
 
   return {
-    cartItems,    // full cart item object with qty
-    itemIds,      // only productId array from Redux
-    itemCount,    // number of items in cart
+    cartItems, // full cart item object with qty
+    itemIds, // only productId array from Redux
+    itemCount, // number of items in cart
     loading,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
     useIsInCart,
-
   };
 };

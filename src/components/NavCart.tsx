@@ -17,6 +17,7 @@ const NavCart = () => {
   const { itemCount, itemIds, cartItems } = useCart();
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
+  console.log(itemIds)
 
   useEffect(() => {
     setIsClient(true);
@@ -42,7 +43,7 @@ const NavCart = () => {
   } = useQuery({
     queryKey: ["cartProducts", itemIds.join(",")],
     queryFn: async () => {
-      const res = await getCartProducts(cartItems, userEmail); // ✅ এখানে sure করে বলছি
+      const res = await getCartProducts(itemIds, userEmail); // ✅ এখানে sure করে বলছি
       console.log(res)
       return (res.data || []) as ProductType[];
     },
@@ -74,7 +75,7 @@ const NavCart = () => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         direction="right"
-        width="w-[90%] md:w-[50%]"
+        width="w-[90%] md:w-[40%]"
       >
         <div className="p-4">
           <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
@@ -103,7 +104,7 @@ const NavCart = () => {
             )}
 
             {!isLoading && !isError && products && products.length > 0 && (
-              <CartContent products={products} cartItems={cartItems} /> // ✅ Build this component to show quantity etc.
+              <CartContent products={products} cartItems={cartItems} contentType={'drawer'} /> // ✅ Build this component to show quantity etc.
             )}
           </div>
         </div>
