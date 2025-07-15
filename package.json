@@ -22,6 +22,7 @@
     "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.19.2",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.513.0",
     "mongodb": "^6.17.0",
     "next": "15.3.3",
@@ -46,6 +47,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/mongodb": "^4.0.6",
     "@types/node": "^20",
     "@types/react": "^19",

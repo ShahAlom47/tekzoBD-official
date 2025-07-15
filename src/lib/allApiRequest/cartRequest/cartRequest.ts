@@ -18,7 +18,7 @@ export const addToCartDB = async (data: { productId: string; quantity: number; u
 };
 
 
-// baki ei  2 ta 
+
 export const removeFromCartDB = async (productId: string, userEmail: string) => {
   return request("DELETE", `/cart/remove`, { productId, userEmail });
 };

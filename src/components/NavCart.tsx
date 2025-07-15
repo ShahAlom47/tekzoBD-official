@@ -14,10 +14,11 @@ import CartContent from "./CartContent";
 
 const NavCart = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { itemCount, itemIds, cartItems } = useCart();
+  const { itemCount, cartItems } = useCart();
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
-  console.log(itemIds)
+ const itemIds = cartItems?.map(item=> item?.productId)
+
 
   useEffect(() => {
     setIsClient(true);
@@ -55,6 +56,9 @@ const NavCart = () => {
         itemIds.join(","),
       ]),
   });
+
+
+  //  console.log(cartItems,products)
 
   if (!isClient || !user) return null;
 

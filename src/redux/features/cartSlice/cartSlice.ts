@@ -1,33 +1,42 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
 interface CartState {
-  itemIds: string[];
+  items: CartItem[];
 }
 
 const initialState: CartState = {
-  itemIds: [],
+  items: [],
 };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    setCartIds: (state, action: PayloadAction<string[]>) => {
-      state.itemIds = action.payload;
+    setCartItems: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
     },
-    addCartId: (state, action: PayloadAction<string>) => {
-      if (!state.itemIds.includes(action.payload)) {
-        state.itemIds.push(action.payload);
+    addOrUpdateCartItem: (state, action: PayloadAction<CartItem>) => {
+      const existing = state.items.find(item => item.productId === action.payload.productId);
+      if (existing) {
+        existing.quantity = action.payload.quantity;
+      } else {
+        state.items.push(action.payload);
       }
     },
-    removeCartId: (state, action: PayloadAction<string>) => {
-      state.itemIds = state.itemIds.filter((id) => id !== action.payload);
+    removeCartItem: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter(item => item.productId !== action.payload);
     },
-    clearCartIds: (state) => {
-      state.itemIds = [];
+    clearCartItems: (state) => {
+      state.items = [];
     },
   },
 });
 
-export const { setCartIds, addCartId, removeCartId, clearCartIds } = cartSlice.actions;
+
+export const { setCartItems, addOrUpdateCartItem, removeCartItem, clearCartItems } = cartSlice.actions;
 export default cartSlice.reducer;

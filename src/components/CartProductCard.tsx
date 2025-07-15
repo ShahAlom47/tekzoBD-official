@@ -19,8 +19,8 @@ const CartProductCard = ({ product, quantity }: Props) => {
       {/* Image */}
       <div className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
         <Image
-          src={product.media[0].url || "/no-image.jpg"}
-          alt={`${product.title } image `}
+          src={product.media[0]?.url || "/no-image.jpg"}
+          alt={`${product.title} image`}
           width={80}
           height={80}
           className="object-cover w-full h-full"
@@ -45,7 +45,7 @@ const CartProductCard = ({ product, quantity }: Props) => {
           </button>
           <span className="text-sm font-medium">{quantity}</span>
           <button
-            onClick={() => updateQuantity(product._id.toString(), quantity + 1)}
+           onClick={() => updateQuantity(product._id.toString(), quantity + 1)}
             className="px-2 py-1 bg-gray-200 rounded"
           >
             +

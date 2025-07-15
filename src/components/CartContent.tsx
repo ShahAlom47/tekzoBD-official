@@ -24,6 +24,8 @@ const CartContent = ({
     );
   }
 
+  // console.log(cartItems[0]?.quantity)
+
   return (
     <div className={`w-full ${contentType === "page" ? "p-6" : "p-2"}`}>
       {contentType === "page" && (
