@@ -33,39 +33,38 @@ export const useCart = () => {
   const itemCount = reduxCartItems.length;
   const [loading, setLoading] = useState(true);
 
+  // ✅ Debounced API call map for each product
+  const debouncedUpdateMap: { [key: string]: ReturnType<typeof debounce> } = {};
 
-
-  // ✅ Load cart on mount
+  // ✅ Load cart
   useEffect(() => {
     const init = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-
         if (userEmail) {
-          const local = getLocalCart();
-          if (local.length) {
-            await syncCartToDB(local, userEmail);
+          const localCart = getLocalCart();
+          if (localCart.length) {
+            await syncCartToDB(localCart, userEmail);
             clearLocalCart();
           }
 
-          const response = await getUserCart(userEmail);
-          const data =response?.data as Cart
+          const res = await getUserCart(userEmail);
+          const data = res?.data as Cart;
           dispatch(setCartItems(data?.items || []));
         } else {
           dispatch(setCartItems(getLocalCart()));
         }
       } catch (err) {
-        console.error("Cart initialization failed:", err);
-        toast.error("Failed to load cart");
+        console.error("Cart init error:", err);
+        toast.error("Cart load failed");
       } finally {
         setLoading(false);
       }
     };
-
     init();
   }, [userEmail, dispatch]);
 
-  // ✅ Add to Cart
+  // ✅ Add to cart
   const addToCart = useCallback(
     async (productId: string) => {
       const exists = reduxCartItems.find((item) => item.productId === productId);
@@ -91,14 +90,14 @@ export const useCart = () => {
         }
         toast.success("Added to cart");
       } catch (err) {
-        toast.error("Failed to add to cart");
+        toast.error("Add failed");
         console.error(err);
       }
     },
     [reduxCartItems, userEmail, dispatch]
   );
 
-  // ✅ Remove from Cart
+  // ✅ Remove from cart
   const removeFromCart = useCallback(
     async (productId: string) => {
       dispatch(removeCartItem(productId));
@@ -112,60 +111,60 @@ export const useCart = () => {
         }
         toast.success("Removed from cart");
       } catch (err) {
-        toast.error("Failed to remove from cart");
+        toast.error("Remove failed");
         console.error(err);
       }
     },
     [reduxCartItems, userEmail, dispatch]
   );
 
-  // ✅ Update Quantity
-// ✅ Debounced API updater - no need to reference outside state
-const debouncedUpdate = useCallback(
-  debounce(async (item: CartItem, userEmail: string) => {
-    try {
-      await updateCartItemQty(item.productId, item.quantity, userEmail);
-      toast.success("Quantity updated");
-    } catch (err) {
-      console.error("Error updating cart:", err);
-    }
-  }, 400),
-  []
-);
+  // ✅ Update quantity with per-item debounce
+  const updateQuantity = useCallback(
+    (productId: string, quantity: number) => {
+      if (quantity < 1) return;
 
-// ✅ Quantity updater
-const updateQuantity = useCallback(
-  (productId: string, quantity: number) => {
-    if (quantity < 1) return;
+      const updatedItem: CartItem = {
+        productId,
+        quantity,
+        addedAt: new Date().toISOString(),
+      };
 
-    const updatedItem: CartItem = {
-      productId,
-      quantity,
-      addedAt: new Date().toISOString(),
-    };
+      // Redux update
+      dispatch(addOrUpdateCartItem(updatedItem));
 
-    // Update Redux first
-    dispatch(addOrUpdateCartItem(updatedItem));
+      // LocalStorage update
+      const updatedCart = reduxCartItems.map((item) =>
+        item.productId === productId ? updatedItem : item
+      );
+      if (!userEmail) {
+        saveLocalCart(updatedCart);
+      }
 
-    // Update LocalStorage
-    const updatedCart = getLocalCart().map((item) =>
-      item.productId === productId ? updatedItem : item
-    );
-    saveLocalCart(updatedCart);
+      // Per-product debounce
+      if (userEmail) {
+        if (!debouncedUpdateMap[productId]) {
+          debouncedUpdateMap[productId] = debounce(
+            async (item: CartItem) => {
+              try {
+                await updateCartItemQty(item.productId, item.quantity, userEmail);
+                toast.success("Cart updated");
+              } catch (err) {
+                console.error("Update error:", err);
+              }
+            },
+            500,
+            { leading: false, trailing: true }
+          );
+        }
+        debouncedUpdateMap[productId](updatedItem);
+      }
+    },
+    [reduxCartItems, dispatch, userEmail]
+  );
 
-    // Debounce API update
-    if (userEmail) {
-      debouncedUpdate(updatedItem, userEmail);
-    }
-  },
-  [dispatch, userEmail, debouncedUpdate]
-);
-
-
-  // ✅ Clear All
+  // ✅ Clear all
   const clearCart = useCallback(() => {
     dispatch(clearCartItems());
-
     if (userEmail) {
       toast.success("Cart cleared from DB");
     } else {
@@ -174,7 +173,7 @@ const updateQuantity = useCallback(
     }
   }, [userEmail, dispatch]);
 
-  // ✅ Is in cart checker
+  // ✅ Check in cart
   const useIsInCart = (productId: string): boolean => {
     return reduxCartItems.some((item) => item.productId === productId);
   };
