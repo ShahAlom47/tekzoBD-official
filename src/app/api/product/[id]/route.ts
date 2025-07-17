@@ -1,16 +1,14 @@
-// /api/product/getSingleproduct/[id]/route.ts
-
-
 import { getProductCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
+// ✅ Get Single Product
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json(
@@ -25,13 +23,13 @@ export async function GET(
 
     if (!result) {
       return NextResponse.json(
-        { message: "product not found", success: false },
+        { message: "Product not found", success: false },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "product retrieved successfully", success: true, data: result },
+      { message: "Product retrieved successfully", success: true, data: result },
       { status: 200 }
     );
   } catch (error) {
@@ -47,9 +45,7 @@ export async function GET(
   }
 }
 
-
-
-// update product 
+// ✅ Update Product
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -71,8 +67,21 @@ export async function PATCH(
         { status: 400 }
       );
     }
-     if ("_id" in body) {
+
+    if ("_id" in body) {
       delete body._id;
+    }
+
+    // ✅ Convert price to number if present
+    if (body.price !== undefined) {
+      const parsedPrice = Number(body.price);
+      if (isNaN(parsedPrice)) {
+        return NextResponse.json(
+          { message: "Invalid price format", success: false },
+          { status: 400 }
+        );
+      }
+      body.price = parsedPrice;
     }
 
     const productCollection = await getProductCollection();
@@ -82,13 +91,13 @@ export async function PATCH(
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
-        { message: "product not found", success: false },
+        { message: "Product not found", success: false },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "product updated successfully", success: true, data: result },
+      { message: "Product updated successfully", success: true, data: result },
       { status: 200 }
     );
   } catch (error) {

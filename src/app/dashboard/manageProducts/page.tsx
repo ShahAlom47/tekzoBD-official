@@ -40,7 +40,7 @@ const ManageProduct = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["getAllProduct", searchValue],
+    queryKey: ["getAllProduct", searchValue,page],
     queryFn: async () => {
       const response = await getAllProduct({
         currentPage: page,
