@@ -48,11 +48,13 @@ const ProductCard = ({
     await removeFromWishlist(item._id.toString());
   };
 
-  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    addToCart(item?._id.toString())
-    console.log("Added to cart:", item.title);
-  };
+const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.stopPropagation();
+  await addToCart(item?._id.toString());
+
+  console.log("Added to cart:", item.title);
+};
+
 
   const isOfferActive = (() => {
     const offer = item.offer;

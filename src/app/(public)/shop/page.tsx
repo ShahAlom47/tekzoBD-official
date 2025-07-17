@@ -72,7 +72,7 @@ export default async function ShopPage({ searchParams }: Props) {
     <section className="max-w mx-auto md:p-6 p-2 py-7 space-y-5">
       <PageHeading title="Our Product" />
 
-      <ProductCountInfo currentPage={currentPage} perPage={limit} total={total} />
+      <ProductCountInfo currentPage={currentPage} perPage={limit} total={total ||0} />
 
       <div className="md:hidden block">
         <MobileScreenFilteringSection></MobileScreenFilteringSection>

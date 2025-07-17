@@ -83,12 +83,17 @@ export const useCart = () => {
 
       try {
         if (userEmail) {
-          await addToCartDB({ ...newItem, userEmail });
+         const res = await addToCartDB({ ...newItem, userEmail });
+        if(res?.success){
+          return {success: true, message: "Added to cart"}
+          
+        }
         } else {
           const updatedCart = [...reduxCartItems, newItem];
           saveLocalCart(updatedCart);
         }
-        toast.success("Added to cart");
+         toast.success("Added to cart");
+       
       } catch (err) {
         toast.error("Add failed");
         console.error(err);

@@ -25,7 +25,7 @@ const WishListContent = ({ products, contentType = 'page' }: WishContentProps) =
       )}
 
       <div
-        className={`grid gap-4 ${
+        className={`grid gap-4  ${
           contentType === 'drawer' ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
         }`}
       >
