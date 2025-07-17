@@ -18,8 +18,7 @@ const NavCart = () => {
   const { itemCount, cartItems } = useCart();
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
- const itemIds = cartItems?.map(item=> item?.productId)
-
+  const itemIds = cartItems?.map((item) => item?.productId);
 
   useEffect(() => {
     setIsClient(true);
@@ -34,8 +33,7 @@ const NavCart = () => {
       ? "+99"
       : itemCount.toString();
 
-  const queryEnabled =
-    isClient && !!userEmail && isOpen && itemIds.length > 0;
+  const queryEnabled = isClient && !!userEmail && isOpen && itemIds.length > 0;
 
   const {
     data: products,
@@ -46,7 +44,7 @@ const NavCart = () => {
     queryKey: ["cartProducts", itemIds.join(",")],
     queryFn: async () => {
       const res = await getCartProducts(itemIds, userEmail); // ✅ এখানে sure করে বলছি
-      console.log(res)
+      console.log(res);
       return (res.data || []) as ProductType[];
     },
     enabled: queryEnabled,
@@ -57,8 +55,6 @@ const NavCart = () => {
         itemIds.join(","),
       ]),
   });
-
-
 
   if (!isClient || !user) return null;
 
@@ -79,44 +75,49 @@ const NavCart = () => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         direction="right"
-        width="w-[90%] md:w-[40%]"
+        width="w-[90%] md:w-[40%] product"
       >
-        <div className="p-4">
+        <div className="p-2 min-h-screen">
           <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
             Your Cart
           </h3>
+          <div className="h-full flex flex-col justify-between gap-2 p-2 product min-h-[90vh] ">
+            <div className=" overflow-y-scroll flex-1 h-full product">
+              {isLoading && !products && <Loading />}
 
-          <div className="max-h-[86vh] overflow-y-scroll">
-            {isLoading && !products && <Loading />}
+              {isError && (
+                <div className="text-red-500 text-sm text-center">
+                  Failed to load cart products.{" "}
+                  <button
+                    onClick={() => refetch()}
+                    className="underline text-brandPrimary hover:text-red-600"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
 
-            {isError && (
-              <div className="text-red-500 text-sm text-center">
-                Failed to load cart products.{" "}
-                <button
-                  onClick={() => refetch()}
-                  className="underline text-brandPrimary hover:text-red-600"
-                >
-                  Try again
-                </button>
-              </div>
-            )}
+              {!isLoading && !isError && products?.length === 0 && (
+                <div className="text-center text-gray-500 mt-6">
+                  Your cart is empty.
+                </div>
+              )}
 
-            {!isLoading && !isError && products?.length === 0 && (
-              <div className="text-center text-gray-500 mt-6">
-                Your cart is empty.
-              </div>
-            )}
-
-            {!isLoading && !isError && products && products.length > 0 && (
-              <CartContent products={products} cartItems={cartItems} contentType={'drawer'} /> // ✅ Build this component to show quantity etc.
-            )}
-          </div>
-          <div className="">
-            <CartSummary
-              cartItems={cartItems}
-              products={products || []}
-              couponDiscountPercent={0} // You can pass actual coupon discount here if needed
-            />
+              {!isLoading && !isError && products && products.length > 0 && (
+                <CartContent
+                  products={products}
+                  cartItems={cartItems}
+                  contentType={"drawer"}
+                /> // ✅ Build this component to show quantity etc.
+              )}
+            </div>
+            <div className="">
+              <CartSummary
+                cartItems={cartItems}
+                products={products || []}
+                couponDiscountPercent={0}
+              />
+            </div>
           </div>
         </div>
       </Drawer>
