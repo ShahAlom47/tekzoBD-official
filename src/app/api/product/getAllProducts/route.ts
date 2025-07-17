@@ -37,6 +37,18 @@ export async function GET(req: NextRequest) {
 
     const stockParam = url.searchParams.get("stock"); // "in-stock", "out-of-stock", or null
 
+//     productCollection.updateMany(
+//   { price: { $type: "string" } },
+//   [
+//     {
+//       $set: {
+//         price: { $toDouble: "$price" }
+//       }
+//     }
+//   ]
+// );
+
+
     if (isNaN(currentPage) || isNaN(pageSize)) {
       return NextResponse.json(
         { message: "Invalid query parameters", success: false },
@@ -88,11 +100,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Price filter
+
     if (minPrice || maxPrice) {
-      filter.price = {};
-      if (minPrice) filter.price.$gte = Number(minPrice);
-      if (maxPrice) filter.price.$lte = Number(maxPrice);
-    }
+  filter.price = {};
+  if (minPrice) filter.price.$gte = Number(minPrice);
+  if (maxPrice) filter.price.$lte = Number(maxPrice);
+}
+
 
     // Stock filter
     if (stockParam === "in-stock") {

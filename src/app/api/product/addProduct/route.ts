@@ -12,6 +12,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 🛡️ Ensure price is stored as a number
+    if (body.price !== undefined) {
+      const parsedPrice = Number(body.price);
+      if (isNaN(parsedPrice)) {
+        return NextResponse.json(
+          { message: "Invalid price format", success: false },
+          { status: 400 }
+        );
+      }
+      body.price = parsedPrice; // ✅ force price to be a number
+    }
+
     const productCollection = await getProductCollection();
 
     const addResult = await productCollection.insertOne(body);
@@ -31,6 +43,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error in POST /api/product:", error);

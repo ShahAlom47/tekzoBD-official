@@ -73,6 +73,8 @@ const ProductCard = ({
 
   const isOutOfStock = item.stock === 0;
 
+  console.log(item)
+
   return (
     <div
       onClick={handleCardClick}

@@ -1,11 +1,6 @@
-
-
-
 import { getProductCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-
-
 
 // update product 
 export async function PATCH(
@@ -29,8 +24,22 @@ export async function PATCH(
         { status: 400 }
       );
     }
-     if ("_id" in body) {
+
+    // remove _id if present (MongoDB doesn't allow updating _id)
+    if ("_id" in body) {
       delete body._id;
+    }
+
+    // ✅ Ensure price is a number if present
+    if (body.price !== undefined) {
+      const parsedPrice = Number(body.price);
+      if (isNaN(parsedPrice)) {
+        return NextResponse.json(
+          { message: "Invalid price format", success: false },
+          { status: 400 }
+        );
+      }
+      body.price = parsedPrice;
     }
 
     const productCollection = await getProductCollection();
@@ -40,13 +49,13 @@ export async function PATCH(
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
-        { message: "product not found", success: false },
+        { message: "Product not found", success: false },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "product updated successfully", success: true, data: result },
+      { message: "Product updated successfully", success: true, data: result },
       { status: 200 }
     );
   } catch (error) {
