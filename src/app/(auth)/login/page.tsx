@@ -22,7 +22,14 @@ const Login: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>();
+  } = useForm<LoginFormInputs>({
+    defaultValues: {
+      email: "admin@gmail.com",
+      password: "123456",
+    },
+    mode: "onBlur",
+    reValidateMode: "onBlur",
+  });
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {

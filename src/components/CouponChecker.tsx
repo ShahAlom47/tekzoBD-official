@@ -8,8 +8,8 @@ interface CouponCheckerProps {
 }
 
 const dummyCoupons = [
-  { code: "DISCOUNT10", discountPercent: 10 },
-  { code: "SAVE20", discountPercent: 20 },
+  { code: "DISCOUNT10", discountPercent: 0 },
+  { code: "SAVE20", discountPercent: 0 },
 ];
 
 const CouponChecker: React.FC<CouponCheckerProps> = ({ onCouponValidated }) => {
@@ -23,7 +23,9 @@ const CouponChecker: React.FC<CouponCheckerProps> = ({ onCouponValidated }) => {
     if (coupon) {
       setError("");
       setSuccess(true);
+    //   onCouponValidated(coupon);
       onCouponValidated(coupon);
+
     } else {
       setSuccess(false);
       setError("Invalid coupon code!");
@@ -59,8 +61,8 @@ const CouponChecker: React.FC<CouponCheckerProps> = ({ onCouponValidated }) => {
           </button>
 
           {success && (
-            <p className="text-green-600 flex items-center gap-1">
-              <FaCheckCircle /> Coupon applied!
+            <p className="text-yellow-600 flex items-center gap-1">
+              <FaCheckCircle /> Coupon feature is under construction.
             </p>
           )}
           {error && <p className="text-red-500">{error}</p>}
