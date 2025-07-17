@@ -10,6 +10,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useUser } from "@/hooks/useUser";
 import LoginMsgModal from "./ui/LoginMsgModal";
 import { useCart } from "@/hooks/useCart";
+import { useProductPriceManage } from "@/hooks/usePriceMange";
 
 type ProductCardProps = {
   item: ProductType;
@@ -27,6 +28,17 @@ const ProductCard = ({
   const [showLoginModal, setLoginModal] = useState<boolean>(false);
   const { user } = useUser();
   const {addToCart}=useCart()
+    const {
+      originalPrice,
+      hasDiscount,
+      discountedPrice,
+      isOutOfStock,
+    } = useProductPriceManage({
+      price: item.price,
+      discount: item.discount,
+      offer: item.offer,
+      stock: item.stock,
+    });
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);
@@ -51,31 +63,9 @@ const ProductCard = ({
 const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
   e.stopPropagation();
   await addToCart(item?._id.toString());
-
-  console.log("Added to cart:", item.title);
 };
 
 
-  const isOfferActive = (() => {
-    const offer = item.offer;
-    if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
-
-    const now = new Date().getTime();
-    const start = new Date(offer.startDate).getTime();
-    const end = new Date(offer.endDate).getTime();
-
-    return now >= start && now <= end;
-  })();
-
-  const hasDiscount = isOfferActive && item.discount > 0;
-  const originalPrice = item.price;
-  const discountedPrice = hasDiscount
-    ? Math.round(originalPrice - (originalPrice * item.discount) / 100)
-    : originalPrice;
-
-  const isOutOfStock = item.stock === 0;
-
-  console.log(item)
 
   return (
     <div

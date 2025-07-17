@@ -5,6 +5,7 @@ import { ProductType } from "@/Interfaces/productInterfaces";
 import { MdClose } from "react-icons/md";
 import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
+import { useProductPriceManage } from "@/hooks/usePriceMange";
 
 interface Props {
   product: ProductType;
@@ -13,27 +14,39 @@ interface Props {
 
 const CartProductCard = ({ product, quantity }: Props) => {
   const { removeFromCart, updateQuantity } = useCart();
+  const {
+    originalPrice,
+    discountPercent,
+    hasDiscount,
+    discountedPrice,
+    isOutOfStock,
+  } = useProductPriceManage({
+    price: product.price,
+    discount: product.discount,
+    offer: product.offer,
+    stock: product.stock,
+  });
 
-  const isOfferActive = (() => {
-    const offer = product.offer;
-    if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
+  // const isOfferActive = (() => {
+  //   const offer = product.offer;
+  //   if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
 
-    const now = new Date().getTime();
-    const start = new Date(offer.startDate).getTime();
-    const end = new Date(offer.endDate).getTime();
+  //   const now = new Date().getTime();
+  //   const start = new Date(offer.startDate).getTime();
+  //   const end = new Date(offer.endDate).getTime();
 
-    return now >= start && now <= end;
-  })();
+  //   return now >= start && now <= end;
+  // })();
 
-  const hasDiscount = isOfferActive && Number(product.discount) > 0;
-  const originalPrice = Number(product.price);
-  const discountPercent = Number(product.discount);
-  const discountedPrice = hasDiscount
-    ? Math.round(originalPrice - (originalPrice * discountPercent) / 100)
-    : originalPrice;
+  // const hasDiscount = isOfferActive && Number(product.discount) > 0;
+  // const originalPrice = Number(product.price);
+  // const discountPercent = Number(product.discount);
+  // const discountedPrice = hasDiscount
+  //   ? Math.round(originalPrice - (originalPrice * discountPercent) / 100)
+  //   : originalPrice;
 
-  const stock = Number(product.stock);
-  const isOutOfStock = stock <= 0;
+  // const stock = Number(product.stock);
+  // const isOutOfStock = stock <= 0;
 
   return (
     <div
@@ -82,7 +95,7 @@ const CartProductCard = ({ product, quantity }: Props) => {
           <span className="text-sm font-medium">{quantity}</span>
           <button
             onClick={() => updateQuantity(product._id.toString(), quantity + 1)}
-            disabled={isOutOfStock || quantity >= stock}
+            disabled={isOutOfStock || quantity >= Number(product.stock)}
             className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
             +

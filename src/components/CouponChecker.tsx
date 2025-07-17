@@ -1,0 +1,73 @@
+// components/CouponChecker.tsx
+"use client";
+import React, { useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
+
+interface CouponCheckerProps {
+  onCouponValidated: (data: { code: string; discountPercent: number }) => void;
+}
+
+const dummyCoupons = [
+  { code: "DISCOUNT10", discountPercent: 10 },
+  { code: "SAVE20", discountPercent: 20 },
+];
+
+const CouponChecker: React.FC<CouponCheckerProps> = ({ onCouponValidated }) => {
+  const [showInput, setShowInput] = useState(false);
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleCheck = () => {
+    const coupon = dummyCoupons.find((c) => c.code === code.trim().toUpperCase());
+    if (coupon) {
+      setError("");
+      setSuccess(true);
+      onCouponValidated(coupon);
+    } else {
+      setSuccess(false);
+      setError("Invalid coupon code!");
+    }
+  };
+
+  return (
+    <div className="mb-2 text-black">
+      <label className="flex gap-1  justify-start ">
+        <input
+        className=""
+          type="checkbox"
+          checked={showInput}
+          onChange={() => setShowInput((prev) => !prev)}
+        />
+        <span>You have a coupon?</span>
+      </label>
+
+      {showInput && (
+        <div className="mt-3 space-y-2">
+          <input
+            type="text"
+            placeholder="Enter coupon code"
+            className="my-input"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <button
+            onClick={handleCheck}
+            className="btn-base"
+          >
+            Apply
+          </button>
+
+          {success && (
+            <p className="text-green-600 flex items-center gap-1">
+              <FaCheckCircle /> Coupon applied!
+            </p>
+          )}
+          {error && <p className="text-red-500">{error}</p>}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CouponChecker;

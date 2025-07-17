@@ -11,6 +11,7 @@ import { ProductType } from "@/Interfaces/productInterfaces";
 import Loading from "@/app/loading";
 import { queryClient } from "@/Providers/QueryProvider";
 import CartContent from "./CartContent";
+import CartSummary from "./CartSummary";
 
 const NavCart = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +59,6 @@ const NavCart = () => {
   });
 
 
-  //  console.log(cartItems,products)
 
   if (!isClient || !user) return null;
 
@@ -110,6 +110,13 @@ const NavCart = () => {
             {!isLoading && !isError && products && products.length > 0 && (
               <CartContent products={products} cartItems={cartItems} contentType={'drawer'} /> // ✅ Build this component to show quantity etc.
             )}
+          </div>
+          <div className="">
+            <CartSummary
+              cartItems={cartItems}
+              products={products || []}
+              couponDiscountPercent={0} // You can pass actual coupon discount here if needed
+            />
           </div>
         </div>
       </Drawer>
