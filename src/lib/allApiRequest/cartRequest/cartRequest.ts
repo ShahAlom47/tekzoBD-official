@@ -28,7 +28,7 @@ export const updateCartItemQty = async (productId: string, quantity: number, use
 };
 
 
-export const getCartProducts = async (productIds:string[], userEmail: string) => {
+export const getCartProducts = async (productIds:string[], userEmail?: string) => {
   return request("POST", `/cart/cart-products`, { productIds, userEmail });
 };
 

@@ -5,6 +5,9 @@ import { CartItem } from "@/Interfaces/cartInterface";
 import { useCartSummary } from "@/hooks/useCartSummary";
 import CouponChecker from "./CouponChecker";
 import { BiSolidDownArrow, BiSolidUpArrow } from "react-icons/bi";
+import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
+import { useUser } from "@/hooks/useUser";
+import LoginMsgModal from "./ui/LoginMsgModal";
 
 interface CartSummaryProps {
   cartItems: CartItem[];
@@ -13,6 +16,10 @@ interface CartSummaryProps {
 }
 
 const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
+  const {user}=useUser()
+  const [openLoginModal, setOpenLoginModal] = useState(false);
+ 
+  // State to manage coupon and summary visibility
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [coupon, setCoupon] = useState<{
     code: string;
@@ -26,14 +33,57 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
     couponDiscountAmount,
     grandTotal,
     totalQuantity,
+    cartProducts,
   } = useCartSummary(cartItems, products, coupon?.discountPercent || 0);
+
+  const handleCheckOut = () => {
+    const data: CheckoutDataType = {
+      cartProducts: cartProducts,
+      coupon: !coupon
+        ? null
+        : {
+            code: coupon?.code,
+            discountPercent: coupon?.discountPercent,
+            discountAmount: couponDiscountAmount,
+          },
+      pricing: {
+        subtotal,
+        totalDiscount,
+        totalAfterDiscount,
+        couponDiscountAmount,
+        grandTotal,
+        totalQuantity,
+      },
+      shippingInfo: undefined,
+      paymentInfo: undefined,
+      meta: {
+        checkoutAt: new Date().toISOString(),
+        userId:user?.email || "guest",
+        orderStatus: "pending",
+      },
+    };
+    // Handle checkout logic here
+   if(!user|| !user.email){
+      setOpenLoginModal(true);
+      return;
+    }
+
+    console.log(data);
+  };
 
   return (
     <div className=" relative p-4  border-t mt-4 bg-white rounded shadow-sm text-black w-full  border border-brandPrimary ">
-      <button onClick={()=>setShowSummary(!showSummary)} className="absolute top-0 left-1/2 btn-base rounded-none p-0 mt-0 h-4 px-4 rounded-b-lg mb-auto flex items-start text-white">
-       {showSummary? <BiSolidDownArrow />:<BiSolidUpArrow />}
+      <button
+        onClick={() => setShowSummary(!showSummary)}
+        className="absolute top-0 left-1/2 btn-base rounded-none p-0 mt-0 h-4 px-4 rounded-b-lg mb-auto flex items-start text-white"
+      >
+        {showSummary ? <BiSolidDownArrow /> : <BiSolidUpArrow />}
       </button>
-      <div className=" font-semibold">
+      <div
+        className={` ${
+          showSummary ? "h-fit translate-y-0 " : "h-0 translate-y-10"
+        } transition-all duration-500 font-semibold overflow-y-hidden`}
+      >
         <CouponChecker onCouponValidated={(data) => setCoupon(data)} />
         <p>Total Items: {totalQuantity}</p>
         <p>Subtotal: TK {subtotal.toLocaleString()}</p>
@@ -54,13 +104,25 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
         )}
       </div>
       {/* begin: cart summary */}
-      <div className="mt-3 flex justify-between items-center  gap-2 border-t-2 border-brandPrimary">
+      <div
+        className={` flex justify-between items-center  gap-2 border-brandPrimary ${
+          showSummary ? " border-t-2 mt-3" : " border-t-0"
+        } transition-all duration-200 overflow-hidden`}
+      >
         <p className="font-semibold text-lg ">
           Grand Total: TK {grandTotal.toLocaleString()}
         </p>
 
-        <button className=" btn-base">Checkout</button>
+        <button className=" btn-base" onClick={handleCheckOut}>
+          Checkout
+        </button>
       </div>
+
+      {/* login modal */}
+      <LoginMsgModal  
+        open={openLoginModal}
+        setOpen={setOpenLoginModal}   
+      />  
     </div>
   );
 };

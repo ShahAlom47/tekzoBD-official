@@ -64,6 +64,8 @@ export const useCart = () => {
     init();
   }, [userEmail, dispatch]);
 
+ 
+
   // ✅ Add to cart
   const addToCart = useCallback(
     async (productId: string) => {

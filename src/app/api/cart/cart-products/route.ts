@@ -7,9 +7,9 @@ import { ObjectId } from "mongodb";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { productIds, userEmail } = body;
+    const { productIds } = body;
 
-    if (!Array.isArray(productIds) || !userEmail) {
+    if (!Array.isArray(productIds) ) {
       return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
     }
 

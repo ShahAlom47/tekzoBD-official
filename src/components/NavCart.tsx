@@ -19,6 +19,7 @@ const NavCart = () => {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
   const itemIds = cartItems?.map((item) => item?.productId);
+  console.log(itemIds)
 
   useEffect(() => {
     setIsClient(true);
@@ -33,7 +34,7 @@ const NavCart = () => {
       ? "+99"
       : itemCount.toString();
 
-  const queryEnabled = isClient && !!userEmail && isOpen && itemIds.length > 0;
+  const queryEnabled = isClient && isOpen && itemIds.length > 0;
 
   const {
     data: products,
@@ -43,8 +44,8 @@ const NavCart = () => {
   } = useQuery({
     queryKey: ["cartProducts", itemIds.join(",")],
     queryFn: async () => {
-      const res = await getCartProducts(itemIds, userEmail); // ✅ এখানে sure করে বলছি
-      console.log(res);
+      const res = await getCartProducts(itemIds, userEmail);
+      console.log(res?.data)
       return (res.data || []) as ProductType[];
     },
     enabled: queryEnabled,
@@ -56,7 +57,7 @@ const NavCart = () => {
       ]),
   });
 
-  if (!isClient || !user) return null;
+  if (!isClient ) return null;
 
   return (
     <div className="relative flex items-center">
@@ -81,7 +82,7 @@ const NavCart = () => {
           <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
             Your Cart
           </h3>
-          <div className="h-full flex flex-col justify-between gap-2 p-2 product min-h-[90vh] ">
+          <div className=" flex flex-col justify-between gap-2 p-2 product h-[90vh] ">
             <div className=" overflow-y-scroll flex-1 h-full product">
               {isLoading && !products && <Loading />}
 

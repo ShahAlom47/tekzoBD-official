@@ -1,16 +1,22 @@
 import { CartItem } from "@/Interfaces/cartInterface";
 import { ProductType } from "@/Interfaces/productInterfaces";
 
+interface CartProductSummary {
+  productId: string;
+  productName: string;
+  quantity: number;
+  priceAtPurchase: number;
+  discountedPrice: number;
+}
+
 export const useCartSummary = (
   cartItems: CartItem[],
   products: ProductType[],
   couponDiscountPercent: number = 0
 ) => {
-
-  // হুকের ভিতরে helper ফাংশনস
+  // Helper: check if product offer is currently active
   const isOfferActive = (offer?: { isActive: boolean; startDate?: string; endDate?: string }) => {
-    if (!offer?.isActive) return false;
-    if (!offer.startDate || !offer.endDate) return false;
+    if (!offer?.isActive || !offer.startDate || !offer.endDate) return false;
 
     const now = new Date();
     const start = new Date(offer.startDate);
@@ -19,6 +25,7 @@ export const useCartSummary = (
     return now >= start && now <= end;
   };
 
+  // Helper: calculate discounted (effective) price
   const getEffectivePrice = (product: ProductType): number => {
     const offerActive = isOfferActive(product.offer);
     const price = product.price;
@@ -31,11 +38,13 @@ export const useCartSummary = (
     return price;
   };
 
+  // Summary variables
   let subtotal = 0;
   let totalDiscount = 0;
   let totalAfterDiscount = 0;
   let totalQuantity = 0;
 
+  // Main calculation loop
   for (const item of cartItems) {
     const product = products.find((p) => p._id === item.productId && p.stock > 0);
     if (!product) continue;
@@ -49,8 +58,27 @@ export const useCartSummary = (
     totalQuantity += item.quantity;
   }
 
+  // Apply coupon discount if any
   const couponDiscountAmount = (totalAfterDiscount * couponDiscountPercent) / 100;
   const grandTotal = totalAfterDiscount - couponDiscountAmount;
+
+  // Prepare cart item summary for order/checkout
+  const cartProducts: CartProductSummary[] = cartItems
+    .map((item) => {
+      const product = products.find((p) => p._id === item.productId && p.stock > 0);
+      if (!product) return null;
+
+      const effectivePrice = getEffectivePrice(product);
+
+      return {
+        productId: product._id.toString(),
+        productName: product.title,
+        quantity: Number(item.quantity),
+        priceAtPurchase: product.price,
+        discountedPrice: effectivePrice,
+      };
+    })
+    .filter((item): item is CartProductSummary => item !== null); // Type-safe filter
 
   return {
     subtotal,
@@ -59,5 +87,6 @@ export const useCartSummary = (
     couponDiscountAmount,
     grandTotal,
     totalQuantity,
+    cartProducts,
   };
 };
