@@ -24,23 +24,23 @@ export interface PricingSummary {
 }
 
 export interface ShippingInfo {
-  fullName: string;
+  name: string;
   address: string;
   city: string;
-  zipCode: string;
+  zipCode?: string;
   phone: string;
-  deliveryMethod: "standard" | "express" | "pickup";
+  deliveryMethod: "home-delivery" | "standard" | "express" | "pickup";
 }
 
 export interface PaymentInfo {
-  method: "card" | "cash-on-delivery";
+  method: "card" | "cash-on-delivery" | "bkash" | "nagad";
   paymentStatus: "unpaid" | "paid";
   transactionId?: string;
 }
 
 export interface CheckoutMeta {
   checkoutAt: string; // ISO timestamp
-  userId: string;
+  userEmail: string;
   orderStatus: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
 }
 

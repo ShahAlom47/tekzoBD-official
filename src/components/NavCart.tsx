@@ -19,7 +19,6 @@ const NavCart = () => {
   const { user } = useUser();
   const [isClient, setIsClient] = useState(false);
   const itemIds = cartItems?.map((item) => item?.productId);
-  console.log(itemIds)
 
   useEffect(() => {
     setIsClient(true);
@@ -45,7 +44,6 @@ const NavCart = () => {
     queryKey: ["cartProducts", itemIds.join(",")],
     queryFn: async () => {
       const res = await getCartProducts(itemIds, userEmail);
-      console.log(res?.data)
       return (res.data || []) as ProductType[];
     },
     enabled: queryEnabled,

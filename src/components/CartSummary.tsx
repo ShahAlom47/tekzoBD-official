@@ -68,16 +68,15 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
       paymentInfo: undefined,
       meta: {
         checkoutAt: new Date().toISOString(),
-        userId: user.email,
+        userEmail: user.email,
         orderStatus: "pending",
       },
     };
 
-    // 1. Redux store এ data পাঠাও
+  
     dispatch(setCheckoutData(data));
 
-    // 2. Checkout page এ navigate করো
-    router.push("/checkout"); // তুমি চাইলে `/checkout/shipping` বা অন্য path ও করতে পারো
+    router.push("/checkout");
   };
 
   return (
