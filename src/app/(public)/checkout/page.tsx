@@ -42,44 +42,52 @@ const CheckoutPage = () => {
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleConfirmOrder = () => {
-    if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
-      toast.error("Please fill all required shipping fields");
-      return;
-    }
+ const handleConfirmOrder = () => {
+  const phoneRegex = /^01[0-9]{9}$/; // BD phone validation: starts with 01 and total 11 digits
 
-    if (paymentMethod === "full" && !transactionId) {
-      toast.error("Please enter your Bkash transaction ID");
-      return;
-    }
+  if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
+    toast.error("Please fill all required shipping fields");
+    return;
+  }
 
-    const order: CheckoutDataType = {
-      cartProducts: checkoutData?.cartProducts ?? [],
-      coupon: checkoutData?.coupon ?? null,
-      pricing: {
-        subtotal: checkoutData?.pricing?.subtotal ?? 0,
-        totalDiscount: checkoutData?.pricing?.totalDiscount ?? 0,
-        totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
-        couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
-        totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
-        grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
-      },
-      shippingInfo,
-      paymentInfo: {
-        method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
-        paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
-        transactionId: paymentMethod === "full" ? transactionId : undefined,
-      },
-      meta: {
-        checkoutAt: new Date().toISOString(),
-        userEmail: checkoutData?.meta?.userEmail || "guest@example.com",
-        orderStatus: "pending",
-      },
-    };
+  if (!phoneRegex.test(shippingInfo.phone)) {
+    toast.error("Please enter a valid 11-digit Bangladeshi phone number");
+    return;
+  }
 
-    setFinalOrder(order);
-    setSuccessModalOpen(true);
+  if (paymentMethod === "full" && !transactionId) {
+    toast.error("Please enter your Bkash transaction ID");
+    return;
+  }
+
+  const order: CheckoutDataType = {
+    cartProducts: checkoutData?.cartProducts ?? [],
+    coupon: checkoutData?.coupon ?? null,
+    pricing: {
+      subtotal: checkoutData?.pricing?.subtotal ?? 0,
+      totalDiscount: checkoutData?.pricing?.totalDiscount ?? 0,
+      totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
+      couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
+      totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
+      grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
+    },
+    shippingInfo,
+    paymentInfo: {
+      method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
+      paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
+      transactionId: paymentMethod === "full" ? transactionId : undefined,
+    },
+    meta: {
+      checkoutAt: new Date().toISOString(),
+      userEmail: checkoutData?.meta?.userEmail || "guest@example.com",
+      orderStatus: "pending",
+    },
   };
+
+  setFinalOrder(order);
+  setSuccessModalOpen(true);
+};
+
 
   const handleModalConfirm = async () => {
     console.log("Modal confirm clicked");
@@ -90,7 +98,6 @@ const CheckoutPage = () => {
     try {
       // Simulated API call
       // await axios.post("/api/orders", finalOrder);
-      console.log("Order placed sess:", finalOrder);
       toast.success("✅ Order placed successfully!");
       router.push("/shop");
       dispatch(clearCheckoutData());
@@ -120,7 +127,7 @@ const CheckoutPage = () => {
                 name={field}
                 placeholder={field[0].toUpperCase() + field.slice(1)}
                 onChange={handleInputChange}
-                className="w-full border rounded p-2"
+                className="w-full my-input"
               />
             ))}
           </div>
