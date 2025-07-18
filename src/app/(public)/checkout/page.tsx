@@ -11,14 +11,17 @@ import { clearCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice"
 import { useAppDispatch } from "@/redux/hooks/reduxHook";
 import { useRouter } from "next/navigation";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
+import { useCart } from "@/hooks/useCart";
 
 const DELIVERY_CHARGE = 100;
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const checkoutData = useSelector((state: RootState) => state.checkout.checkoutData);
-  
+  const checkoutData = useSelector(
+    (state: RootState) => state.checkout.checkoutData
+  );
+  const { clearCart } = useCart();
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
 
@@ -80,17 +83,19 @@ const CheckoutPage = () => {
 
   const handleModalConfirm = async () => {
     console.log("Modal confirm clicked");
-    if (!finalOrder) {  
+    if (!finalOrder) {
       toast.error("No order data available");
       return;
-    } 
+    }
     try {
       // Simulated API call
       // await axios.post("/api/orders", finalOrder);
+      console.log("Order placed sess:", finalOrder);
       toast.success("✅ Order placed successfully!");
-      dispatch(clearCheckoutData());
-      setSuccessModalOpen(false);
       router.push("/shop");
+      dispatch(clearCheckoutData());
+      clearCart();
+      setSuccessModalOpen(false);
     } catch {
       toast.error("❌ Something went wrong while placing order.");
     }
@@ -128,10 +133,15 @@ const CheckoutPage = () => {
             <p>Subtotal: {checkoutData.pricing?.subtotal} TK</p>
             <p>Discount: -{checkoutData.pricing?.totalDiscount} TK</p>
             <p>After Discount: {checkoutData.pricing?.totalAfterDiscount} TK</p>
-            <p>Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK</p>
-            <p className="font-semibold">Delivery Charge: +{DELIVERY_CHARGE} TK</p>
+            <p>
+              Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK
+            </p>
+            <p className="font-semibold">
+              Delivery Charge: +{DELIVERY_CHARGE} TK
+            </p>
             <p className="font-bold text-lg">
-              Grand Total: {(checkoutData.pricing?.grandTotal || 0) + DELIVERY_CHARGE} TK
+              Grand Total:{" "}
+              {(checkoutData.pricing?.grandTotal || 0) + DELIVERY_CHARGE} TK
             </p>
           </div>
 
@@ -184,22 +194,22 @@ const CheckoutPage = () => {
       </div>
 
       {/* Success Modal */}
-     <CustomModal
-  open={successModalOpen}
-  onOpenChange={setSuccessModalOpen}
-  title="Order Successful"
-  description="Your order has been placed successfully."
->
-  {finalOrder && (
-    <OrderSuccessContent
-      orderData={finalOrder}
-      onConfirm={() => {
-        console.log("Modal confirm clicked");
-        handleModalConfirm();
-      }}
-    />
-  )}
-</CustomModal>
+      <CustomModal
+        open={successModalOpen}
+        onOpenChange={setSuccessModalOpen}
+        title="Order Successful"
+        description="Your order has been placed successfully."
+        className="w-11/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 h-full max-h-[90vh] overflow-y-scroll"
+      >
+        {finalOrder && (
+          <OrderSuccessContent
+            orderData={finalOrder}
+            onConfirm={() => {
+              handleModalConfirm();
+            }}
+          />
+        )}
+      </CustomModal>
     </div>
   );
 };

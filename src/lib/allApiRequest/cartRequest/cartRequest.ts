@@ -9,8 +9,8 @@ export const getUserCart = async (userEmail: string) => {
   return request("GET", `/cart/user-cart?userEmail=${userEmail}`);
 };
 
-export const syncCartToDB = async (localItems: CartItem[], userEmail: string) => {
-  return request("POST", `/cart/sync`, { localItems, userEmail });
+export const syncCartToDB = async (localItems: CartItem[], userEmail: string ,forClean?: boolean) => {
+  return request("POST", `/cart/sync`, { localItems, userEmail, forClean });
 };
 
 export const addToCartDB = async (data: { productId: string; quantity: number; userEmail: string }) => {

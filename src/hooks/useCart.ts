@@ -170,15 +170,22 @@ export const useCart = () => {
   );
 
   // ✅ Clear all
-  const clearCart = useCallback(() => {
-    dispatch(clearCartItems());
-    if (userEmail) {
-      toast.success("Cart cleared from DB");
-    } else {
+ const clearCart = useCallback(async () => {
+  dispatch(clearCartItems());
+  if (userEmail) {
+    try {
+      await syncCartToDB([], userEmail, true); // Clear cart in DB
       clearLocalCart();
-      toast.success("Local cart cleared");
+      // toast.success("Cart cleared from DB");
+    } catch (error) {
+      console.error("Failed to clear cart from DB:", error);
+      toast.error("Failed to clear cart");
     }
-  }, [userEmail, dispatch]);
+  } else {
+    clearLocalCart();
+    // toast.success("Local cart cleared");
+  }
+}, [userEmail, dispatch]);
 
   // ✅ Check in cart
   const useIsInCart = (productId: string): boolean => {

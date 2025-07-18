@@ -5,19 +5,33 @@ import { CartItem } from "@/Interfaces/cartInterface";
 interface RequestBody {
   localItems: CartItem[];
   userEmail: string;
+  forClean?: boolean; // optional, if true will clear cart instead of syncing
 }
 
 export async function POST(req: Request) {
   try {
     const body: RequestBody = await req.json();
-    const { userEmail, localItems } = body;
+    const { userEmail, localItems, forClean } = body;
 
-    if (!userEmail || !Array.isArray(localItems)) {
-      return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
+    if (!userEmail) {
+      return NextResponse.json({ message: "Missing userEmail" }, { status: 400 });
+    }
+
+    if (!forClean && (!Array.isArray(localItems) || localItems.length === 0)) {
+      return NextResponse.json({ message: "Invalid or empty localItems" }, { status: 400 });
     }
 
     const cartCollection = await getCartCollection();
 
+    if (forClean) {
+      // Clear cart items for the user
+      const updatedCart = await cartCollection.findOneAndUpdate(
+        { userEmail },
+        { $set: { items: [], updatedAt: new Date().toISOString() } },
+        { upsert: true, returnDocument: "after" }
+      );
+      return NextResponse.json({ message: "Cart cleared successfully", cart: updatedCart });
+    }
     // Format items (make sure each item has productId, quantity, addedAt)
     const items = localItems.map((item) => ({
       productId: item.productId,

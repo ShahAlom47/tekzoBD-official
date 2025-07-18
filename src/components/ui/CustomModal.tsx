@@ -27,7 +27,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={className ?? "sm:max-w-lg"}>
+      <DialogContent className={className ?? " p-2 w-11/12 md:w-8/12 lg:w-6/12 xl:w-5/12 2xl:w-4/12 h-full max-h-[95vh] overflow-y-scroll"}>
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}

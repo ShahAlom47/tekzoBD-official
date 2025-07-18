@@ -1,5 +1,7 @@
 "use client";
+
 import React, { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -20,18 +22,26 @@ const Drawer: React.FC<DrawerProps> = ({
   className = "",
   children,
 }) => {
+  const pathname = usePathname();
 
-    useEffect(() => {
-  if (isOpen) {
-    document.body.classList.add("overflow-hidden");
-  } else {
-    document.body.classList.remove("overflow-hidden");
-  }
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
 
-  return () => {
-    document.body.classList.remove("overflow-hidden");
-  };
-}, [isOpen]);
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen]);
+
+  // Route change detect kore drawer close korar jonno
+  useEffect(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, [pathname]);  // jekono route change hole
 
   const getPositionClasses = () => {
     switch (direction) {
@@ -72,7 +82,6 @@ const Drawer: React.FC<DrawerProps> = ({
           fixed bg-white  z-50 shadow-lg
           border border-[var(--border)]
           transform transition-transform duration-700 h-full
-      
           ${getPositionClasses()} ${className}
         `}
       >
