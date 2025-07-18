@@ -8,6 +8,9 @@ import { BiSolidDownArrow, BiSolidUpArrow } from "react-icons/bi";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { useUser } from "@/hooks/useUser";
 import LoginMsgModal from "./ui/LoginMsgModal";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { setCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice";
 
 interface CartSummaryProps {
   cartItems: CartItem[];
@@ -16,9 +19,11 @@ interface CartSummaryProps {
 }
 
 const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
-  const {user}=useUser()
+  const { user } = useUser();
   const [openLoginModal, setOpenLoginModal] = useState(false);
- 
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   // State to manage coupon and summary visibility
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [coupon, setCoupon] = useState<{
@@ -37,6 +42,11 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
   } = useCartSummary(cartItems, products, coupon?.discountPercent || 0);
 
   const handleCheckOut = () => {
+    if (!user || !user.email) {
+      setOpenLoginModal(true);
+      return;
+    }
+
     const data: CheckoutDataType = {
       cartProducts: cartProducts,
       coupon: !coupon
@@ -58,17 +68,16 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
       paymentInfo: undefined,
       meta: {
         checkoutAt: new Date().toISOString(),
-        userId:user?.email || "guest",
+        userId: user.email,
         orderStatus: "pending",
       },
     };
-    // Handle checkout logic here
-   if(!user|| !user.email){
-      setOpenLoginModal(true);
-      return;
-    }
 
-    console.log(data);
+    // 1. Redux store এ data পাঠাও
+    dispatch(setCheckoutData(data));
+
+    // 2. Checkout page এ navigate করো
+    router.push("/checkout"); // তুমি চাইলে `/checkout/shipping` বা অন্য path ও করতে পারো
   };
 
   return (
@@ -119,10 +128,7 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
       </div>
 
       {/* login modal */}
-      <LoginMsgModal  
-        open={openLoginModal}
-        setOpen={setOpenLoginModal}   
-      />  
+      <LoginMsgModal open={openLoginModal} setOpen={setOpenLoginModal} />
     </div>
   );
 };

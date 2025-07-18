@@ -5,6 +5,7 @@ import globalSearchReducer from "../features/search/GlobalSearchSlice"
 import categoryReducer  from '../features/category/categorySlice'
 import wishlistReducer from "../features/wishList/wishlistSlice"
 import cartReducer from "../features/cartSlice/cartSlice"
+import checkoutReducer from "../features/checkoutSlice/checkoutSlice"
 
 
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     categories: categoryReducer,
     wishlist: wishlistReducer,
     cart: cartReducer,
+    checkout: checkoutReducer
   },
 })
 
