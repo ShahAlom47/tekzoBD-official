@@ -7,21 +7,28 @@ import { RootState } from "@/redux/store/store";
 import PageHeading from "@/components/PageHeading";
 import CustomModal from "@/components/ui/CustomModal";
 import OrderSuccessContent from "@/components/OrderSuccessContent";
+import { clearCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice";
+import { useAppDispatch } from "@/redux/hooks/reduxHook";
+import { useRouter } from "next/navigation";
+import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 
 const DELIVERY_CHARGE = 100;
 
 const CheckoutPage = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const checkoutData = useSelector((state: RootState) => state.checkout.checkoutData);
+  
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const checkoutData = useSelector(
-    (state: RootState) => state.checkout.checkoutData
-  );
+  const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
 
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     phone: "",
     address: "",
     city: "",
-    zip: "",
+    zipCode: "",
+    deliveryMethod: "home-delivery" as const,
   });
 
   const [paymentMethod, setPaymentMethod] = useState<"full" | "cod">("cod");
@@ -39,38 +46,58 @@ const CheckoutPage = () => {
     }
 
     if (paymentMethod === "full" && !transactionId) {
-      toast.error("Please enter your Bkash/Nagad transaction ID");
+      toast.error("Please enter your Bkash transaction ID");
       return;
     }
 
-    const order = {
-      ...checkoutData,
+    const order: CheckoutDataType = {
+      cartProducts: checkoutData?.cartProducts ?? [],
+      coupon: checkoutData?.coupon ?? null,
+      pricing: {
+        subtotal: checkoutData?.pricing?.subtotal ?? 0,
+        totalDiscount: checkoutData?.pricing?.totalDiscount ?? 0,
+        totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
+        couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
+        totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
+        grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
+      },
       shippingInfo,
       paymentInfo: {
-        method: paymentMethod === "full" ? "bkash-manual" : "cod",
-        paid: paymentMethod === "full",
-        transactionId: paymentMethod === "full" ? transactionId : null,
-      },
-      pricing: {
-        ...checkoutData?.pricing,
-        grandTotal: (checkoutData?.pricing?.grandTotal || 0) + DELIVERY_CHARGE,
+        method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
+        paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
+        transactionId: paymentMethod === "full" ? transactionId : undefined,
       },
       meta: {
-        ...(checkoutData?.meta || {}),
-        confirmedAt: new Date().toISOString(),
+        checkoutAt: new Date().toISOString(),
+        userEmail: checkoutData?.meta?.userEmail || "guest@example.com",
+        orderStatus: "pending",
       },
     };
 
-    // Simulate order submit
-    console.log("✅ Final Order Submitted:", order);
-    toast.success("Order confirmed successfully!");
-   
-    // router.push("/order-success");
+    setFinalOrder(order);
     setSuccessModalOpen(true);
   };
 
+  const handleModalConfirm = async () => {
+    console.log("Modal confirm clicked");
+    if (!finalOrder) {  
+      toast.error("No order data available");
+      return;
+    } 
+    try {
+      // Simulated API call
+      // await axios.post("/api/orders", finalOrder);
+      toast.success("✅ Order placed successfully!");
+      dispatch(clearCheckoutData());
+      setSuccessModalOpen(false);
+      router.push("/shop");
+    } catch {
+      toast.error("❌ Something went wrong while placing order.");
+    }
+  };
+
   if (!checkoutData) {
-    return <div className="text-center py-10">No checkout data found. </div>;
+    return <div className="text-center py-10">No checkout data found.</div>;
   }
 
   return (
@@ -82,38 +109,33 @@ const CheckoutPage = () => {
         <div>
           <h2 className="text-lg font-semibold mb-2">Shipping Information</h2>
           <div className="space-y-3">
-            {["name", "phone", "address", "city", "zip"].map((field) => (
+            {["name", "phone", "address", "city", "zipCode"].map((field) => (
               <input
                 key={field}
                 name={field}
                 placeholder={field[0].toUpperCase() + field.slice(1)}
                 onChange={handleInputChange}
-                className="w-full my-input rounded p-2"
+                className="w-full border rounded p-2"
               />
             ))}
           </div>
         </div>
 
-        {/* Order Summary + Payment */}
+        {/* Order Summary & Payment */}
         <div>
           <h2 className="text-lg font-semibold mb-2">Order Summary</h2>
           <div className="text-sm font-medium space-y-1 bg-gray-100 p-4 rounded border">
             <p>Subtotal: {checkoutData.pricing?.subtotal} TK</p>
             <p>Discount: -{checkoutData.pricing?.totalDiscount} TK</p>
             <p>After Discount: {checkoutData.pricing?.totalAfterDiscount} TK</p>
-            <p>
-              Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK
-            </p>
-            <p className="font-semibold">
-              Delivery Charge: +{DELIVERY_CHARGE} TK
-            </p>
+            <p>Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK</p>
+            <p className="font-semibold">Delivery Charge: +{DELIVERY_CHARGE} TK</p>
             <p className="font-bold text-lg">
-              Grand Total: {checkoutData.pricing?.grandTotal + DELIVERY_CHARGE}{" "}
-              TK
+              Grand Total: {(checkoutData.pricing?.grandTotal || 0) + DELIVERY_CHARGE} TK
             </p>
           </div>
 
-          {/* Payment Method */}
+          {/* Payment */}
           <div className="mt-6 space-y-2">
             <h3 className="font-medium">Payment Method:</h3>
             <div className="flex gap-4">
@@ -139,14 +161,10 @@ const CheckoutPage = () => {
               </label>
             </div>
 
-            {/* Bkash Details */}
             {paymentMethod === "full" && (
               <div className="mt-4 space-y-2">
                 <p className="text-sm font-medium text-gray-700">
                   Pay to: <span className="font-bold">017XXXXXXXX</span>
-                </p>
-                <p className="text-xs text-gray-500">
-                  After payment, enter the Transaction ID below:
                 </p>
                 <input
                   type="text"
@@ -159,22 +177,29 @@ const CheckoutPage = () => {
             )}
           </div>
 
-          {/* Confirm Button */}
           <button className="btn-base w-full mt-6" onClick={handleConfirmOrder}>
             Confirm Order
           </button>
         </div>
       </div>
-      {/* afetr successful order, show modal  */}
-      <CustomModal
-        open={successModalOpen}
-        onOpenChange={setSuccessModalOpen}
-        title="Order Successful"
-        description="Your order has been placed successfully."
-        className="sm:max-w-lg"
-      >
-        {checkoutData && <OrderSuccessContent orderData={checkoutData} />}
-      </CustomModal>
+
+      {/* Success Modal */}
+     <CustomModal
+  open={successModalOpen}
+  onOpenChange={setSuccessModalOpen}
+  title="Order Successful"
+  description="Your order has been placed successfully."
+>
+  {finalOrder && (
+    <OrderSuccessContent
+      orderData={finalOrder}
+      onConfirm={() => {
+        console.log("Modal confirm clicked");
+        handleModalConfirm();
+      }}
+    />
+  )}
+</CustomModal>
     </div>
   );
 };

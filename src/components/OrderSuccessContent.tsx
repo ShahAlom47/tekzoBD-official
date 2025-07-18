@@ -1,13 +1,12 @@
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
-import { clearCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice";
 import React from "react";
-import { useDispatch } from "react-redux";
 
 interface OrderSuccessContentProps {
-  orderData: CheckoutDataType
+  orderData: CheckoutDataType;
+  onConfirm: () => void;
 }
 
-const OrderSuccessContent: React.FC<OrderSuccessContentProps> = ({ orderData }) => {
+const OrderSuccessContent: React.FC<OrderSuccessContentProps> = ({ orderData, onConfirm }) => {
   const {
     meta,
     pricing,
@@ -15,18 +14,8 @@ const OrderSuccessContent: React.FC<OrderSuccessContentProps> = ({ orderData }) 
     shippingInfo,
   } = orderData;
 
-  
-
-  const dispatch = useDispatch();
-
-  const  handleOk=()=>{
-
-     dispatch(clearCheckoutData());
-
-  }
-
   return (
-    <div className="space-y-2 px-2 py-4 text-black">
+    <div className="space-y-4 px-2 py-4 text-black h-full overflow-y-scroll bb">
       <h2 className="text-xl font-bold text-center">Order Confirmed!</h2>
       <p className="text-center text-green-600 font-semibold text-sm">
         Thank you for your purchase.
@@ -55,6 +44,15 @@ const OrderSuccessContent: React.FC<OrderSuccessContentProps> = ({ orderData }) 
         <p>{shippingInfo?.phone}</p>
         <p>{shippingInfo?.address}</p>
         <p>{shippingInfo?.city} - {shippingInfo?.zipCode}</p>
+      </div>
+
+      <div className="text-center pt-4">
+        <button
+          onClick={() => onConfirm()}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+        >
+          OK, Finish
+        </button>
       </div>
     </div>
   );
