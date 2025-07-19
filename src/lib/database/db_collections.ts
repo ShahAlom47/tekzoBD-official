@@ -7,6 +7,7 @@ import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { ReviewsType } from "@/Interfaces/reviewInterfaces";
 import { WishlistType } from "@/Interfaces/wishListInterfaces";
 import { Cart } from "@/Interfaces/cartInterface";
+import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 
 
 // Define the User type (you can extend it as needed)
@@ -42,4 +43,9 @@ export const getCartCollection = async (): Promise<Collection<Cart>> => {
   const client = await clientPromise;
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<Cart>("Cart");
+};
+export const getOrderCollection = async (): Promise<Collection<CheckoutDataType>> => {
+  const client = await clientPromise;
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
+  return db.collection<CheckoutDataType>("Orders");
 };

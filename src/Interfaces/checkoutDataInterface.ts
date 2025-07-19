@@ -41,6 +41,7 @@ export interface PaymentInfo {
 export interface CheckoutMeta {
   checkoutAt: string; // ISO timestamp
   userEmail: string;
+  userId:string|ObjectId; // optional, can be null for guest checkout
   orderStatus: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
 }
 

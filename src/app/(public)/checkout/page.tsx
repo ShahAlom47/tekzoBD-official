@@ -12,12 +12,15 @@ import { useAppDispatch } from "@/redux/hooks/reduxHook";
 import { useRouter } from "next/navigation";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { useCart } from "@/hooks/useCart";
+import { addOrder } from "@/lib/allApiRequest/orderRequest/orderRequest";
+import { useUser } from "@/hooks/useUser";
 
 const DELIVERY_CHARGE = 100;
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const {user}=useUser();
   const checkoutData = useSelector(
     (state: RootState) => state.checkout.checkoutData
   );
@@ -42,52 +45,52 @@ const CheckoutPage = () => {
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
   };
 
- const handleConfirmOrder = () => {
-  const phoneRegex = /^01[0-9]{9}$/; // BD phone validation: starts with 01 and total 11 digits
+  const handleConfirmOrder = () => {
+    const phoneRegex = /^01[0-9]{9}$/; // BD phone validation: starts with 01 and total 11 digits
 
-  if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
-    toast.error("Please fill all required shipping fields");
-    return;
-  }
+    if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
+      toast.error("Please fill all required shipping fields");
+      return;
+    }
 
-  if (!phoneRegex.test(shippingInfo.phone)) {
-    toast.error("Please enter a valid 11-digit Bangladeshi phone number");
-    return;
-  }
+    if (!phoneRegex.test(shippingInfo.phone)) {
+      toast.error("Please enter a valid 11-digit Bangladeshi phone number");
+      return;
+    }
 
-  if (paymentMethod === "full" && !transactionId) {
-    toast.error("Please enter your Bkash transaction ID");
-    return;
-  }
+    if (paymentMethod === "full" && !transactionId) {
+      toast.error("Please enter your Bkash transaction ID");
+      return;
+    }
 
-  const order: CheckoutDataType = {
-    cartProducts: checkoutData?.cartProducts ?? [],
-    coupon: checkoutData?.coupon ?? null,
-    pricing: {
-      subtotal: checkoutData?.pricing?.subtotal ?? 0,
-      totalDiscount: checkoutData?.pricing?.totalDiscount ?? 0,
-      totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
-      couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
-      totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
-      grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
-    },
-    shippingInfo,
-    paymentInfo: {
-      method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
-      paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
-      transactionId: paymentMethod === "full" ? transactionId : undefined,
-    },
-    meta: {
-      checkoutAt: new Date().toISOString(),
-      userEmail: checkoutData?.meta?.userEmail || "guest@example.com",
-      orderStatus: "pending",
-    },
+    const order: CheckoutDataType = {
+      cartProducts: checkoutData?.cartProducts ?? [],
+      coupon: checkoutData?.coupon ?? null,
+      pricing: {
+        subtotal: checkoutData?.pricing?.subtotal ?? 0,
+        totalDiscount: checkoutData?.pricing?.totalDiscount ?? 0,
+        totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
+        couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
+        totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
+        grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
+      },
+      shippingInfo,
+      paymentInfo: {
+        method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
+        paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
+        transactionId: paymentMethod === "full" ? transactionId : undefined,
+      },
+      meta: {
+        checkoutAt: new Date().toISOString(),
+        userEmail: user?.email || "guest@example.com",
+        userId: user?.id ? user.id.toString() : "", // Use empty string for guest checkout
+        orderStatus: "pending",
+      },
+    };
+    console.log(order);
+    setFinalOrder(order);
+    setSuccessModalOpen(true);
   };
-
-  setFinalOrder(order);
-  setSuccessModalOpen(true);
-};
-
 
   const handleModalConfirm = async () => {
     console.log("Modal confirm clicked");
@@ -98,12 +101,18 @@ const CheckoutPage = () => {
     try {
       // Simulated API call
       // await axios.post("/api/orders", finalOrder);
-      toast.success("✅ Order placed successfully!");
-      router.push("/shop");
-      dispatch(clearCheckoutData());
-      clearCart();
-      setSuccessModalOpen(false);
-    } catch {
+      const response = await addOrder(finalOrder);
+      if (response?.success) {
+        toast.success("✅ Order placed successfully!");
+        router.push("/shop");
+        dispatch(clearCheckoutData());
+        clearCart();
+        setSuccessModalOpen(false);
+      }
+
+      console.log("Order response:", response);
+    } catch (error) {
+      console.error("Error placing order:", error);
       toast.error("❌ Something went wrong while placing order.");
     }
   };
