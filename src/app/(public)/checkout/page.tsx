@@ -82,6 +82,7 @@ const CheckoutPage = () => {
       },
       meta: {
         checkoutAt: new Date().toISOString(),
+        userName: user?.name || "Guest",
         userEmail: user?.email || "guest@example.com",
         userId: user?.id ? user.id.toString() : "", // Use empty string for guest checkout
         orderStatus: "pending",
@@ -154,6 +155,9 @@ const CheckoutPage = () => {
             </p>
             <p className="font-semibold">
               Delivery Charge: +{DELIVERY_CHARGE} TK
+            </p>
+            <p className="font-semibold">
+              Total Quantity: {checkoutData?.pricing?.totalQuantity || 0}
             </p>
             <p className="font-bold text-lg">
               Grand Total:{" "}

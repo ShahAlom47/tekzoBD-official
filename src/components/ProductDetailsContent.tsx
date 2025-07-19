@@ -11,6 +11,11 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useUser } from "@/hooks/useUser";
 import LoginMsgModal from "./ui/LoginMsgModal";
 import { useCart } from "@/hooks/useCart";
+import { useCartSummary } from "@/hooks/useCartSummary";
+import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
+import { useAppDispatch } from "@/redux/hooks/reduxHook";
+import { setCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice";
+import { useRouter } from "next/navigation";
 
 interface Props {
   product: ProductType;
@@ -22,6 +27,28 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
   const [showLoginModal, setLoginModal] = useState<boolean>(false);
   const { user } = useUser();
   const {addToCart}= useCart()
+   const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const cartItems=[
+    {
+      productId: product._id.toString(),
+      quantity: 1,
+      addedAt: new Date().toISOString(),
+    }
+  ]
+
+  
+  
+    const {
+      subtotal,
+      totalDiscount,
+      totalAfterDiscount,
+      couponDiscountAmount,
+      grandTotal,
+      totalQuantity,
+      cartProducts,
+    } = useCartSummary(cartItems, [product],  0);
 
   useEffect(() => {
     if (product?._id) {
@@ -53,13 +80,42 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
     addToCart(product?._id.toString())
   };
 
-  // const handleQuantity = (type: string) => {
-  //   if (type === "increment" && quantity < product?.stock) {
-  //     setQuantity((prev) => prev + 1);
-  //   } else if (type === "decrement" && quantity > 1) {
-  //     setQuantity((prev) => prev - 1);
-  //   }
-  // };
+  const handleBuyNow = () => {
+    if (isOutOfStock) return;
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
+       const data: CheckoutDataType = {
+          cartProducts: cartProducts,
+          coupon: null,
+          pricing: {
+            subtotal,
+            totalDiscount,
+            totalAfterDiscount,
+            couponDiscountAmount,
+            grandTotal,
+            totalQuantity,
+          },
+          shippingInfo: undefined,
+          paymentInfo: undefined,
+          meta: {
+            checkoutAt: new Date().toISOString(),
+            userEmail: user?.email || "guest@example.com",
+            userId: user?.id || "guest",
+            userName: user?.name || "Guest",
+            orderStatus: "pending",
+          },
+        };
+    
+      
+        dispatch(setCheckoutData(data));
+    
+        router.push("/checkout");
+
+
+  };
+
 
   const handleWishClick = () => {
     if (!user) {
@@ -120,34 +176,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
             </span>
           </div>
 
-          {/* Quantity Selector */}
-          {/* <div className="flex items-center space-x-2">
-            <label htmlFor="quantity" className="text-sm">
-              Quantity:
-            </label>
-
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => handleQuantity("decrement")}
-                className="btn-bordered rounded-sm px-3 py-1 text-lg"
-                disabled={quantity <= 1}
-              >
-                -
-              </button>
-
-              <p className="my-input text-black text-lg font-medium px-3">
-                {quantity}
-              </p>
-
-              <button
-                onClick={() => handleQuantity("increment")}
-                className="btn-bordered rounded-sm px-3 py-1 text-lg"
-                disabled={quantity >= product?.stock}
-              >
-                +
-              </button>
-            </div>
-          </div> */}
+  
 
           {/* Actions */}
           <div className="flex gap-4">
@@ -159,6 +188,15 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
               }`}
             >
               Add to Cart
+            </button>
+            <button
+              onClick={handleBuyNow}
+              disabled={isOutOfStock}
+              className={`btn-base  ${
+                isOutOfStock ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Buy Now
             </button>
             <button
               onClick={handleWishClick}

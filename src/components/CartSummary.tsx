@@ -24,6 +24,7 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+
   // State to manage coupon and summary visibility
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [coupon, setCoupon] = useState<{
@@ -69,6 +70,8 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
       meta: {
         checkoutAt: new Date().toISOString(),
         userEmail: user.email,
+        userId: user.id,
+        userName: user.name || "",
         orderStatus: "pending",
       },
     };
@@ -78,6 +81,8 @@ const CartSummary = ({ cartItems, products }: CartSummaryProps) => {
 
     router.push("/checkout");
   };
+ 
+
 
   return (
     <div className=" relative p-4  border-t mt-4 bg-white rounded shadow-sm text-black w-full  border border-brandPrimary ">
