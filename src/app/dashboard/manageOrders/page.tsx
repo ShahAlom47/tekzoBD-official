@@ -2,7 +2,6 @@
 
 import ErrorComponent from "@/app/error";
 import Loading from "@/app/loading";
-import DashPageTitle from "@/components/DashPageTitle";
 import { CustomTable } from "@/components/ui/CustomTable";
 import { DashPaginationButton } from "@/components/ui/DashPaginationButton";
 import { useConfirm } from "@/hooks/useConfirm";
@@ -16,8 +15,6 @@ import { ObjectId } from "mongodb";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { MdDeleteSweep } from "react-icons/md";
 import Link from "next/link";
-import PrimaryButton from "@/components/PrimaryButton";
-import { FaPlus } from "react-icons/fa";
 import OrderFilters from "@/components/OrdersFilteringSec";
 
 const ManageOrders = () => {
@@ -148,15 +145,7 @@ const ManageOrders = () => {
 
   return (
     <div className="p-4 min-h-screen">
-      <div className="flex justify-between mb-4">
-        <DashPageTitle>Manage Orders</DashPageTitle>
-        <PrimaryButton
-          href={"/dashboard/ManageOrderss/create"}
-          className="rounded-sm text-sm h-8"
-        >
-          <FaPlus className="mr-2" /> New Order
-        </PrimaryButton>
-      </div>
+     
          {/* Filter section added here */}
       <OrderFilters onFilterChange={(newFilters) => {
         setFilters(newFilters);

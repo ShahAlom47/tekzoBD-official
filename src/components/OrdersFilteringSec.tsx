@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { GrPowerReset } from "react-icons/gr";
+import DashPageTitle from "./DashPageTitle";
 
 type Filters = {
   orderStatus: string;
@@ -67,7 +68,10 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
   return (
     <div className="relative mb-6 p-3 bg-white shadow-md rounded-md">
       {/* Toggle Button */}
-      <div className="w-full flex justify-center border-b-2 border-brandPrimary mb-3">
+      <div className="w-full flex justify-between border-b-2 border-brandPrimary mb-3">
+        
+                <DashPageTitle>Manage Orders</DashPageTitle>
+         
         <button
           className="btn-base text-sm h-8 rounded-t-md rounded-b-none -mb-0"
           onClick={() => setIsOpen(!isOpen)}
