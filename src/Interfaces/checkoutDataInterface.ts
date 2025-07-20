@@ -48,6 +48,8 @@ export interface CheckoutMeta {
 
 // main Type  for checkout data
 export interface CheckoutDataType {
+  _id?: string | ObjectId; // optional for new orders
+  userId?: string | ObjectId; // optional for guest checkout
   cartProducts: CheckoutProductItem[];
   coupon: CouponData | null;
   pricing: PricingSummary;
@@ -60,4 +62,21 @@ export interface CheckoutRequestBody {
   coupon?: CouponData; // optional
   shippingInfo?: ShippingInfo; // optional
   paymentInfo?: PaymentInfo; // optional
+}
+
+
+// api request params 
+export interface GetAllOrdersParams {
+  currentPage: number;
+  limit: number;
+  search?: string; // Search by name/email/orderId
+  sort?: string;   // e.g., "grandTotal-desc" or "checkoutAt-asc"
+  orderStatus?: string; // e.g., "pending"
+  paymentMethod?: string; // e.g., "bkash"
+  paymentStatus?: string; // "paid" or "unpaid"
+  deliveryMethod?: string; // "home-delivery" etc.
+  city?: string;
+  fromDate?: string; // ISO format
+  toDate?: string;   // ISO format
+  isDashboardRequest?: boolean;
 }

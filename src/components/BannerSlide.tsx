@@ -13,18 +13,19 @@ type SlidePropsType = {
 
 const BannerSlide = ({ bannerData }: SlidePropsType) => {
   return (
-    <div className="w-full">
+    <div className="w-full"
+      style={{
+                backgroundImage:"linear-gradient(to right, #0f2257, #0c3679)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}>
       <Swiper
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         loop={true}
         className="w-full"
-          style={{
-                backgroundImage:"linear-gradient(to right, #1e3a8a, #3b82f6)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+        
       >
         {bannerData?.map((banner) => (
           <SwiperSlide key={String(banner._id)}>
@@ -48,7 +49,7 @@ const BannerSlide = ({ bannerData }: SlidePropsType) => {
                     <p className="">{banner.subtitle}</p>
                     <Link
                       href={banner.link}
-                      className="inline-block px-5 py-1 bg-white text-brandPrimary font-semibold rounded-sm hover:bg-gray-200 transition"
+                      className="btn-bordered border-white text-white rounded-sm h-7 hover:bg-gray-300 hover:text-black"
                     >
                       View Product
                     </Link>

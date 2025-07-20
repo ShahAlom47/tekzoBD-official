@@ -6,6 +6,8 @@ import { FaHome, FaFolderOpen, FaPlus,  } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
 import { TbLayoutGridAdd } from "react-icons/tb";
 import { MdCategory } from "react-icons/md";
+import { BsCartCheckFill } from "react-icons/bs";
+
 
 
 interface PropsType {
@@ -17,6 +19,7 @@ const DashNavbar: React.FC<PropsType> = ({ isOpen }) => {
 
   const navItems = [
     { name: "OverView", href: "/dashboard", icon: FaHome },
+    { name: "Orders", href: "/dashboard/manageOrders", icon: BsCartCheckFill },
     { name: "Products", href: "/dashboard/manageProducts", icon: AiFillProduct },
     { name: " Add Products", href: "/dashboard/manageProducts/addProducts", icon: TbLayoutGridAdd  },
     { name: " Category", href: "/dashboard/manageCategory", icon: MdCategory  },
