@@ -1,45 +1,73 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-type OrderFiltersProps = {
-  onFilterChange: (filters: {
-    orderStatus: string;
-    paymentMethod: string;
-    deliveryMethod: string;
-    fromDate: string;
-    toDate: string;
-  }) => void;
+type Filters = {
+  orderStatus: string;
+  paymentMethod: string;
+  deliveryMethod: string;
+  fromDate: string;
+  toDate: string;
 };
 
+type OrderFiltersProps = {
+  onFilterChange: (filters: Filters) => void;
+};
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
+  const [filters, setFilters] = useState<Filters>({
+    orderStatus: "",
+    paymentMethod: "",
+    deliveryMethod: "",
+    fromDate: "",
+    toDate: "",
+  });
 
-  const [orderStatus, setOrderStatus] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const debouncedFilters = useDebounce(filters, 500);
 
-  const handleApplyFilters = () => {
-    onFilterChange({  orderStatus, paymentMethod, deliveryMethod, fromDate, toDate });
+  useEffect(() => {
+    onFilterChange(debouncedFilters);
+  }, [debouncedFilters, onFilterChange]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleResetFilters = () => {
-    setOrderStatus("");
-    setPaymentMethod("");
-    setDeliveryMethod("");
-    setFromDate("");
-    setToDate("");
-    onFilterChange({  orderStatus: "", paymentMethod: "", deliveryMethod: "", fromDate: "", toDate: "" });
+    const emptyFilters: Filters = {
+      orderStatus: "",
+      paymentMethod: "",
+      deliveryMethod: "",
+      fromDate: "",
+      toDate: "",
+    };
+    setFilters(emptyFilters);
+    onFilterChange(emptyFilters);
   };
 
   return (
     <div className="mb-6 p-4 bg-white rounded-md shadow-md grid grid-cols-1 md:grid-cols-3 gap-4">
-    
-
       <select
-        value={orderStatus}
-        onChange={(e) => setOrderStatus(e.target.value)}
+        name="orderStatus"
+        value={filters.orderStatus}
+        onChange={handleChange}
         className="my-input"
       >
         <option value="">All Status</option>
@@ -51,8 +79,9 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
       </select>
 
       <select
-        value={paymentMethod}
-        onChange={(e) => setPaymentMethod(e.target.value)}
+        name="paymentMethod"
+        value={filters.paymentMethod}
+        onChange={handleChange}
         className="my-input"
       >
         <option value="">All Payment Methods</option>
@@ -63,8 +92,9 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
       </select>
 
       <select
-        value={deliveryMethod}
-        onChange={(e) => setDeliveryMethod(e.target.value)}
+        name="deliveryMethod"
+        value={filters.deliveryMethod}
+        onChange={handleChange}
         className="my-input"
       >
         <option value="">All Delivery Types</option>
@@ -78,8 +108,9 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
         <label className="block mb-1 text-sm font-medium">From Date</label>
         <input
           type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
+          name="fromDate"
+          value={filters.fromDate}
+          onChange={handleChange}
           className="my-input"
         />
       </div>
@@ -88,19 +119,14 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
         <label className="block mb-1 text-sm font-medium">To Date</label>
         <input
           type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
+          name="toDate"
+          value={filters.toDate}
+          onChange={handleChange}
           className="my-input"
         />
       </div>
 
       <div className="md:col-span-3 flex gap-4 mt-2">
-        <button
-          onClick={handleApplyFilters}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Apply
-        </button>
         <button
           onClick={handleResetFilters}
           className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"

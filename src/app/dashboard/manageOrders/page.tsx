@@ -93,6 +93,7 @@ const ManageOrders = () => {
     { header: "Email", accessor: "email" },
     { header: "Phone", accessor: "phone" },
     { header: "Qty", accessor: "quantity" },
+    { header: "Delivery Methods", accessor: "deliveryMethods" },
     { header: "Delivery Type", accessor: "deliveryType" },
     { header: "Total", accessor: "total" },
     { header: "Status", accessor: "status" },
@@ -115,7 +116,8 @@ const ManageOrders = () => {
       email: meta.userEmail || "N/A",
       phone: shippingInfo?.phone || "N/A",
       quantity: pricing.totalQuantity,
-      deliveryType: paymentInfo?.method || shippingInfo?.deliveryMethod || "N/A",
+      deliveryMethods: paymentInfo?.method || "N/A",
+      deliveryType:  shippingInfo?.deliveryMethod || "N/A",
       total: `${pricing.grandTotal.toFixed(2)} TK`,
       status: meta.orderStatus,
       date: new Date(meta.checkoutAt).toLocaleDateString("en-GB"),
@@ -156,7 +158,7 @@ const ManageOrders = () => {
          {/* Filter section added here */}
       <OrderFilters onFilterChange={(newFilters) => {
         setFilters(newFilters);
-        setPage(1); // reset to first page on filter change
+        setPage(1); 
       }} />
       {isLoading ? (
         <Loading />

@@ -35,14 +35,16 @@ export async function GET(req: NextRequest) {
 
     const filter: any = {};
 
-    if (search) {
-      filter.$or = [
-        { "meta.userName": { $regex: search, $options: "i" } },
-        { "meta.userEmail": { $regex: search, $options: "i" } },
-        { "shippingInfo.name": { $regex: search, $options: "i" } },
-        { "shippingInfo.phone": { $regex: search, $options: "i" } },
-      ];
-    }
+   if (search) {
+  filter.$or = [
+    { "meta.userName": { $regex: search, $options: "i" } },
+    { "meta.userEmail": { $regex: search, $options: "i" } },
+    { "shippingInfo.name": { $regex: search, $options: "i" } },
+    { "shippingInfo.phone": { $regex: search, $options: "i" } },
+    { "cartProducts.productName": { $regex: search, $options: "i" } }, // ✅ product name search
+  ];
+}
+
 
     if (orderStatus) filter["meta.orderStatus"] = orderStatus;
     if (paymentMethod) filter["paymentInfo.method"] = paymentMethod;
