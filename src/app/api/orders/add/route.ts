@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CheckoutDataType;
 
-    // Optional: minimal manual validation
     if (!body?.cartProducts?.length || !body?.shippingInfo || !body?.pricing || !body?.paymentInfo) {
       return NextResponse.json(
         { success: false, message: "Missing required order fields." },
@@ -16,7 +15,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-  
+    // যদি checkoutAt না থাকে, নতুন টাইমস্ট্যাম্প দিন
+    if (!body.meta.checkoutAt) {
+      body.meta.checkoutAt = new Date().toISOString();
+    }
+
+    // অথবা চাইলে এখানে Date অবজেক্টও ব্যবহার করতে পারেন
+    // body.meta.checkoutAt = new Date();
 
     const orderCollection = await getOrderCollection();
     const result = await orderCollection.insertOne(body);
@@ -42,10 +47,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Optional: Reject unsupported methods (good for production)
-export async function GET() {
-  return NextResponse.json(
-    { success: false, message: "Method not allowed" },
-    { status: 405 }
-  );
-}
+

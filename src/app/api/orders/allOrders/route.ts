@@ -10,15 +10,16 @@ export async function GET(req: NextRequest) {
     const orderCollection = await getOrderCollection();
     const session = await getServerSession(authOptions);
     const user = session?.user || null;
+
     const isDashboard = req.headers.get("x-from-dashboard") === "true";
     const isPublic = !isDashboard || !user;
-    console.log("isDashboard:", isDashboard, "isPublic:", isPublic);
+    console.log("Is Dashboard Request:", isDashboard, "Is Public:", isPublic);
 
     const currentPage = parseInt(url.searchParams.get("currentPage") || "1", 10);
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
     const skip = (currentPage - 1) * pageSize;
 
-    const search = url.searchParams.get("search")?.trim().toLowerCase();
+    const search = url.searchParams.get("search")?.trim() || "";
     const sort = url.searchParams.get("sort") || "checkoutAt-desc";
 
     const orderStatus = url.searchParams.get("orderStatus");
@@ -30,21 +31,23 @@ export async function GET(req: NextRequest) {
     const toDate = url.searchParams.get("toDate");
 
     if (isNaN(currentPage) || isNaN(pageSize)) {
-      return NextResponse.json({ message: "Invalid pagination params", success: false }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid pagination params", success: false },
+        { status: 400 }
+      );
     }
 
     const filter: any = {};
 
-   if (search) {
-  filter.$or = [
-    { "meta.userName": { $regex: search, $options: "i" } },
-    { "meta.userEmail": { $regex: search, $options: "i" } },
-    { "shippingInfo.name": { $regex: search, $options: "i" } },
-    { "shippingInfo.phone": { $regex: search, $options: "i" } },
-    { "cartProducts.productName": { $regex: search, $options: "i" } }, // ✅ product name search
-  ];
-}
-
+    if (search) {
+      filter.$or = [
+        { "meta.userName": { $regex: search, $options: "i" } },
+        { "meta.userEmail": { $regex: search, $options: "i" } },
+        { "shippingInfo.name": { $regex: search, $options: "i" } },
+        { "shippingInfo.phone": { $regex: search, $options: "i" } },
+        { "cartProducts.productName": { $regex: search, $options: "i" } },
+      ];
+    }
 
     if (orderStatus) filter["meta.orderStatus"] = orderStatus;
     if (paymentMethod) filter["paymentInfo.method"] = paymentMethod;
@@ -52,20 +55,31 @@ export async function GET(req: NextRequest) {
     if (deliveryMethod) filter["shippingInfo.deliveryMethod"] = deliveryMethod;
     if (city) filter["shippingInfo.city"] = { $regex: city, $options: "i" };
 
+    // Date filtering with start/end of day
     if (fromDate || toDate) {
       const dateRange: any = {};
-      if (fromDate) dateRange.$gte = new Date(fromDate);
-      if (toDate) dateRange.$lte = new Date(toDate);
+
+      if (fromDate) {
+        dateRange.$gte = new Date(new Date(fromDate).setHours(0, 0, 0, 0));
+      }
+
+      if (toDate) {
+        dateRange.$lte = new Date(new Date(toDate).setHours(23, 59, 59, 999));
+      }
+
       filter["meta.checkoutAt"] = dateRange;
     }
 
-    // Sorting
     const sortQuery: any = {};
     if (sort.includes("-")) {
       const [field, order] = sort.split("-");
-      sortQuery[`meta.${field}`] = order === "desc" ? -1 : 1;
+      if (["checkoutAt", "orderStatus", "userName", "userEmail"].includes(field)) {
+        sortQuery[`meta.${field}`] = order === "desc" ? -1 : 1;
+      } else {
+        sortQuery[field] = order === "desc" ? -1 : 1;
+      }
     } else {
-      sortQuery[`meta.${sort}`] = -1; // default to descending
+      sortQuery["meta.checkoutAt"] = -1;
     }
 
     const [data, total] = await Promise.all([
@@ -73,21 +87,26 @@ export async function GET(req: NextRequest) {
       orderCollection.countDocuments(filter),
     ]);
 
-    return NextResponse.json({
-      success: true,
-      message: "Orders retrieved successfully",
-      data,
-      totalData: total,
-      currentPage,
-      totalPages: Math.ceil(total / pageSize),
-    }, { status: 200 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Orders retrieved successfully",
+        data,
+        totalData: total,
+        currentPage,
+        totalPages: Math.ceil(total / pageSize),
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("GET /api/orders/getAllOrders Error:", error);
-    return NextResponse.json({
-      success: false,
-      message: "Failed to retrieve orders",
-      error: error instanceof Error ? error.message : String(error),
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to retrieve orders",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
   }
 }

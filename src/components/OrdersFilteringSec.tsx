@@ -63,46 +63,61 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="mb-6 p-4 bg-white rounded-md shadow-md grid grid-cols-1 md:grid-cols-3 gap-4">
-      <select
-        name="orderStatus"
-        value={filters.orderStatus}
-        onChange={handleChange}
-        className="my-input"
-      >
-        <option value="">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="shipped">Shipped</option>
-        <option value="delivered">Delivered</option>
-        <option value="cancelled">Cancelled</option>
-      </select>
+    <div className="mb-6 p-4 bg-white rounded-md shadow-md grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div>
+        <label className="block mb-1 text-sm font-medium">
+          Filter By Status
+        </label>
+        <select
+          name="orderStatus"
+          value={filters.orderStatus}
+          onChange={handleChange}
+          className="my-input"
+        >
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
 
-      <select
-        name="paymentMethod"
-        value={filters.paymentMethod}
-        onChange={handleChange}
-        className="my-input"
-      >
-        <option value="">All Payment Methods</option>
-        <option value="card">Card</option>
-        <option value="cash-on-delivery">Cash on Delivery</option>
-        <option value="bkash">Bkash</option>
-        <option value="nagad">Nagad</option>
-      </select>
+      <div>
+        <label className="block mb-1 text-sm font-medium">
+          Filter By Payment Method
+        </label>
+        <select
+          name="paymentMethod"
+          value={filters.paymentMethod}
+          onChange={handleChange}
+          className="my-input"
+        >
+          <option value="">All Payment Methods</option>
+          <option value="card">Card</option>
+          <option value="cash-on-delivery">Cash on Delivery</option>
+          <option value="bkash">Bkash</option>
+          <option value="nagad">Nagad</option>
+        </select>
+      </div>
 
-      <select
-        name="deliveryMethod"
-        value={filters.deliveryMethod}
-        onChange={handleChange}
-        className="my-input"
-      >
-        <option value="">All Delivery Types</option>
-        <option value="home-delivery">Home Delivery</option>
-        <option value="standard">Standard</option>
-        <option value="express">Express</option>
-        <option value="pickup">Pickup</option>
-      </select>
+      <div>
+        <label className="block mb-1 text-sm font-medium">
+          Filter By Delivery Method
+        </label>
+        <select
+          name="deliveryMethod"
+          value={filters.deliveryMethod}
+          onChange={handleChange}
+          className="my-input"
+        >
+          <option value="">All Delivery Methods</option>
+          <option value="home-delivery">Home Delivery</option>
+          <option value="standard">Standard</option>
+          <option value="express">Express</option>
+          <option value="pickup">Pickup</option>
+        </select>
+      </div>
 
       <div>
         <label className="block mb-1 text-sm font-medium">From Date</label>
@@ -126,7 +141,7 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
         />
       </div>
 
-      <div className="md:col-span-3 flex gap-4 mt-2">
+      <div className="flex gap-4 ">
         <button
           onClick={handleResetFilters}
           className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"

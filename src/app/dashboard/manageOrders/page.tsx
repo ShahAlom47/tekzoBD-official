@@ -144,6 +144,8 @@ const ManageOrders = () => {
     };
   });
 
+  console.log(orderData)
+
   return (
     <div className="p-4 min-h-screen">
       <div className="flex justify-between mb-4">
