@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { GrPowerReset } from "react-icons/gr";
 
 type Filters = {
   orderStatus: string;
@@ -26,6 +27,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     orderStatus: "",
     paymentMethod: "",
@@ -63,91 +65,107 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="mb-6 p-4 bg-white rounded-md shadow-md grid grid-cols-1 md:grid-cols-6 gap-4">
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          Filter By Status
-        </label>
-        <select
-          name="orderStatus"
-          value={filters.orderStatus}
-          onChange={handleChange}
-          className="my-input"
-        >
-          <option value="">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          Filter By Payment Method
-        </label>
-        <select
-          name="paymentMethod"
-          value={filters.paymentMethod}
-          onChange={handleChange}
-          className="my-input"
-        >
-          <option value="">All Payment Methods</option>
-          <option value="card">Card</option>
-          <option value="cash-on-delivery">Cash on Delivery</option>
-          <option value="bkash">Bkash</option>
-          <option value="nagad">Nagad</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block mb-1 text-sm font-medium">
-          Filter By Delivery Method
-        </label>
-        <select
-          name="deliveryMethod"
-          value={filters.deliveryMethod}
-          onChange={handleChange}
-          className="my-input"
-        >
-          <option value="">All Delivery Methods</option>
-          <option value="home-delivery">Home Delivery</option>
-          <option value="standard">Standard</option>
-          <option value="express">Express</option>
-          <option value="pickup">Pickup</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block mb-1 text-sm font-medium">From Date</label>
-        <input
-          type="date"
-          name="fromDate"
-          value={filters.fromDate}
-          onChange={handleChange}
-          className="my-input"
-        />
-      </div>
-
-      <div>
-        <label className="block mb-1 text-sm font-medium">To Date</label>
-        <input
-          type="date"
-          name="toDate"
-          value={filters.toDate}
-          onChange={handleChange}
-          className="my-input"
-        />
-      </div>
-
-      <div className="flex gap-4 ">
+    <div className="relative mb-6 p-3 bg-white shadow-md rounded-md">
+      {/* Toggle Button */}
+      <div className="w-full flex justify-center border-b-2 border-brandPrimary mb-3">
         <button
-          onClick={handleResetFilters}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+          className="btn-base text-sm h-8 rounded-t-md"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls="filter-section"
         >
-          Reset
+          Filtering {isOpen ? "▲" : "▼"}
         </button>
+      </div>
+
+      {/* Filter Inputs Wrapper with smooth height animation */}
+      <div
+        id="filter-section"
+        className={`overflow-hidden transition-all duration-500 ease-in-out grid grid-cols-1 md:grid-cols-5 gap-4 ${
+          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div>
+          <label className="block mb-1 text-sm font-medium">Filter By Status</label>
+          <select
+            name="orderStatus"
+            value={filters.orderStatus}
+            onChange={handleChange}
+            className="my-input bg-slate-200"
+          >
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">Filter By Payment Method</label>
+          <select
+            name="paymentMethod"
+            value={filters.paymentMethod}
+            onChange={handleChange}
+            className="my-input bg-slate-200"
+          >
+            <option value="">All Payment Methods</option>
+            <option value="card">Card</option>
+            <option value="cash-on-delivery">Cash on Delivery</option>
+            <option value="bkash">Bkash</option>
+            <option value="nagad">Nagad</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">Filter By Delivery Method</label>
+          <select
+            name="deliveryMethod"
+            value={filters.deliveryMethod}
+            onChange={handleChange}
+            className="my-input bg-slate-200"
+          >
+            <option value="">All Delivery Methods</option>
+            <option value="home-delivery">Home Delivery</option>
+            <option value="standard">Standard</option>
+            <option value="express">Express</option>
+            <option value="pickup">Pickup</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">From Date</label>
+          <input
+            type="date"
+            name="fromDate"
+            value={filters.fromDate}
+            onChange={handleChange}
+            className="my-input bg-slate-200"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">To Date</label>
+          <input
+            type="date"
+            name="toDate"
+            value={filters.toDate}
+            onChange={handleChange}
+            className="my-input bg-slate-200"
+          />
+        </div>
+
+        {/* Reset Button spanning full width at the bottom */}
+        <div className="md:col-span-5 flex justify-end mt-2">
+          <button
+            onClick={handleResetFilters}
+            title="Reset Filters"
+            className="btn-bordered rounded-sm p-2 flex items-center gap-1"
+          >
+            <GrPowerReset size={16} /> Reset
+          </button>
+        </div>
       </div>
     </div>
   );

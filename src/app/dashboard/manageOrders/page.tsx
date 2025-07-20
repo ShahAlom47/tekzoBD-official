@@ -42,7 +42,7 @@ const ManageOrders = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["getAllOrders", filters, page],
+    queryKey: ["getAllOrders", filters, page,searchValue],
     queryFn: async () => {
       const response = await getAllOrders({
         currentPage: page,
@@ -112,7 +112,7 @@ const ManageOrders = () => {
 
     return {
       user: meta.userName  || "Guest",
-      customElements : shippingInfo?.name || "Guest",
+      customer :shippingInfo?.name || "Guest",
       email: meta.userEmail || "N/A",
       phone: shippingInfo?.phone || "N/A",
       quantity: pricing.totalQuantity,
