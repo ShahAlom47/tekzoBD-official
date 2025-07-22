@@ -6,7 +6,7 @@ import { CustomTable } from "@/components/ui/CustomTable";
 import { DashPaginationButton } from "@/components/ui/DashPaginationButton";
 import { useConfirm } from "@/hooks/useConfirm";
 import { useAppSelector } from "@/redux/hooks/reduxHook";
-import { getAllOrders } from "@/lib/allApiRequest/orderRequest/orderRequest";
+import { deleteOrder, getAllOrders } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { MdDeleteSweep } from "react-icons/md";
 import Link from "next/link";
 import OrderFilters from "@/components/OrdersFilteringSec";
+import OrderStatus from "@/components/OrderStatus";
 
 const ManageOrders = () => {
   const { ConfirmModal, confirm } = useConfirm();
@@ -74,8 +75,12 @@ const ManageOrders = () => {
     if (ok && id) {
       try {
         // Replace this with your deleteOrder API
-        // const deleteResponse = await deleteOrder(id);
-        toast.success("Deleted (mock) — connect to real delete API");
+        const deleteResponse = await deleteOrder(id);
+        if(deleteResponse.success) {
+          toast.success("Order deleted successfully");
+        } else {
+          toast.error("Failed to delete order");
+        }
         queryClient.invalidateQueries({ queryKey: ["getAllOrders"] });
       } catch (error) {
         toast.error("Error deleting order");
@@ -116,7 +121,7 @@ const ManageOrders = () => {
       deliveryMethods: paymentInfo?.method || "N/A",
       deliveryType:  shippingInfo?.deliveryMethod || "N/A",
       total: `${pricing.grandTotal.toFixed(2)} TK`,
-      status: meta.orderStatus,
+      status: (<OrderStatus status={meta?.orderStatus}/>),
       date: new Date(meta.checkoutAt).toLocaleDateString("en-GB"),
       action: (
         <div className="flex gap-2 items-center">
@@ -141,7 +146,7 @@ const ManageOrders = () => {
     };
   });
 
-  console.log(orderData)
+
 
   return (
     <div className="p-4 min-h-screen">

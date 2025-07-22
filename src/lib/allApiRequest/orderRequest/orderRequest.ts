@@ -2,6 +2,7 @@
 
 import { CheckoutDataType, GetAllOrdersParams } from "@/Interfaces/checkoutDataInterface";
 import { request } from "../apiRequests";
+import { ObjectId } from "mongodb";
 
 
 
@@ -46,4 +47,9 @@ export const getAllOrders = async (params: GetAllOrdersParams) => {
     : undefined;
 
   return request("GET", url, undefined, undefined, customHeaders);
+};
+
+
+export const deleteOrder = async (id: string | ObjectId) => {
+  return request("DELETE", `/orders/delete/${id}`);
 };
