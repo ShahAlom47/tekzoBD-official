@@ -8,21 +8,22 @@ import Loading from "@/app/loading";
 import Error from "@/app/error";
 import OrderDetailsContent from "@/components/OrderDetailsContent";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
+import DashPageTitle from "@/components/DashPageTitle";
 
 const OrderDetails = () => {
-  const { id } = useParams();
+  const { orderId } = useParams();
 
   const {
     data: order,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["order-details", id],
+    queryKey: ["order-details", orderId],
     queryFn: async () =>{
-        const res = await getSingleOrder(id?.toString() || "");
+        const res = await getSingleOrder(orderId?.toString() || "");
         return res?.data  as CheckoutDataType;
     },
-    enabled: !!id,
+    enabled: !!orderId,
   });
 
   if (isLoading) return <Loading />;
@@ -33,9 +34,11 @@ const OrderDetails = () => {
       />
     );
 
+
+    console.log("Order Details:", order,orderId);
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+    <DashPageTitle > Order Details</DashPageTitle>
       {order ? (
         <OrderDetailsContent order={order} />
       ) : (

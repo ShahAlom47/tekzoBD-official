@@ -128,7 +128,7 @@ const ManageOrders = () => {
           <Link
             href={
               order?._id
-                ? `/dashboard/ManageOrderss/${order._id.toString()}`
+                ? `/dashboard/manageOrders/${order._id.toString()}`
                 : "#"
             }
             className="text-blue-600 hover:underline"
