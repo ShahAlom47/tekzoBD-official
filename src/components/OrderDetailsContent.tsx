@@ -43,21 +43,21 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 py-3">
       {/* Order Summary */}
-      <div className=" p-6 rounded shadow">
+      <div className=" p-6 rounded shadow border bg-grayLight border-brandPrimary">
         <h2 className="text-lg font-semibold mb-2">Order Summary</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <p>
             <strong>Order ID:</strong> {_id?.toString()}
           </p>
-          <p className="">
-            <strong>Status:</strong>
+          <div className="">
+            <strong>Status: </strong>
             <OrderStatusSelect
               status={meta?.orderStatus}
               id={_id?.toString() ?? ""}
             />
-          </p>
+          </div>
           <p>
             <strong>Ordered On:</strong>{" "}
             {format(new Date(meta?.checkoutAt), "PPP p")}
@@ -73,7 +73,7 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
 
       {/* Shipping Info */}
       {shippingInfo && (
-        <div className="bg-white p-6 rounded shadow">
+        <div className="bg-grayLight p-6 rounded shadow border border-brandPrimary">
           <h2 className="text-lg font-semibold mb-2">Shipping Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <p>
@@ -102,7 +102,7 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
 
       {/* Payment Info */}
       {paymentInfo && (
-        <div className="bg-white p-6 rounded shadow">
+        <div className="bg-grayLight p-6 rounded shadow border border-brandPrimary">
           <h2 className="text-lg font-semibold mb-2">Payment Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <p>
@@ -121,7 +121,7 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
       )}
 
       {/* Pricing Summary */}
-      <div className="bg-white p-6 rounded shadow">
+      <div className="bg-grayLight p-6 rounded shadow border border-brandPrimary">
         <h2 className="text-lg font-semibold mb-2">Pricing Summary</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <p>
@@ -143,7 +143,7 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
       </div>
 
       {/* Product List */}
-      <div className="bg-white p-6 rounded shadow">
+      <div className="bg-grayLight p-6 rounded shadow border border-brandPrimary">
         <h2 className="text-lg font-semibold mb-4">Products</h2>
         <div className="space-y-4">
           {cartProducts.map((item, idx) => (

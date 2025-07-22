@@ -58,7 +58,7 @@ const OrderStatusSelect: React.FC<Props> = ({ id, status, onStatusChange }) => {
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-500";
+        return "bg-yellow-600";
       case "confirmed":
         return "bg-blue-500";
       case "shipped":
