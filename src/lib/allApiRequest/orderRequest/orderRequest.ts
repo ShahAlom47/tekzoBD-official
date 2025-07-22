@@ -48,7 +48,9 @@ export const getAllOrders = async (params: GetAllOrdersParams) => {
 
   return request("GET", url, undefined, undefined, customHeaders);
 };
-
+export const getSingleOrder = async (id: string | ObjectId) => {
+  return request("GET", `/orders/details/${id}`);
+};
 
 export const deleteOrder = async (id: string | ObjectId) => {
   return request("DELETE", `/orders/delete/${id}`);
