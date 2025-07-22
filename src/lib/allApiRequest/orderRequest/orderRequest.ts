@@ -53,3 +53,6 @@ export const getAllOrders = async (params: GetAllOrdersParams) => {
 export const deleteOrder = async (id: string | ObjectId) => {
   return request("DELETE", `/orders/delete/${id}`);
 };
+export const updateOrderStatus = async (id: string | ObjectId,newStatus:string) => {
+  return request("PATCH", `/orders/update/${id}`, { status: newStatus });
+};
