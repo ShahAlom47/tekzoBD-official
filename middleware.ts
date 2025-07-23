@@ -9,9 +9,10 @@ export default withAuth(
 
     const publicRoutes = ["/", "/login", "/register", "/about", "/portfolio"];
     const publicApiRoutes = ["/api/public-data", "/api/blogs"];
+    
      const adminApiRoutes = [
-      "/api/portfolio/addPortfolio",
-      "/api/portfolio/deletePortfolio",
+     
+      "/api/orders/allOrders",
       "/api/portfolio/updatePortfolio",
     ];
 
@@ -29,7 +30,7 @@ export default withAuth(
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    console.log("🔐 Middleware hit:", pathname, "| Role:", role);
+    // console.log("🔐 Middleware hit:", pathname, "| Role:", role);
 
     // ✅ Admin-only routes
     if (pathname.startsWith("/dashboard/admin") && role === "admin") {

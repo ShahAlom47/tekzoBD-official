@@ -55,6 +55,7 @@ export const getSingleOrder = async (id: string | ObjectId) => {
 export const deleteOrder = async (id: string | ObjectId) => {
   return request("DELETE", `/orders/delete/${id}`);
 };
+
 export const updateOrderStatus = async (id: string | ObjectId,newStatus:string) => {
   return request("PATCH", `/orders/updateStatus/${id}`, { status: newStatus });
 };

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 
 
 
@@ -9,6 +10,7 @@ export interface RegisterUser {
     }
 
     export interface Users {
+  _id: string|ObjectId;
   email: string;
   name: string;
   password: string;
