@@ -9,9 +9,8 @@ export default withAuth(
 
     const publicRoutes = ["/", "/login", "/register", "/about", "/portfolio"];
     const publicApiRoutes = ["/api/public-data", "/api/blogs"];
-    
-     const adminApiRoutes = [
-     
+
+    const adminApiRoutes = [
       "/api/orders/allOrders",
       "/api/portfolio/updatePortfolio",
     ];
@@ -36,16 +35,21 @@ export default withAuth(
     if (pathname.startsWith("/dashboard/admin") && role === "admin") {
       return NextResponse.next();
     }
-   
+
     if (adminApiRoutes.includes(pathname) && role === "admin") {
       return NextResponse.next();
+    }
+
+    if (pathname.startsWith("/user") && !token) {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     // ✅ User-only routes
     if (
       (pathname.startsWith("/dashboard/user") ||
-        pathname.startsWith("/api/user")) &&
-      role === "user"
+        pathname.startsWith("/api/user") ||
+        pathname.startsWith("/user")) &&
+      (role === "user" || role === "admin")
     ) {
       return NextResponse.next();
     }
@@ -90,5 +94,5 @@ export default withAuth(
 
 // ✅ Middleware active on dashboard and API routes
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: ["/dashboard/:path*", "/api/:path*", "/user/:path*"],
 };
