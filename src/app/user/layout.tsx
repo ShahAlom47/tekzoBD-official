@@ -6,8 +6,8 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <UserLayoutWrapper>
-      {children}
-    </UserLayoutWrapper>
+    <main className="max-w my-4">
+      <UserLayoutWrapper>{children}</UserLayoutWrapper>
+    </main>
   );
 }

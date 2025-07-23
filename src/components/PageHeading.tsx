@@ -28,6 +28,7 @@ const PageHeading = ({ title, isDetailsPage, subTitle }: { title?: string; isDet
           Home
         </Link>
         {pathSegments.map((segment, index) => {
+            if (segment === "user") return null; // Skip 'user'
           const isCurrent =
             (lastIndex === index && !isDetailsPage) ||
             (lastIndex === index && isDetailsPage);
@@ -35,7 +36,7 @@ const PageHeading = ({ title, isDetailsPage, subTitle }: { title?: string; isDet
           const segmentText =
             index === lastIndex && isDetailsPage
               ? title
-              : segment.replace(/-/g, " ");
+              :segment.replace(/-/g, " ");
 
           const segmentHref = `/${pathSegments.slice(0, index + 1).join("/")}`;
 
