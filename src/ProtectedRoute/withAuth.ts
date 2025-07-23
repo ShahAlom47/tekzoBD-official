@@ -1,67 +1,74 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/withAuth.ts
-import authOptions from "@/app/api/auth/authOptions/authOptions";
 import { getServerSession } from "next-auth/next";
-import { NextApiRequest, NextApiResponse, NextApiHandler } from "next";
-import { Users } from "@/Interfaces/userInterfaces";
+import authOptions from "@/app/api/auth/authOptions/authOptions";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Extend request with user info
-declare module "next" {
-  interface NextApiRequest {
-    user?:Users
-  }
+interface User {
+  id: string;
+  role: string;
+  email: string;
+  name?: string;
 }
 
 interface WithAuthOptions {
   allowedRoles?: string[];
-  matchUserParamId?: boolean; // Optional: check if user.id === req.query.id
+  matchUserParamId?: boolean;
+}
+
+// Custom interface to extend NextRequest with user info
+declare module "next/server" {
+  interface NextRequest {
+    user?: User;
+  }
 }
 
 export function withAuth(
-  handler: NextApiHandler,
+  handler: (req: NextRequest, context: { params: any }) => Promise<Response | NextResponse>,
   options: WithAuthOptions = {}
 ) {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = await getServerSession(req, res, authOptions);
+  return async (req: NextRequest, context: { params: any }) => {
+    const session = await getServerSession(authOptions);
 
     if (!session) {
-      return res.status(401).json({ message: "Unauthorized: No session found" });
+      return NextResponse.json(
+        { message: "Unauthorized: No session found" },
+        { status: 401 }
+      );
     }
 
-    const { user } = session;
+    const user = session.user as User;
     const { allowedRoles = [], matchUserParamId = false } = options;
 
-    // ✅ Role check
+    // Role check
     if (
       allowedRoles.length > 0 &&
       (!user.role || !allowedRoles.includes(user.role))
     ) {
-      return res.status(403).json({ message: "Forbidden: Role not allowed" });
+      return NextResponse.json(
+        { message: "Forbidden: Role not allowed" },
+        { status: 403 }
+      );
     }
 
-    // ✅ Ownership check if enabled
-    if (matchUserParamId && req.query.id && user.role === "user") {
-      const paramId = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
-      if (user.id !== paramId) {
-        return res.status(403).json({ message: "Forbidden: Cannot access others' data" });
+    // Ownership check (optional)
+    if (matchUserParamId && context.params.id && user.role === "user") {
+      if (user.id !== context.params.id) {
+        return NextResponse.json(
+          { message: "Forbidden: Cannot access others' data" },
+          { status: 403 }
+        );
       }
     }
 
-    // Attach user to req object with required properties
-    const { id, role = "", email = "", name } = user;
-    req.user = {
-      _id: id ?? "",
-      role: role ?? "",
-      email: email ?? "",
-      name: name ?? "",
-      password: "", // Password is required by Users interface, but should not be exposed
-    };
+    // Attach user to request object (TypeScript ignore needed for augmentation)
+    
+    req.user = user;
 
-    // Proceed to original handler
-    return handler(req, res);
+    return handler(req, context);
   };
 }
-
-
 
 
 // uses example:
