@@ -73,36 +73,40 @@ export function withAuth(
 
 // uses example:
 
-// pages/api/orders/[id].ts
-// import { NextApiRequest, NextApiResponse } from "next";
-// import { withAuth } from "@/lib/withAuth";
-// import { getOrderCollection } from "@/lib/database/db_collections";
-// import { ObjectId } from "mongodb";
 
-// async function handler(req: NextApiRequest, res: NextApiResponse) {
-//   const { id } = req.query;
-//   const { status } = req.body;
-//   const user = req.user;
-
-//   if (!id || typeof id !== "string") {
-//     return res.status(400).json({ message: "Order ID required" });
+// const handler = async (req: NextRequest, context: { params: { id: string } }) => {
+//   if (req.method !== "PATCH") {
+//     return NextResponse.json(
+//       { message: "Method Not Allowed" },
+//       { status: 405 }
+//     );
 //   }
 
-//   // শুধু নিজের order update করতে পারবে user role হলে
-//   if (user.role === "user") {
-//     const orderCollection = await getOrderCollection();
-//     const order = await orderCollection.findOne({ _id: new ObjectId(id) });
-//     if (!order) return res.status(404).json({ message: "Order not found" });
-//     if (order.userId.toString() !== user.id) {
-//       return res.status(403).json({ message: "Forbidden: Not your order" });
-//     }
+//   const { id } = context.params;
+//   const body = await req.json();
+ 
+// // related  code 
+ 
+//   const user = req.user as User ; // Type assertion for user
+
+//   // If user role is "user", only update own order
+//   if (
+//     user?.role === "user" &&
+//     (!order.userId || order.userId.toString() !== user.id)
+//   ) {
+//     return NextResponse.json(
+//       { message: "Forbidden: cannot update others' orders", success: false },
+//       { status: 403 }
+//     );
 //   }
 
-//   // এখন order update করার লজিক
-//   // ...
 
-//   res.status(200).json({ message: "Order updated successfully" });
-// }
+//   return NextResponse.json(
+//     { message: "Order status updated successfully", success: true },
+//     { status: 200 }
+//   );
+// };
 
-// // allowedRoles: শুধু admin আর user access পাবে
-// export default withAuth(handler, { allowedRoles: ["admin", "user"] });
+// export const PATCH = withAuth(handler, {
+//   allowedRoles: [ "admin", "user"],
+// });

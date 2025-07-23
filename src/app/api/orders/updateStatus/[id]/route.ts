@@ -6,7 +6,10 @@ import { ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const handler = async (req: NextRequest, context: { params: { id: string } }) => {
+const handler = async (
+  req: NextRequest,
+  context: { params: { id: string } }
+) => {
   if (req.method !== "PATCH") {
     return NextResponse.json(
       { message: "Method Not Allowed" },
@@ -18,7 +21,13 @@ const handler = async (req: NextRequest, context: { params: { id: string } }) =>
   const body = await req.json();
   const { status } = body;
 
-  const allowedStatuses = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+  const allowedStatuses = [
+    "pending",
+    "confirmed",
+    "shipped",
+    "delivered",
+    "cancelled",
+  ];
 
   if (!status) {
     return NextResponse.json(
@@ -45,8 +54,7 @@ const handler = async (req: NextRequest, context: { params: { id: string } }) =>
     );
   }
 
- 
-  const user = req.user as User ; // Type assertion for user
+  const user = req.user as User; // Type assertion for user
 
   // If user role is "user", only update own order
   if (
@@ -56,6 +64,20 @@ const handler = async (req: NextRequest, context: { params: { id: string } }) =>
     return NextResponse.json(
       { message: "Forbidden: cannot update others' orders", success: false },
       { status: 403 }
+    );
+  }
+
+  const isUser = user?.role === "user";
+  const isCancelling = status === "cancelled";
+  const isAlreadyInProgress = order.meta.orderStatus !== "pending";
+
+  if (isUser && isCancelling && isAlreadyInProgress) {
+    return NextResponse.json(
+      {
+        message: "You can't cancel this order as it's already in progress.",
+        success: false,
+      },
+      { status: 400 }
     );
   }
 
@@ -78,5 +100,5 @@ const handler = async (req: NextRequest, context: { params: { id: string } }) =>
 };
 
 export const PATCH = withAuth(handler, {
-  allowedRoles: [ "admin", "user"],
+  allowedRoles: ["admin", "user"],
 });
