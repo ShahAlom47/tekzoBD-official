@@ -41,7 +41,7 @@ const MyOrderContent: React.FC<Props> = ({ userEmail }) => {
 
 
   return (
-    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2  p-4">
       {orders.map((order) => (
         <div
           key={order._id?.toString()}
