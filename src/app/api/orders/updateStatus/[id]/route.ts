@@ -59,7 +59,7 @@ const handler = async (
   // If user role is "user", only update own order
   if (
     user?.role === "user" &&
-    (!order.userId || order.userId.toString() !== user.id)
+    (!order.meta?.userEmail || order?.meta?.userEmail !== user.email)
   ) {
     return NextResponse.json(
       { message: "Forbidden: cannot update others' orders", success: false },

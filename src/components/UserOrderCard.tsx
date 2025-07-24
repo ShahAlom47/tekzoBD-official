@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useConfirm } from "@/hooks/useConfirm";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "@/lib/allApiRequest/orderRequest/orderRequest";
+import { queryClient } from "@/Providers/QueryProvider";
 
 interface OrderCardProps {
   order: CheckoutDataType;
@@ -56,7 +57,8 @@ const UserOrderCard: React.FC<OrderCardProps> = ({ order }) => {
       const response = await updateOrderStatus(_id.toString(), "cancelled");
       if (response?.success) {
         toast.success("Order status updated successfully");
-        // Optionally, update UI or refetch orders here
+         queryClient.invalidateQueries({ queryKey: ["userOrders"] });
+        
       } else {
         toast.error(response?.message || "Failed to update order status");
       }
