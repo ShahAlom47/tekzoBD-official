@@ -6,6 +6,7 @@ import { getUserOrders } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import Loading from "@/app/loading";
 import Error from "@/app/error";
+import UserOrderCard from "./UserOrderCard";
 
 interface Props {
   userEmail: string;
@@ -44,27 +45,9 @@ const MyOrderContent: React.FC<Props> = ({ userEmail }) => {
       {orders.map((order) => (
         <div
           key={order._id?.toString()}
-          className="rounded-xl shadow-md border border-gray-200 p-6 bg-white hover:shadow-lg transition duration-300"
+          className=""
         >
-          <div className="mb-4">
-            <h3 className="text-lg font-bold text-gray-800 truncate">
-              Order ID: {order._id?.toString()}
-            </h3>
-            {/* প্রয়োজনমত আরও ডাটা দেখাতে পারো */}
-          </div>
-
-          {order.cartProducts && order.cartProducts.length > 0 && (
-            <div className="mt-4">
-              <h4 className="font-semibold text-gray-800 mb-2">Items:</h4>
-              <ul className="space-y-1 text-sm list-disc list-inside text-gray-600">
-                {order.cartProducts.map((item, index) => (
-                  <li key={index}>
-                    {item.productId.toString()} × {item.quantity}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        <UserOrderCard order={order}></UserOrderCard>
         </div>
       ))}
     </div>
