@@ -75,14 +75,7 @@ const AuthMenu: React.FC = () => {
             </li>
           </>
         )}
-        <li>
-          <Link
-            href="/user/settings"
-            className="cursor-pointer hover:text-brandPrimary"
-          >
-            Settings
-          </Link>
-        </li>
+      
 
         {/* Only show if user is admin */}
         {role === "admin" && (
@@ -95,6 +88,15 @@ const AuthMenu: React.FC = () => {
             </Link>
           </li>
         )}
+
+          <li>
+          <Link
+            href="/user/settings"
+            className="cursor-pointer hover:text-brandPrimary"
+          >
+            Settings
+          </Link>
+        </li>
 
         <li>
           <button

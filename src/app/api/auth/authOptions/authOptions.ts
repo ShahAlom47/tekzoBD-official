@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // console.log("🔐 Authorizing user with credentials:", credentials);
         const usersCollection = await getUserCollection();
 
         try {
