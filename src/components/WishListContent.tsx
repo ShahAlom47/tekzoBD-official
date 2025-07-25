@@ -19,14 +19,14 @@ const WishListContent = ({ products, contentType = 'page' }: WishContentProps) =
   }
 
   return (
-    <div className={`w-full ${contentType === 'page' ? 'p-6' : 'p-2'}`}>
+    <div className={`w-full space-y-5  ${contentType === 'page' ? 'p-6' : 'p-2'}`}>
       {contentType === 'page' && (
         <PageHeading title="Your Wishlist" subTitle="View and manage your favorite products" />
       )}
 
       <div
         className={`grid gap-4  ${
-          contentType === 'drawer' ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+          contentType === 'drawer' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
         }`}
       >
         {products?.map((product) => (

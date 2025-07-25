@@ -23,7 +23,6 @@ const MyWishListContent = () => {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">My Wishlist</h1>
       {isProductsLoading ? (
         <Loading />
       ) : wishlistProducts.length === 0 ? (

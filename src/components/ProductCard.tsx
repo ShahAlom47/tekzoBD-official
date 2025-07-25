@@ -163,14 +163,14 @@ const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
 
         {/* ✅ Button Group */}
         <div
-          className={`flex gap-1 ${
+          className={`flex gap-1  ${
             isWishList ? "md:flex-row flex-co items-center" : "flex-col w-full"
           }`}
         >
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className={`btn-bordered  md:px-4 px-2 text-xs md:text-base py-1 transition w-fit ${
+            className={`btn-bordered  md:px-2 px-2 text-xs md:text-base py-1 transition w-fit ${
               isOutOfStock ? "cursor-not-allowed opacity-50" : ""
             } ${isWishList ? "h-6" : ""}`}
           >

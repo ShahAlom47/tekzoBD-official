@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/api/auth/authOptions/authOptions";
 import Head from "next/head";
-import PageHeading from "@/components/PageHeading";
 import MyWishListContent from "@/components/MyWishListContent";
 
 const MyWishlist = async () => {
@@ -26,7 +25,6 @@ const MyWishlist = async () => {
       </Head>
 
       <div className="container mx-auto p-4">
-        <PageHeading title="My Orders" />
         <MyWishListContent/>
       </div>
     </>
