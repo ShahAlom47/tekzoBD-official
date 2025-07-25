@@ -58,20 +58,35 @@ export const useWishlist = () => {
   }, [fetchedWishlist]);
 
   // ✅ Fetch actual product data
+  // const {
+  //   data: wishlistProducts = [],
+  //   isLoading: isProductsLoading,
+  //   isError: isProductsError,
+  //   refetch: refetchProducts,
+  // } = useQuery<ProductType[]>({
+  //   queryKey: ["wishlistData", productIdList],
+  //   queryFn: async (): Promise<ProductType[]> => {
+  //     const res = await getWishListProductByIds(productIdList);
+  //     return res.data as ProductType[];
+  //   },
+  //   enabled: productIdList.length > 0,
+  //   staleTime: 1000 * 60 * 5,
+  // });
+
   const {
-    data: wishlistProducts = [],
-    isLoading: isProductsLoading,
-    isError: isProductsError,
-    refetch: refetchProducts,
-  } = useQuery<ProductType[]>({
-    queryKey: ["wishlistData", productIdList],
-    queryFn: async (): Promise<ProductType[]> => {
-      const res = await getWishListProductByIds(productIdList);
-      return res.data as ProductType[];
-    },
-    enabled: productIdList.length > 0,
-    staleTime: 1000 * 60 * 5,
-  });
+  data: wishlistProducts = [],
+  isLoading: isProductsLoading,
+  isError: isProductsError,
+  refetch: refetchProducts,
+} = useQuery<ProductType[]>({
+  queryKey: ["wishlistData", productIdList],
+  queryFn: async (): Promise<ProductType[]> => {
+    const res = await getWishListProductByIds(productIdList);
+    return res.data as ProductType[];
+  },
+  enabled: false,
+  staleTime: 1000 * 60 * 5,
+});
 
   // ✅ Add item
   const addToWishlist = useCallback(
