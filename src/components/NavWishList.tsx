@@ -19,6 +19,7 @@ const NavWishList = () => {
     isProductsError,
     refetchProducts,
     productIdList,
+    stableProductIdList,
   } = useWishlist();
 
   // Make sure the component is rendered on client only
@@ -26,18 +27,22 @@ const NavWishList = () => {
     setIsClient(true);
   }, []);
 
+   const wishCount = useMemo(() => {
+    const count = productIdList?.length || 0;
+    return count > 98 ? "99+" : `${count}`;
+  }, [productIdList]);
+
+
+  
+
   // Trigger refetch only when drawer opens and user is logged in
   useEffect(() => {
-    if (isClient && user && isOpen) {
+    if (isClient && user && isOpen && stableProductIdList?.length>0) {
       refetchProducts();
     }
   }, [isClient, user, isOpen, refetchProducts]);
 
-  // Format wishlist count
-  const wishCount = useMemo(() => {
-    const count = productIdList?.length || 0;
-    return count > 98 ? "99+" : `${count}`;
-  }, [productIdList]);
+ 
 
   return (
     <div className="relative flex items-center">
