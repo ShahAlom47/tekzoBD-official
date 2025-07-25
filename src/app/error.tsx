@@ -1,9 +1,16 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { FaExclamationTriangle } from "react-icons/fa";
+import errImg from "@/assets/image/errorTextBg.jpg";
+import { ImHome } from "react-icons/im";
+import { TfiReload } from "react-icons/tfi";
 
-const Error = () => {
+interface ErrorPageProps {
+  homeBtn?: boolean;
+  reloadBtn?: boolean;
+}
+
+const ErrorPage = ({ homeBtn, reloadBtn }: ErrorPageProps) => {
   const router = useRouter();
 
   const handleGoHome = () => {
@@ -11,20 +18,45 @@ const Error = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-blackDeep text-white px-4">
-      <FaExclamationTriangle className="text-red-500 text-6xl mb-4 animate-pulse" />
-      <h1 className="text-3xl font-bold mb-2">Oops! Something went wrong</h1>
-      <p className="text-center text-gray-400 max-w-md mb-6">
-        We`re sorry, an unexpected error occurred. Please try again later or go back to the homepage.
-      </p>
-      <button
-        onClick={handleGoHome}
-        className="primary-hover"
+    <div className="min-h-[80vh] flex flex-col items-center justify-center bg-white text-center px-4">
+      {/* Oops! Text with Image Fill using inline style */}
+      <div
+        className="text-[100px] md:text-[140px] font-extrabold text-transparent text-center"
+        style={{
+          backgroundImage: `url(${errImg.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
       >
-        Back to Home
-      </button>
+        Oops!
+      </div>
+
+      {/* 404 Text */}
+      <h2 className="text-xl md:text-2xl font-bold mb-2">
+        404 - PAGE NOT FOUND
+      </h2>
+      <p className="text-gray-500 max-w-md mb-6">
+        The page you are looking for might have been removed,
+        <br />
+        had its name changed or is temporarily unavailable.
+      </p>
+
+      <div className="flex gap-4">
+        {homeBtn !== false && (
+          <button onClick={handleGoHome} className="btn-base rounded-full w-10 h-10 p-2">
+            <ImHome />
+          </button>
+        )}
+        {reloadBtn !== false && (
+          <button onClick={() => router.refresh()} className="btn-bordered  rounded-full w-10 h-10 p-2">
+            <TfiReload />
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Error;
+export default ErrorPage;
