@@ -29,8 +29,8 @@ const WishListContent = ({ products, contentType = 'page' }: WishContentProps) =
           contentType === 'drawer' ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
         }`}
       >
-        {products.map((product) => (
-          <ProductCard key={product._id.toString()} item={product} isWishList={true} layout={contentType==="drawer"?"list":"grid-3"} />
+        {products?.map((product) => (
+          <ProductCard key={product?._id.toString()} item={product} isWishList={true} layout={contentType==="drawer"?"list":"grid-3"} />
         ))}
       </div>
     </div>
