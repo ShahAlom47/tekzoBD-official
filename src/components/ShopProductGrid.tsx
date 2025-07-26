@@ -21,9 +21,9 @@ const ShopProductGrid: React.FC<Props> = ({ products }) => {
   );
 
   return (
-    <div className="space-y-4 md:mt-0 mt-12">
+    <div className="space-y-4 md:mt-0 mt-16   ">
       {/* Layout Switch Buttons */}
-      <div className="flex items-center gap-2 mb-2 justify-end -mt-10">
+      <div className="flex items-center gap-2 mb-2 justify-end -mt-10  ">
         <button
           onClick={() => setLayout("list")}
           className={`border px-3 py-1 rounded hover:bg-gray-100 ${

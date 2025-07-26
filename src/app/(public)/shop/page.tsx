@@ -100,7 +100,7 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
         <div className="md:col-span-9 space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
-              ❌ {errorMessage}
+             {errorMessage}
             </div>
           ) : products.length === 0 ? (
             <div className="text-gray-600 text-lg font-medium my-6">

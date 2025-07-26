@@ -60,7 +60,7 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
         render={({ field }) => (
           <select
             {...field}
-            className={`my-input ${className}`}
+            className={`my-input max-w-14 ${className}`}
             value={field.value || ""}
           >
             {renderOptions()}
@@ -74,7 +74,7 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
     <select
       value={value || ""}
       onChange={(e) => onChange?.(e.target.value)}
-      className={`my-input ${className}`}
+      className={`my-input  ${className}`}
     >
       {renderOptions()}
     </select>

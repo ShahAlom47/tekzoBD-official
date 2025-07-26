@@ -44,7 +44,7 @@ const CategoryFilter = () => {
   };
 
   return (
-    <div className="p-1 rounded-md space-y-2">
+    <div className="p-1 rounded-md space-y-2 text-sm md:text-base">
       <h3 className="font-medium text-gray-700">Filter by Category</h3>
       <div className="mb-4">
         {/* Render CategorySelect only after selectedId is initialized */}
