@@ -24,7 +24,7 @@ const LoginMsgModal: React.FC<LoginMsgModalProps> = ({ open, setOpen }) => {
       onOpenChange={setOpen}
       title="Login Required"
     >
-      <div className="py-4 px-2 text-center text-gray-600 space-y-4">
+      <div className="py-4 px-2 text-center text-gray-600 space-y-4 ">
         <div className="flex items-center justify-center text-brandPrimary text-4xl">
           <HiOutlineExclamationCircle />
         </div>
@@ -33,9 +33,9 @@ const LoginMsgModal: React.FC<LoginMsgModalProps> = ({ open, setOpen }) => {
         </p>
       </div>
 
-      <div className="flex justify-end gap-4 pt-6 px-4">
+      <div className="flex justify-center gap-4 pt-6 px-4 ">
         <button
-          className="btn-bordered rounded-sm "
+          className="btn-bordered rounded-sm max-h-10 "
           onClick={() => setOpen(false)}
         >
           Cancel
@@ -43,7 +43,7 @@ const LoginMsgModal: React.FC<LoginMsgModalProps> = ({ open, setOpen }) => {
 
         <button
           onClick={handleLoginRedirect}
-          className="btn-base"
+          className="btn-base max-h-10"
         >
           Login
         </button>
