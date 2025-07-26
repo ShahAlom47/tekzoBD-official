@@ -42,7 +42,7 @@ const BannerSlide = ({ bannerData }: SlidePropsType) => {
               <div className="w-full max-w h-full flex justify-center items-center px-6 py-8 ">
                 <div className="max-w-screen-xl w-full grid grid-cols-1  md:grid-cols-2 gap-8 items-center p-4">
                   {/* Left Content */}
-                  <div className="text-white space-y-4 md:order-1 order-2  animate-fadeInUp  ">
+                  <div className="text-white space-y-4 md:order-1 order-2  animate-fadeInUp duration-1000  ">
                     <h1 className="text-2xl md:text-4xl font-bold ">
                       {banner.title}
                     </h1>

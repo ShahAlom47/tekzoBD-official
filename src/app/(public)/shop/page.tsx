@@ -1,3 +1,4 @@
+import HomePageProductFilter from "@/components/HomePageProductFilter";
 import MobileScreenFilteringSection from "@/components/MobileScreenFilteringSection";
 import PageHeading from "@/components/PageHeading";
 import ProductCountInfo from "@/components/ProductCountInfo";
@@ -7,9 +8,11 @@ import ShopFilterSidebar from "@/components/ShopFilterSidebar";
 import ShopProductGrid from "@/components/ShopProductGrid";
 import { SortOptions } from "@/Interfaces/productInterfaces";
 import { getAllProduct } from "@/lib/allApiRequest/productRequest/productRequest";
+import Link from "next/link";
 import { Suspense } from "react";
 
 interface Props {
+  isHomePage?: boolean;
   searchParams: Promise<{
     page?: string;
     minPrice?: string;
@@ -19,25 +22,32 @@ interface Props {
     rating?: string;
     sort?: SortOptions;
     searchTrim?: string;
-    stock?:"in-stock"| "out-of-stock";
+    stock?: "in-stock" | "out-of-stock";
   }>;
 }
 
-export default async function ShopPage({ searchParams }: Props) {
+export default async function ShopPage({ searchParams, isHomePage }: Props) {
   const params = await searchParams;
 
+  // ✅ Constants
+  const HOMEPAGE_PRODUCT_LIMIT = 4;
+  const SHOPPAGE_PRODUCT_LIMIT = 9;
+  const limit = isHomePage ? HOMEPAGE_PRODUCT_LIMIT : SHOPPAGE_PRODUCT_LIMIT;
   const currentPage = Number(params?.page) || 1;
-  const limit = 9;
 
-  const searchTrim = params?.searchTrim;
-  const sort = (params?.sort as SortOptions) || "asc";
-  const minPrice = params?.minPrice;
-  const maxPrice = params?.maxPrice;
-  const category = params?.category;
-  const brand = params?.brand;
-  const rating = params?.rating;
-  const stock= params?.stock;
+  // ✅ Extract filters
+  const filters = {
+    sort: (params?.sort as SortOptions) || "asc",
+    minPrice: params?.minPrice,
+    maxPrice: params?.maxPrice,
+    category: params?.category,
+    brand: params?.brand,
+    rating: params?.rating,
+    searchTrim: params?.searchTrim,
+    stock: params?.stock,
+  };
 
+  // ✅ Data state
   let products = [];
   let total = 0;
   let totalPages = 0;
@@ -47,14 +57,7 @@ export default async function ShopPage({ searchParams }: Props) {
     const response = await getAllProduct({
       currentPage,
       limit,
-      sort,
-      minPrice,
-      maxPrice,
-      category,
-      brand,
-      rating,
-      searchTrim,
-      stock,
+      ...filters,
     });
 
     if (!response.success) {
@@ -65,21 +68,36 @@ export default async function ShopPage({ searchParams }: Props) {
     total = response.totalData || 0;
     totalPages = Math.ceil(total / limit);
   } catch (error) {
-    errorMessage = error instanceof Error ? error.message : "Unexpected error occurred";
+    errorMessage =
+      error instanceof Error ? error.message : "Unexpected error occurred";
   }
 
   return (
     <section className="max-w mx-auto md:p-6 p-2 py-7 space-y-5">
-      <PageHeading title="Our Product" />
+      {!isHomePage && <PageHeading title="Our Product" />}
 
-      <ProductCountInfo currentPage={currentPage} perPage={limit} total={total ||0} />
+      {isHomePage ? (
+        <HomePageProductFilter />
+      ) : (
+        <ProductCountInfo
+          currentPage={currentPage}
+          perPage={limit}
+          total={total}
+        />
+      )}
 
-      <div className="md:hidden block">
-        <MobileScreenFilteringSection></MobileScreenFilteringSection>
-      </div>
+      {!isHomePage && (
+        <div className="md:hidden block">
+          <MobileScreenFilteringSection />
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 my-6 ">
-        <div className="md:col-span-9  space-y-6">
+      <div
+        className={`${
+          isHomePage ? "" : "grid"
+        } grid-cols-1 md:grid-cols-12 gap-6 my-6`}
+      >
+        <div className="md:col-span-9 space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
               ❌ {errorMessage}
@@ -90,26 +108,40 @@ export default async function ShopPage({ searchParams }: Props) {
             </div>
           ) : (
             <>
-              <ShopProductGrid products={products} />
-              {totalPages > 1 && (
-                <PublicPagePaginationButton
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                />
+              <Suspense fallback={<div>Loading products...</div>}>
+                <ShopProductGrid products={products} />
+              </Suspense>
+
+              {isHomePage ? (
+                <div className="flex items-center justify-center w-full">
+                  <Link href="/shop" className="btn-bordered">
+                    See More
+                  </Link>
+                </div>
+              ) : (
+                totalPages > 1 && (
+                  <PublicPagePaginationButton
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                  />
+                )
               )}
             </>
           )}
         </div>
 
-        <div className=" md:block hidden col-span-3 space-y-4">
-          <Suspense fallback={<div>Loading filters...</div>}>
-            <ShopFilterSidebar />
-          </Suspense>
-        </div>
+        {!isHomePage && (
+          <div className="hidden md:block col-span-3 space-y-4">
+            <Suspense fallback={<div>Loading filters...</div>}>
+              <ShopFilterSidebar />
+            </Suspense>
+          </div>
+        )}
       </div>
-     <div className=" block md:hidden"> 
-      <RecentViewProducts></RecentViewProducts>
-     </div>
+
+      <div className="block md:hidden">
+        <RecentViewProducts />
+      </div>
     </section>
   );
 }
