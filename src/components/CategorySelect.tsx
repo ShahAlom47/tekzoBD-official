@@ -46,7 +46,7 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
 
   if (loading) {
     return (
-      <select disabled className={`my-input ${className}`}>
+      <select disabled className={`my-input ${className} bb text-black`}>
         <option>Loading categories...</option>
       </select>
     );

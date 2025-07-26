@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const sortOptions = [
   { label: "Default", value: "" },
@@ -15,6 +15,8 @@ const sortOptions = [
 const SortFilter = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const isShopPage = pathname?.includes("/shop");
 
   const initialSort = searchParams.get("sort") || "";
 
@@ -40,7 +42,10 @@ const SortFilter = () => {
 
   return (
     <div className="p-1 space-y-2 text-sm md:text-base ">
-      <label className="font-medium  text-gray-700">Sort By</label>
+      {isShopPage && (
+        <label className="font-medium  text-gray-700">Sort By</label>
+      )}
+
       <select
         value={selectedSort}
         onChange={(e) => handleChange(e.target.value)}

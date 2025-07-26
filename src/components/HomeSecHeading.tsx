@@ -6,7 +6,7 @@ interface HomeSecHeadingProps {
   children: React.ReactNode;
   subTitle?: string;
   className?: string;
-  align?: "left" | "center";
+  align?: "left" | "center" | "right";
 }
 
 const HomeSecHeading: React.FC<HomeSecHeadingProps> = ({
@@ -15,19 +15,19 @@ const HomeSecHeading: React.FC<HomeSecHeadingProps> = ({
   className = "",
   align = "center",
 }) => {
-  const isCentered = align === "center";
+  const isCentered = align === "left";
 
   return (
     <div
       className={clsx(
-        "mb-8",
+        "mb-5",
         isCentered ? "text-center" : "text-left",
         className
       )}
     >
       <h2
         className={clsx(
-          "text-2xl md:text-3xl font-bold text-gray-800",
+          "text-xl md:text-2xl font-bold text-brandNeutral",
           isCentered ? "mx-auto" : ""
         )}
       >

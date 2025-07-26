@@ -1,4 +1,5 @@
 import HomePageProductFilter from "@/components/HomePageProductFilter";
+import HomeSecHeading from "@/components/HomeSecHeading";
 import MobileScreenFilteringSection from "@/components/MobileScreenFilteringSection";
 import PageHeading from "@/components/PageHeading";
 import ProductCountInfo from "@/components/ProductCountInfo";
@@ -74,7 +75,13 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
 
   return (
     <section className="max-w mx-auto md:p-6 p-2 py-7 space-y-5">
-      {!isHomePage && <PageHeading title="Our Product" />}
+      {!isHomePage ? (
+        <PageHeading title="Our Product" />
+      ) : (
+        <HomeSecHeading  className="mt-5" >
+          Our Products
+        </HomeSecHeading>
+      )}
 
       {isHomePage ? (
         <HomePageProductFilter />
@@ -100,7 +107,7 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
         <div className="md:col-span-9 space-y-6">
           {errorMessage ? (
             <div className="text-red-600 text-lg font-semibold">
-             {errorMessage}
+              {errorMessage}
             </div>
           ) : products.length === 0 ? (
             <div className="text-gray-600 text-lg font-medium my-6">
