@@ -74,11 +74,11 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
   }
 
   return (
-    <section className="max-w mx-auto md:p-6 p-2 py-7 space-y-5">
+    <section className="max-w  mx-auto md:p-6 p-2 py-7  relative  space-y-8">
       {!isHomePage ? (
         <PageHeading title="Our Product" />
       ) : (
-        <HomeSecHeading  className="mt-5" >
+        <HomeSecHeading  className="my-5 " >
           Our Products
         </HomeSecHeading>
       )}

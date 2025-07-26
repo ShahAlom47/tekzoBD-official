@@ -4,7 +4,7 @@ import CategoryFilter from './CategoryFilter';
 
 const HomePageProductFilter = () => {
     return (
-         <div className="flex gap-2 flex-col  md:flex-row  -mb-16">
+         <div className="flex flex-col  md:flex-row md:w-fit w-full  absolute top-20 left-5">
         {/* sort  */}
         <SortFilter />
         {/* Category */}

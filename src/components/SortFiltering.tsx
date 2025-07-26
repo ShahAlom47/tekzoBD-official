@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const sortOptions = [
-  { label: "Default", value: "" },
+  { label: "Sort", value: "" },
   { label: "Price: Low to High", value: "asc" },
   { label: "Price: High to Low", value: "desc" },
   { label: "Newest", value: "newest" },
@@ -41,7 +41,7 @@ const SortFilter = () => {
   };
 
   return (
-    <div className="p-1 space-y-2 text-sm md:text-base ">
+    <div className="p-1 space-y- text-sm md:text-base ">
       {isShopPage && (
         <label className="font-medium  text-gray-700">Sort By</label>
       )}
