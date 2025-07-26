@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "../style/animatedBorder.css" ;
 import Navbar from "@/components/Navbar";
 import Providers from "@/Providers/RootProvider/Providers";
 import Footer from "@/components/Footer";

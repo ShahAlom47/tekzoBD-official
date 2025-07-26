@@ -20,7 +20,7 @@ const HomeSecHeading: React.FC<HomeSecHeadingProps> = ({
   return (
     <div
       className={clsx(
-        "mb-5",
+        "mb-5  animated-bottom-border   w-full  py-3 ",
         isCentered ? "text-center" : "text-left",
         className
       )}
