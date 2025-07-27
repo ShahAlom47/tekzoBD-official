@@ -1,42 +1,139 @@
 "use client";
-import { motion } from "framer-motion";
+
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 import SafeImage from "./SafeImage";
-import image from "@/assets/image/banner.png"
 import HomeSecHeading from "./HomeSecHeading";
+import { FaCogs, FaSmile, FaRocket } from "react-icons/fa";
+
+import image1 from "@/assets/aboutImg/about-1.png";
+import image2 from "@/assets/aboutImg/about-2.jpg";
+import image3 from "@/assets/aboutImg/about-3.png";
+import image4 from "@/assets/aboutImg/about-4.jpg";
 
 const aboutUsContent = {
   title: "About Us",
-  text: "আমরা একটি প্রযুক্তি নির্ভর ই-কমার্স প্রতিষ্ঠান, যেখানে আপনি সর্বশেষ প্রযুক্তি পণ্য খুঁজে পাবেন সহজেই এবং নিশ্চিন্তে। আমাদের লক্ষ্য হচ্ছে উন্নতমানের প্রোডাক্ট ইউজারদের কাছে পৌঁছে দেওয়া এবং সর্বোচ্চ গ্রাহক সাপোর্ট নিশ্চিত করা।",
-  image: image, 
+  text: "We are a tech-driven eCommerce company dedicated to bringing the latest and most reliable tech products directly to you. Our mission is to ensure the highest product quality, fast delivery, and outstanding customer support.",
+  images: [image1, image2, image3, image4],
+  highlights: [
+    {
+      icon: <FaCogs />,
+      title: "Tech-Focused",
+      desc: "We specialize in the latest technology solutions.",
+    },
+    {
+      icon: <FaRocket />,
+      title: "Fast & Reliable",
+      desc: "Quick delivery and smooth service guaranteed.",
+    },
+    {
+      icon: <FaSmile />,
+      title: "Customer First",
+      desc: "Your satisfaction is our top priority.",
+    },
+  ],
+};
+
+// Variants for description text
+const descriptionVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
+
+// Variants for cards container (stagger children)
+const cardsContainerVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.25, delayChildren: 0.5 } },
+};
+
+// Variants for each card with scale
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.8 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const AboutUsSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % aboutUsContent.images.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="bg-white py-16 px-4 sm:px-8 md:px-16" id="about">
+    <section
+      className=" py-20 px-4 sm:px-8 md:px-16"
+      id="about"
+    >
       <div className="max-w-7xl mx-auto">
-      
-          <HomeSecHeading animation={true}>   {aboutUsContent.title}</HomeSecHeading>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <HomeSecHeading animation>{aboutUsContent.title}</HomeSecHeading>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-10">
+          {/* Image Slideshow */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            className="relative w-full h-[280px] sm:h-[330px] md:h-[400px] rounded-3xl overflow-hidden"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <SafeImage
-              src={aboutUsContent.image}
-              alt="About us"
-              className="w-full h-auto rounded-2xl shadow-md border border-blue-200"
-            ></SafeImage>
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="absolute w-full h-full"
+            >
+              <SafeImage
+                src={aboutUsContent.images[currentIndex]}
+                alt="About us product"
+                className="w-full h-full object-contain rounded-3xl bg-white p-2"
+              />
+            </motion.div>
           </motion.div>
 
-          <motion.div
-            className="text-gray-700 text-lg leading-relaxed"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p>{aboutUsContent.text}</p>
-          </motion.div>
+          {/* Text and Highlights */}
+          <div className="space-y-6">
+            {/* Description text with separate animation */}
+            <motion.p
+              className="text-base md:text-lg font-light font-serif text-gray-700 leading-relaxed"
+              variants={descriptionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {aboutUsContent.text}
+            </motion.p>
+
+            {/* Cards container with stagger animation */}
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+              variants={cardsContainerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
+              {aboutUsContent.highlights.map((item, i) => (
+                <motion.div
+                  key={i}
+                  className="flex items-start gap-4 bg-white/60 backdrop-blur-sm border border-blue-100 rounded-xl p-4 shadow hover:shadow-md transition"
+                  variants={cardVariants}
+                >
+                  <div className="text-blue-600 text-2xl">{item.icon}</div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-blue-800">{item.title}</h4>
+                    <p className="text-sm text-gray-600">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
