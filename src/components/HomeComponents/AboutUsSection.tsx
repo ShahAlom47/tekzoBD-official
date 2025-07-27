@@ -2,14 +2,14 @@
 
 import { motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import SafeImage from "./SafeImage";
-import HomeSecHeading from "./HomeSecHeading";
 import { FaCogs, FaSmile, FaRocket } from "react-icons/fa";
 
 import image1 from "@/assets/aboutImg/about-1.png";
 import image2 from "@/assets/aboutImg/about-2.jpg";
 import image3 from "@/assets/aboutImg/about-3.png";
 import image4 from "@/assets/aboutImg/about-4.jpg";
+import HomeSecHeading from "../HomeSecHeading";
+import SafeImage from "../SafeImage";
 
 const aboutUsContent = {
   title: "About Us",

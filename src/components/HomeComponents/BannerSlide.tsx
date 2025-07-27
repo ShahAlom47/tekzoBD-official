@@ -4,7 +4,7 @@ import { BannerType } from "@/Interfaces/bannerInterfaces";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import Link from "next/link";
-import SafeImage from "./SafeImage";
+import SafeImage from "../SafeImage";
 import { StaticImageData } from "next/image";
 
 type SlidePropsType = {

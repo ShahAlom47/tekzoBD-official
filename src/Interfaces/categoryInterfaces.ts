@@ -11,7 +11,7 @@ export interface CategoryType {
 }
 
 export type GetAllCategoryParams = {
-  currentPage: number;  
-  limit: number;
+  currentPage?: number;  
+  limit?: number;
   searchTrim?: string;
 };

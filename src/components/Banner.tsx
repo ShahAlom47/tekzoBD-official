@@ -1,6 +1,6 @@
 // app/components/Banner.tsx or wherever your Banner is
 import { getBannerData } from "@/DemoDataModel/bannerData";
-import BannerSlide from "./BannerSlide";
+import BannerSlide from "./HomeComponents/BannerSlide";
 import { BannerType } from "@/Interfaces/bannerInterfaces";
 
 const Banner = async () => {
