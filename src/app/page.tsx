@@ -5,9 +5,12 @@ import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 import CategorySection from "@/components/HomeComponents/HomeCategorySection";
 import TopRatedProducts from "@/components/HomeComponents/TopRatedProducts";
 import ActiveOfferProducts from "@/components/HomeComponents/ActiveOfferProducts";
+import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest";
 
 
-const Home = () => {
+const Home = async() => {
+  const homeData= await getHomeData()
+  console.log(homeData)
 
   return (
     <div className=" min-h-screen ">

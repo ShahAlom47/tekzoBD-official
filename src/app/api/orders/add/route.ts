@@ -1,12 +1,13 @@
 // app/api/order/add/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import { getOrderCollection } from "@/lib/database/db_collections";
+import { getOrderCollection, getProductCollection } from "@/lib/database/db_collections";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CheckoutDataType;
+    const productCollection= getProductCollection();
 
     if (!body?.cartProducts?.length || !body?.shippingInfo || !body?.pricing || !body?.paymentInfo) {
       return NextResponse.json(

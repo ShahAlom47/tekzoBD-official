@@ -58,7 +58,7 @@ const cardVariants: Variants = {
 };
 
 const AboutUsSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
