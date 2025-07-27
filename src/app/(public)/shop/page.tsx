@@ -74,7 +74,7 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
   }
 
   return (
-    <section className="max-w  mx-auto md:p-6 p-2 py-7  relative space-y-8">
+    <section className="max-w  mx-auto md:p-6 p-2 py-7  relative md:space-y-8 space-y-2">
       {!isHomePage ? (
         <PageHeading title="Our Product" />
       ) : (
