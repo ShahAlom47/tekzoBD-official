@@ -30,6 +30,7 @@ export interface ProductType {
   price: number;
   discount: number;
   stock: number;
+  soldCount?:number; // akono use kora a hoyni  use korte  hobe 
   offer?: {
   isActive: boolean;
   startDate?: string;

@@ -3,6 +3,8 @@ import React from "react";
 import ShopPage from "./(public)/shop/page";
 import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 import CategorySection from "@/components/HomeComponents/HomeCategorySection";
+import TopRatedProducts from "@/components/HomeComponents/TopRatedProducts";
+import ActiveOfferProducts from "@/components/HomeComponents/ActiveOfferProducts";
 
 
 const Home = () => {
@@ -11,8 +13,11 @@ const Home = () => {
     <div className=" min-h-screen ">
       <Banner></Banner>
       <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
-      <AboutUsSection></AboutUsSection>
       <CategorySection></CategorySection>
+      <TopRatedProducts products={[]}></TopRatedProducts>
+      <AboutUsSection></AboutUsSection>
+      <ActiveOfferProducts products={[]}></ActiveOfferProducts>
+
     </div>
   );
 };
