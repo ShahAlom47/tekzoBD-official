@@ -69,13 +69,13 @@ const AboutUsSection = () => {
 
   return (
     <section
-      className=" py-20 px-4 sm:px-8 md:px-16"
+      className=" py-20 px-4 sm:px-8 md:px-16 bg-slate-100"
       id="about"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w mx-auto">
         <HomeSecHeading animation>{aboutUsContent.title}</HomeSecHeading>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-10 bg-white p-6 rounded-lg">
           {/* Image Slideshow */}
           <motion.div
             className="relative w-full h-[280px] sm:h-[330px] md:h-[400px] rounded-3xl overflow-hidden"
@@ -93,7 +93,7 @@ const AboutUsSection = () => {
               <SafeImage
                 src={aboutUsContent.images[currentIndex]}
                 alt="About us product"
-                className="w-full h-full object-contain rounded-3xl bg-white p-2"
+                className="w-full h-full object-contain rounded-3xl bg-white p-2 opacity-80"
               />
             </motion.div>
           </motion.div>
@@ -113,7 +113,7 @@ const AboutUsSection = () => {
 
             {/* Cards container with stagger animation */}
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+              className="grid grid-cols-1 md:grid-cols-1  gap-6"
               variants={cardsContainerVariants}
               initial="hidden"
               whileInView="show"

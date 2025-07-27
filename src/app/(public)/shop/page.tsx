@@ -78,7 +78,7 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
       {!isHomePage ? (
         <PageHeading title="Our Product" />
       ) : (
-        <HomeSecHeading  animation={true} className="my-5 " >
+        <HomeSecHeading animation={true} className="my-5 ">
           Our Products
         </HomeSecHeading>
       )}
@@ -145,10 +145,11 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
           </div>
         )}
       </div>
-
-      <div className="block md:hidden">
-        <RecentViewProducts />
-      </div>
+      {!isHomePage && (
+        <div className="block md:hidden">
+          <RecentViewProducts />
+        </div>
+      )}
     </section>
   );
 }
