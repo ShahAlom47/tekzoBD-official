@@ -20,8 +20,8 @@ const CategorySection = async () => {
   }
 
   return (
-    <section className="py-12 bg-gray-100 scroll-mt-20" id="categories">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12  scroll-mt-20" id="categories">
+      <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <HomeSecHeading>
               Explore Our Categories
         </HomeSecHeading>
