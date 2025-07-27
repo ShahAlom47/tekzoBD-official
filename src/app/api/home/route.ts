@@ -34,7 +34,7 @@ export async function GET() {
     // ৪. Best Selling Products (soldCount DESC, limit 5)
     const bestSellingProducts = await productCollection
       .find({ isPublished: true, soldCount: { $exists: true } })
-      .sort({ soldCount: -1 })
+    //   .sort({ soldCount: -1 })
       .limit(5)
       .toArray();
 

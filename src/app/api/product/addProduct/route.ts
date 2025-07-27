@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     // 🛡️ Ensure price is stored as a number
     if (body.price !== undefined) {
       const parsedPrice = Number(body.price);
+     
       if (isNaN(parsedPrice)) {
         return NextResponse.json(
           { message: "Invalid price format", success: false },
@@ -22,6 +23,18 @@ export async function POST(req: NextRequest) {
         );
       }
       body.price = parsedPrice; // ✅ force price to be a number
+    }
+    if (body.stock !== undefined) {
+           const parsedStock = Number(body.stock);
+
+     
+      if (isNaN(parsedStock)) {
+        return NextResponse.json(
+          { message: "Invalid Stock format", success: false },
+          { status: 400 }
+        );
+      }
+      body.price = parsedStock; // ✅ force price to be a number
     }
 
     const productCollection = await getProductCollection();

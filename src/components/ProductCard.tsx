@@ -163,7 +163,7 @@ const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
 
         {/* ✅ Button Group */}
         <div
-          className={`flex gap-1  ${
+          className={`flex gap-1  justify-center items-center   ${
             isWishList ? "md:flex-row flex-co items-center" : "flex-col w-full"
           }`}
         >
@@ -176,6 +176,7 @@ const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
           >
             {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </button>
+       
 
           {/* ✅ Remove from Wishlist Button */}
           {isWishList && (
