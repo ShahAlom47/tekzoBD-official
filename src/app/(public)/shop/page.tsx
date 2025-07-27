@@ -78,7 +78,7 @@ export default async function ShopPage({ searchParams, isHomePage }: Props) {
       {!isHomePage ? (
         <PageHeading title="Our Product" />
       ) : (
-        <HomeSecHeading  className="my-5 " >
+        <HomeSecHeading  animation={true} className="my-5 " >
           Our Products
         </HomeSecHeading>
       )}
