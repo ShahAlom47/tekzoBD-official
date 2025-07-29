@@ -27,9 +27,8 @@ export async function GET() {
         isPublished: true,
         "offer.isActive": true,
         discount: { $gt: 0 },
-
-        "offer.startDate": { $lte: now.toISOString() },
-        "offer.endDate": { $gte: now.toISOString() },
+        "offer.startDate": { $lte: now }, // <-- no toISOString()
+        "offer.endDate": { $gte: now }, // <-- no toISOString()
       })
       .limit(5)
       .toArray();

@@ -12,33 +12,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🛡️ Ensure price is stored as a number
-    if (body.price !== undefined) {
-      const parsedPrice = Number(body.price);
-     
-      if (isNaN(parsedPrice)) {
-        return NextResponse.json(
-          { message: "Invalid price format", success: false },
-          { status: 400 }
-        );
-      }
-      body.price = parsedPrice; // ✅ force price to be a number
-    }
-    if (body.stock !== undefined) {
-           const parsedStock = Number(body.stock);
+    // 🔁 List of fields that must be numbers
+    const numericFields = ["price", "stock", "discount","soldCount"];
 
-     
-      if (isNaN(parsedStock)) {
-        return NextResponse.json(
-          { message: "Invalid Stock format", success: false },
-          { status: 400 }
-        );
+    for (const field of numericFields) {
+      if (body[field] !== undefined) {
+        const parsedValue = Number(body[field]);
+        if (isNaN(parsedValue)) {
+          return NextResponse.json(
+            { message: `Invalid ${field} format`, success: false },
+            { status: 400 }
+          );
+        }
+        body[field] = parsedValue;
       }
-      body.price = parsedStock; // ✅ force price to be a number
     }
 
     const productCollection = await getProductCollection();
-
     const addResult = await productCollection.insertOne(body);
 
     if (!addResult.acknowledged) {
@@ -61,7 +51,6 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error in POST /api/product:", error);
 
-    // ✅ Handle MongoDB Duplicate Key Error
     if (error.code === 11000) {
       const duplicateField = Object.keys(error.keyPattern || {})[0];
       const duplicateValue = error.keyValue?.[duplicateField];
@@ -70,7 +59,7 @@ export async function POST(req: NextRequest) {
           message: `A product with the same ${duplicateField} "${duplicateValue}" already exists.`,
           success: false,
         },
-        { status: 409 } // Conflict
+        { status: 409 }
       );
     }
 
