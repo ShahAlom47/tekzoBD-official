@@ -9,11 +9,22 @@ type Props = {
 
 const ActiveOfferProducts = ({ products }: Props) => {
   // Active offer ও discount > 0 প্রোডাক্ট ফিল্টার করা
-  const offerProducts = products.filter(
-    (product) =>
-      product.isPublished &&
-      product.offer?.isActive === true
-  );
+const currentDate = new Date();
+
+const offerProducts = products.filter((product) => {
+  if (
+    product.isPublished &&
+    product.offer?.isActive === true &&
+    product.offer.startDate &&
+    product.offer.endDate
+  ) {
+    const start = new Date(product.offer.startDate);
+    const end = new Date(product.offer.endDate);
+    return currentDate >= start && currentDate <= end;
+  }
+  return false;
+});
+
 
   console.log(products)
 

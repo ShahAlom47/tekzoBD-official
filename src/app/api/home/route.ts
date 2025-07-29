@@ -20,17 +20,18 @@ export async function GET() {
       .limit(5)
       .toArray();
 
-    const now = new Date();
+
 
     const activeOfferProducts = await productCollection
       .find({
         isPublished: true,
         "offer.isActive": true,
         discount: { $gt: 0 },
-        "offer.startDate": { $lte: now }, // <-- no toISOString()
-        "offer.endDate": { $gte: now }, // <-- no toISOString()
+        // "offer.startDate": { $lte: now },
+        // "offer.endDate": { $gte: now },
       })
-      .limit(5)
+      .sort({ createdAt: -1 })
+      // .limit(5)
       .toArray();
 
     // ৪. Best Selling Products (soldCount DESC, limit 5)

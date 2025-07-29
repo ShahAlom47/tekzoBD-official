@@ -34,7 +34,7 @@ const OfferProductCard = ({ product }: OfferProductCardProps) => {
 
       {/* ❌ Out of stock badge */}
       {isOutOfStock && (
-        <div className="absolute top-3 left-3  text-white text-xs px-2 py-1 rounded z-10 shadow">
+        <div className="absolute top-3 left-3 bg-zinc-400/40 border border-black  text-black text-xs px-2 py-1 rounded z-10 shadow">
           Stock Out
         </div>
       )}
