@@ -59,6 +59,13 @@ const cardVariants: Variants = {
 
 const AboutUsSection = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isClient,setClient]= useState<boolean>(false)
+
+  useEffect(()=>{
+setClient(true)
+  },[])
+
+ 
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -66,6 +73,8 @@ const AboutUsSection = () => {
     }, 3500);
     return () => clearInterval(interval);
   }, []);
+
+   if(!isClient) return null
 
   return (
     <section

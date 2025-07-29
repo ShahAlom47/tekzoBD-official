@@ -3,25 +3,26 @@
 import { ProductType } from "@/Interfaces/productInterfaces";
 import SafeImage from "../SafeImage";
 import HomeSecHeading from "../HomeSecHeading";
+import { useRouter } from "next/navigation";
 
 type Props = {
   products: ProductType[];
 };
 
 const TopRatedProducts = ({ products }: Props) => {
+  const router = useRouter();
   // Filter and sort products by rating (descending), then by creation date (newest)
-const topRated = [...products]
+  const topRated = [...products]
 
-  .sort((a, b) => {
-    if (b.ratings.avg === a.ratings.avg) {
-      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return dateB - dateA; // Newest first
-    }
-    return b.ratings.avg - a.ratings.avg;
-  })
-  .slice(0, 10); // Show max 10
-
+    .sort((a, b) => {
+      if (b.ratings.avg === a.ratings.avg) {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA; // Newest first
+      }
+      return b.ratings.avg - a.ratings.avg;
+    })
+    .slice(0, 10); // Show max 10
 
   if (topRated.length === 0) {
     return (
@@ -31,12 +32,16 @@ const topRated = [...products]
     );
   }
 
+  const handleCardClick = (slug:string) => {
+    router.push(`/shop/${slug}`);
+  };
+
   return (
     <section className="py-12 bg-gradient-to-b from-white via-gray-50 to-white">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <HomeSecHeading>Top Rated Products</HomeSecHeading>
 
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center my-5">
           <div
             className={`
               grid gap-6
@@ -50,8 +55,9 @@ const topRated = [...products]
           >
             {topRated.map((product) => (
               <div
+                onClick={()=>handleCardClick(product?.slug)}
                 key={product._id.toString()}
-                className="bg-white rounded-sm shadow-md hover:shadow-xl transition-all duration-300 p-3 border border-brandPrimary hover:border-primary/40 group text-center"
+                className="bg-white cursor-pointer rounded-sm shadow-md hover:shadow-xl transition-all duration-300 p-3 border border-brandPrimary hover:border-primary/40 group text-center"
               >
                 <div className="relative overflow-hidden rounded-sm mb-3">
                   <SafeImage
