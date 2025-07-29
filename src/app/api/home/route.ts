@@ -20,12 +20,16 @@ export async function GET() {
       .limit(5)
       .toArray();
 
-    // ৩. Active Offer প্রোডাক্ট (offer.isActive = true && discount > 0, limit 5)
+    const now = new Date();
+
     const activeOfferProducts = await productCollection
       .find({
         isPublished: true,
         "offer.isActive": true,
         discount: { $gt: 0 },
+
+        "offer.startDate": { $lte: now.toISOString() },
+        "offer.endDate": { $gte: now.toISOString() },
       })
       .limit(5)
       .toArray();
