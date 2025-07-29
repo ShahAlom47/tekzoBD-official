@@ -4,11 +4,23 @@ import { getAllCategories } from "@/lib/allApiRequest/categoryRequest/categoryRe
 import CategoryCarousel from "./CategoryCarousel";
 import HomeSecHeading from "../HomeSecHeading";
 
-const CategorySection = async () => {
-  const res = await getAllCategories({ currentPage: 1, limit: 1000 });
-  const categories = res?.data as CategoryType[];
+interface CategoryPropsType {
+  categories?: CategoryType[];
+  fetchData?: boolean;
+}
 
-  if (!categories || categories.length === 0) {
+const CategorySection = async ({ categories, fetchData }: CategoryPropsType) => {
+  let categoriesData: CategoryType[] = categories ?? [];
+
+  if (fetchData && !categories) {
+    try {
+      const res = await getAllCategories({ currentPage: 1, limit: 1000 });
+      categoriesData = res?.data  as CategoryType[];
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+    }
+  }
+  if (!categoriesData || categoriesData.length === 0) {
     return (
       <section className="py-12 bg-gray-100">
         <div className="max-w-screen-xl mx-auto px-4 text-center">
@@ -20,17 +32,14 @@ const CategorySection = async () => {
   }
 
   return (
-    <section className="py-12  scroll-mt-20" id="categories">
+    <section className="py-12 scroll-mt-20" id="categories">
       <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <HomeSecHeading>
-              Explore Our Categories
-        </HomeSecHeading>
-       
-
-        <CategoryCarousel categories={categories} />
+        <HomeSecHeading>Explore Our Categories</HomeSecHeading>
+        <CategoryCarousel categories={categoriesData} />
       </div>
     </section>
   );
 };
+
 
 export default CategorySection;

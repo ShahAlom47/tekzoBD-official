@@ -5,24 +5,56 @@ import CategorySection from "@/components/HomeComponents/HomeCategorySection";
 import TopRatedProducts from "@/components/HomeComponents/TopRatedProducts";
 import ActiveOfferProducts from "@/components/HomeComponents/ActiveOfferProducts";
 import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest";
+import { CategoryType } from "@/Interfaces/categoryInterfaces";
+import { ProductType } from "@/Interfaces/productInterfaces";
 
+interface HomeDataType {
+  topRatedProducts: ProductType[];
+  activeOfferProducts: ProductType[];
+  bestSellingProducts: ProductType[];
+  categories: CategoryType[];
+}
 
-const Home = async() => {
-  const homeData= await getHomeData()
-  console.log(homeData)
+const Home = async () => {
+  let homeData: HomeDataType | null = null;
 
+  try {
+    const res = await getHomeData();
+    console.log(res)
+    homeData = res?.data as HomeDataType;
+  } catch (error) {
+    console.error("Home data fetch failed", error);
+    // Optional: You can show a toast here or log to monitoring tools
+  }
 
-  //  after  order complete   data  update bugs  thik koraa lagbe   
+  const topRatedProducts = homeData?.topRatedProducts || [];
+  const activeOfferProducts = homeData?.activeOfferProducts || [];
+  const categories = homeData?.categories || [];
 
   return (
-    <div className=" min-h-screen ">
-      <Banner></Banner>
-      <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
-      <CategorySection></CategorySection>
-      <TopRatedProducts products={[]}></TopRatedProducts>
-      {/* <AboutUsSection></AboutUsSection> */}
-      <ActiveOfferProducts products={[]}></ActiveOfferProducts>
+    <div className="min-h-screen">
+      <Banner />
 
+          {/* searchParams এখন blank object পাঠানো হয়েছে */}
+      <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
+
+      {/* Only render if data is available, else skip section */}
+      {categories.length > 0 && <CategorySection categories={categories} />}
+
+      {topRatedProducts.length > 0 && (
+        <TopRatedProducts products={topRatedProducts} />
+      )}
+
+      {activeOfferProducts.length > 0 && (
+        <ActiveOfferProducts products={activeOfferProducts} />
+      )}
+
+      {/* Optional: if all data missing, show light fallback */}
+      {!homeData && (
+        <div className="text-center py-10 text-red-500">
+          Some sections failed to load. Please try refreshing the page.
+        </div>
+      )}
     </div>
   );
 };

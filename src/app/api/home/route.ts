@@ -1,18 +1,17 @@
 // app/api/home/route.ts
 
-import { getCategoryCollection, getProductCollection } from "@/lib/database/db_collections";
-import {  NextResponse } from "next/server";
+import {
+  getCategoryCollection,
+  getProductCollection,
+} from "@/lib/database/db_collections";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const categoryCollection = await getCategoryCollection();
     const productCollection = await getProductCollection();
 
-   
-    const categories = await categoryCollection
-      .find({})
-      .limit(1000)
-      .toArray();
+    const categories = await categoryCollection.find({}).limit(1000).toArray();
 
     // ২. টপ রেটেড প্রোডাক্ট (rating.avg DESC, limit 5)
     const topRatedProducts = await productCollection
@@ -34,15 +33,19 @@ export async function GET() {
     // ৪. Best Selling Products (soldCount DESC, limit 5)
     const bestSellingProducts = await productCollection
       .find({ isPublished: true, soldCount: { $exists: true } })
-    //   .sort({ soldCount: -1 })
+      //   .sort({ soldCount: -1 })
       .limit(5)
       .toArray();
 
     return NextResponse.json({
-      categories,
-      topRatedProducts,
-      activeOfferProducts,
-      bestSellingProducts,
+      data: {
+        categories,
+        topRatedProducts,
+        activeOfferProducts,
+        bestSellingProducts,
+      },
+      message: "Successfully",
+      success: true,
     });
   } catch (error) {
     console.error("Failed to fetch home page data:", error);
