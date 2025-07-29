@@ -7,6 +7,7 @@ import ActiveOfferProducts from "@/components/HomeComponents/ActiveOfferProducts
 import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest";
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
+import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 
 interface HomeDataType {
   topRatedProducts: ProductType[];
@@ -40,6 +41,7 @@ const Home = async () => {
 
       {/* Only render if data is available, else skip section */}
       {categories.length > 0 && <CategorySection categories={categories} />}
+      <AboutUsSection></AboutUsSection>
 
       {topRatedProducts.length > 0 && (
         <TopRatedProducts products={topRatedProducts} />

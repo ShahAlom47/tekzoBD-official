@@ -8,13 +8,8 @@ type Props = {
 };
 
 const TopRatedProducts = ({ products }: Props) => {
-  // রেটিং অনুসারে টপ ৫ প্রোডাক্ট সিলেক্ট করা
-  const topRated = products
-    .filter(product => product.isPublished && product.ratings.avg >= 4)
-    .sort((a, b) => b.ratings.avg - a.ratings.avg)
-    .slice(0, 5);
 
-  if (topRated.length === 0) {
+  if (products.length === 0) {
     return (
       <section className="py-12 text-center text-gray-500">
         <p>No top rated products found.</p>
@@ -30,7 +25,7 @@ const TopRatedProducts = ({ products }: Props) => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {topRated.map(product => (
+          {products.map(product => (
             <div key={product._id.toString()} className="border rounded-lg p-4 shadow hover:shadow-lg transition">
               <SafeImage
                 src={product.media[0]?.url || "/placeholder.png"}
