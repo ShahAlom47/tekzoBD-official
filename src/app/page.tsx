@@ -8,6 +8,7 @@ import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
+import Newsletter from "@/components/HomeComponents/NewsLetter";
 
 interface HomeDataType {
   topRatedProducts: ProductType[];
@@ -50,6 +51,7 @@ const Home = async () => {
       {activeOfferProducts.length > 0 && (
         <ActiveOfferProducts products={activeOfferProducts} />
       )}
+      <Newsletter></Newsletter>
 
       {/* Optional: if all data missing, show light fallback */}
       {!homeData && (

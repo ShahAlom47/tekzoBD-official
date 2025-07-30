@@ -88,6 +88,9 @@ const config = {
           "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
+      backgroundImage: {
+        'dot-pattern': "radial-gradient(currentColor 1px, transparent 1px)",
+      },
     },
   },
   plugins: [

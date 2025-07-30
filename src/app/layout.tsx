@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "../style/animatedBorder.css" ;
+import "../style/animatedBorder.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/Providers/RootProvider/Providers";
 import Footer from "@/components/Footer";
@@ -21,16 +21,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dar">
-      <body className="min-h-screen bg-white relative ">
+      <body className="min-h-screen bg-white relative">
         <Providers>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
           </ConditionalWrapper>
           <MainWrapper>
             {children}
-                  <ScrollTopButton />
-                    <SmartChatWidget />
-            </MainWrapper>
+            <ScrollTopButton />
+            <SmartChatWidget />
+            
+          </MainWrapper>
           <ConditionalWrapper hideOn={["dashboard", "login"]}>
             <Footer />
           </ConditionalWrapper>
