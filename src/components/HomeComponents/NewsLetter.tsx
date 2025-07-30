@@ -1,49 +1,88 @@
-// Newsletter.tsx
 "use client";
+import { subscribeNewsLetter } from "@/lib/allApiRequest/newsLetterRequest/newsLetterRequest";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type FormData = {
   email: string;
 };
 
 export default function Newsletter() {
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log("Subscribed:", data.email);
-    reset();
+  const onSubmit = async (data: FormData) => {
+    const subsData = {
+      email: data.email,
+      isActive: true,
+    };
+
+    try {
+      const res = await subscribeNewsLetter(subsData);
+
+      if (res?.success) {
+        toast.success("Subscribed successfully!");
+        reset();
+      } else {
+        toast.error(res?.message || "Subscription failed. Try again.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try later.");
+      console.error(error);
+    }
   };
 
   return (
-    <div className="relative bg-gray-50 py-16 px-6 sm:px-10  overflow-hidden shadow-md ">
-      {/* Small Dot Background */}
-      <div className="absolute inset-0 bg-dot-pattern  z-0 " />
+    <div className="relative bg-gray-50 py-16 px-6 sm:px-10 overflow-hidden shadow-md rounded-2xl">
+      {/* Dot Background */}
+      <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none z-0" />
 
-      <div className="relative z-10 max-w-xl mx-auto text-center bg-transparent ">
-        <h2 className=" text-xl md:text-2xl font-semibold text-black mb-4">
+      <div className="relative z-10 max-w-xl mx-auto text-center">
+        <h2 className="text-2xl md:text-3xl font-semibold text-black mb-6">
           Subscribe to our Newsletter
         </h2>
-      
+
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-row items-center gap-2 rounded-full my-input bg-white  "
+          className="flex flex-row items-center gap-2 rounded-full bg-white shadow-md overflow-hidden"
         >
           <input
             type="email"
-            {...register("email", { required: true })}
             placeholder="Enter your email"
-            className="w-full px-4 py-2  bg-transparent outline-none "
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Please enter a valid email address",
+              },
+            })}
+            className={`flex-grow px-4 py-3 text-gray-700 bg-transparent outline-none
+              ${
+                errors.email ? "border-red-500" : "border-transparent"
+              } focus:border-brandPrimary`}
           />
           <button
             type="submit"
-            className="px-4 py-2 pr-2 font-semibold hover:scale-105 text-brandPrimary uppercase 
-            "
+            disabled={isSubmitting}
+            className="px-6 py-3 text-brandPrimary font-semibold uppercase hover:bg-brandPrimary hover:text-white transition rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Subscribe
+            {isSubmitting ? "Submitting..." : "Subscribe"}
           </button>
         </form>
-          <p className="text-gray-600 text-sm md:text-base my-6">
-          Get the latest updates, offers, and helpful content directly to your inbox.
+
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-2 text-left">
+            {errors.email.message}
+          </p>
+        )}
+
+        <p className="text-gray-600 text-sm md:text-base mt-8 max-w-md mx-auto">
+          Get the latest updates, offers, and helpful content directly to your
+          inbox.
         </p>
       </div>
     </div>
