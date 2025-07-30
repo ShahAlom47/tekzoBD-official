@@ -89,7 +89,7 @@ const config = {
         },
       },
       backgroundImage: {
-        'dot-pattern': "radial-gradient(currentColor 1px, transparent 1px)",
+        'dot-patternn': "radial-gradient(currentColor 4px, transparent 5px)",
       },
     },
   },

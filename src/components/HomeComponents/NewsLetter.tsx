@@ -15,34 +15,36 @@ export default function Newsletter() {
   };
 
   return (
-    <div className="relative bg-white py-16 px-6 sm:px-10 rounded-2xl overflow-hidden border shadow-md">
+    <div className="relative bg-gray-50 py-16 px-6 sm:px-10  overflow-hidden shadow-md ">
       {/* Small Dot Background */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-90 z-30 bb" />
+      <div className="absolute inset-0 bg-dot-pattern  z-0 " />
 
-      <div className="relative z-10 max-w-xl mx-auto text-center">
-        <h2 className="text-2xl font-bold text-brandPrimary mb-4">
+      <div className="relative z-10 max-w-xl mx-auto text-center bg-transparent ">
+        <h2 className=" text-xl md:text-2xl font-semibold text-black mb-4">
           Subscribe to our Newsletter
         </h2>
-        <p className="text-gray-600 mb-6">
-          Get the latest updates, offers, and helpful content directly to your inbox.
-        </p>
+      
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col sm:flex-row items-center gap-3"
+          className="flex flex-row items-center gap-2 rounded-full my-input bg-white  "
         >
           <input
             type="email"
             {...register("email", { required: true })}
             placeholder="Enter your email"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brandPrimary"
+            className="w-full px-4 py-2  bg-transparent outline-none "
           />
           <button
             type="submit"
-            className="px-6 py-2 bg-brandPrimary text-white rounded-lg hover:bg-opacity-90 transition"
+            className="px-4 py-2 pr-2 font-semibold hover:scale-105 text-brandPrimary uppercase 
+            "
           >
             Subscribe
           </button>
         </form>
+          <p className="text-gray-600 text-sm md:text-base my-6">
+          Get the latest updates, offers, and helpful content directly to your inbox.
+        </p>
       </div>
     </div>
   );
