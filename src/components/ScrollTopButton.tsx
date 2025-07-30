@@ -40,7 +40,7 @@ const ScrollTopButton: React.FC = () => {
     <button
       onClick={scrollToTop}
       aria-label="Scroll to top"
-      className="fixed bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center bg-brandPrimary shadow-lg z-50 animate-bounce delay-700"
+      className="fixed bottom-6 right-5 w-14 h-14 rounded-full flex items-center justify-center bg-brandPrimary shadow-lg z-50 animate-bounce delay-700"
     >
       {/* SVG circular progress ring */}
       <svg
@@ -49,7 +49,7 @@ const ScrollTopButton: React.FC = () => {
         width={radius * 2}
       >
         <circle
-          stroke="#3b82f6" // Tailwind's gray-200
+          stroke="#a6abd7" // Tailwind's gray-200
           fill="transparent"
           strokeWidth={stroke}
           r={normalizedRadius}

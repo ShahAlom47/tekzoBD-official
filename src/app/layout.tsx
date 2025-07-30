@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import ConditionalWrapper from "@/components/wrappers/ConditionalWrapper";
 import MainWrapper from "@/components/wrappers/MainWrapper"; // 👈 import here
 import ScrollTopButton from "@/components/ScrollTopButton";
+import SmartChatWidget from "@/components/SmartChatWidget";
 
 export const metadata: Metadata = {
   title: "Shah Alom Official",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dar">
-      <body className="min-h-screen bg-white ">
+      <body className="min-h-screen bg-white relative ">
         <Providers>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
@@ -28,6 +29,7 @@ export default function RootLayout({
           <MainWrapper>
             {children}
                   <ScrollTopButton />
+                    <SmartChatWidget />
             </MainWrapper>
           <ConditionalWrapper hideOn={["dashboard", "login"]}>
             <Footer />
