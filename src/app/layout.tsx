@@ -6,6 +6,7 @@ import Providers from "@/Providers/RootProvider/Providers";
 import Footer from "@/components/Footer";
 import ConditionalWrapper from "@/components/wrappers/ConditionalWrapper";
 import MainWrapper from "@/components/wrappers/MainWrapper"; // 👈 import here
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 export const metadata: Metadata = {
   title: "Shah Alom Official",
@@ -24,7 +25,10 @@ export default function RootLayout({
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
           </ConditionalWrapper>
-          <MainWrapper>{children}</MainWrapper>
+          <MainWrapper>
+            {children}
+                  <ScrollTopButton />
+            </MainWrapper>
           <ConditionalWrapper hideOn={["dashboard", "login"]}>
             <Footer />
           </ConditionalWrapper>
