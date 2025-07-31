@@ -3,5 +3,5 @@ import { request } from "../apiRequests";
 
 
 export const subscribeNewsLetter = async (data:NewsletterSubscriberType) => {
-  return request("POST", `/newsletter/subscribe`,{data});
+  return request("POST", `/newsletter/subscribe`,{...data});
 }
