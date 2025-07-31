@@ -6,3 +6,9 @@ export interface NewsletterSubscriberType {
   subscribedAt?: string;    
   isActive: boolean;     
 }
+
+export type GetNewsLetterParams = {
+  currentPage?: number;  
+  limit?: number;
+  searchTrim?: string;
+};

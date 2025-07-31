@@ -2,11 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaFolderOpen, FaPlus,  } from "react-icons/fa";
+import { FaHome} from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
 import { TbLayoutGridAdd } from "react-icons/tb";
 import { MdCategory } from "react-icons/md";
 import { BsCartCheckFill } from "react-icons/bs";
+import { TiNews } from "react-icons/ti";
+
 
 
 
@@ -23,8 +25,7 @@ const DashNavbar: React.FC<PropsType> = ({ isOpen }) => {
     { name: "Products", href: "/dashboard/manageProducts", icon: AiFillProduct },
     { name: " Add Products", href: "/dashboard/manageProducts/addProducts", icon: TbLayoutGridAdd  },
     { name: " Category", href: "/dashboard/manageCategory", icon: MdCategory  },
-    { name: "Portfolio", href: "/dashboard/managePortfolio", icon: FaFolderOpen },
-    { name: "Add Portfolio", href: "/dashboard/addPortfolio", icon: FaPlus },
+    { name: "NewsLetter", href: "/dashboard/manageNewsLetter", icon: TiNews },
    
   ];
 
