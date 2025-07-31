@@ -44,6 +44,8 @@ const ManageNewsletter = () => {
     },
     refetchOnWindowFocus: false,
   });
+console.log(newsLetters)
+
 
   const handleDelete = async (id: string | ObjectId) => {
     const ok = await confirm({

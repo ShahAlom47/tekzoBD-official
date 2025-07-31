@@ -14,7 +14,7 @@ export const getAllNewsLetterSubscribers = async ({
   searchTrim,
 }: GetNewsLetterParams) => {
   const url =
-    `/newsletter/subscriber?currentPage=${currentPage}&limit=${limit}` +
+    `/newsletter/subscribers?currentPage=${currentPage}&limit=${limit}` +
     (searchTrim ? `&search=${encodeURIComponent(searchTrim)}` : "");
   return request("GET", url);
 };
