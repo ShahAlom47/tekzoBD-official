@@ -21,7 +21,7 @@ export const getAllNewsLetterSubscribers = async ({
 
 // ✅ 3. Delete a subscriber
 export const deleteNewsLetterSubscriber = async (id: string | ObjectId) => {
-  return request("DELETE", `/newsletter/subscriber/${id}`);
+  return request("DELETE", `/newsletter/deleteSubscriber/${id}`);
 };
 
 // ✅ 4. Update subscriber active/inactive status
@@ -29,7 +29,5 @@ export const updateSubscriberStatus = async (
   id: string | ObjectId,
   newStatus: boolean
 ) => {
-  return request("PATCH", `/newsletter/subscriber/${id}`, {
-    data: { isActive: newStatus },
-  });
+  return request("PATCH", `/newsletter/updateStatus/${id}`, {newStatus });
 };

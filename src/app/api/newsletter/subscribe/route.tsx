@@ -13,14 +13,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+  
+
     const collection = await getNewsLetterCollection();
 
     const newSubscriber = {
       email: body.email,
       subscribedAt: new Date().toISOString(),
       isActive: true,
+      ...body
     };
-
+  console.log(body,newSubscriber)
     const result = await collection.insertOne(newSubscriber);
 
     if (!result.acknowledged) {
