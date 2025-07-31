@@ -9,6 +9,7 @@ import AuthButton from "./AuthButton";
 import GlobalSearchBox from "./GlobalSearchBox";
 import NavCart from "./NavCart";
 import NavWishList from "./NavWishList";
+import SocialButtons from "./SocialButton";
 const Navbar = () => {
   const { scrollY, scrollDirection } = useScreenInfo();
   const showNavbar = scrollDirection === "up" || scrollY < 100;
@@ -33,6 +34,7 @@ const Navbar = () => {
           <div className=" flex-center  flex-1 gap-3 px-3">
             <h1 className=" text-brandNeutral">Welcome to TekzoBD</h1>
             <h1 className="text-blackDeep">Contact: 01747291486</h1>
+            <SocialButtons iconSize="lg"></SocialButtons>
           </div>
       <div className="md:block hidden">    <AuthButton></AuthButton></div>
         </div>
