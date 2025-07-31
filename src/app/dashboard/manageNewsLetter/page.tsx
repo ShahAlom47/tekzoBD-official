@@ -106,7 +106,7 @@ const handleStatusToggle = async (id: string | ObjectId, currentStatus: boolean)
       ),
       delete: (
         <button
-          className="btn-bordered border-red-700 hover:bg-red-700"
+          className="btn-bordered border-red-700 hover:bg-red-700 h-6 py-0"
           onClick={() => handleDelete(item?._id?item._id:'')}
         >
           Delete

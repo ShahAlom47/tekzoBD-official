@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/hooks/useUser";
 import { subscribeNewsLetter } from "@/lib/allApiRequest/newsLetterRequest/newsLetterRequest";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -8,12 +9,17 @@ type FormData = {
 };
 
 export default function Newsletter() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>();
+  const {user}=useUser()
+ const {
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors, isSubmitting },
+} = useForm<FormData>({
+  defaultValues: {
+    email: user?.email || "example@gmail.com",
+  },
+});
 
   const onSubmit = async (data: FormData) => {
     const subsData = {
