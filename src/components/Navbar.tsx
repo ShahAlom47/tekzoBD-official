@@ -31,10 +31,10 @@ const Navbar = () => {
         }}
       >
         <div className="max-w flex justify-between items-center gap-3">
-          <div className=" flex-center  flex-1 gap-3 px-3">
+          <div className=" flex-center  flex-1  gap-3 px-3">
             <h1 className=" text-brandNeutral">Welcome to TekzoBD</h1>
-            <h1 className="text-blackDeep">Contact: 01747291486</h1>
-            <SocialButtons iconSize="lg"></SocialButtons>
+            <h1 className="text-blackDeep hidden md:inline">Contact: 01747291486</h1>
+            <SocialButtons className="text-xs"></SocialButtons>
           </div>
       <div className="md:block hidden">    <AuthButton></AuthButton></div>
         </div>

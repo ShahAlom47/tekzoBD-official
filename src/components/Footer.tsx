@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { FaFacebookF, FaLinkedinIn, FaGithub } from "react-icons/fa";
 import Logo from "./Logo";
 import NavLinks from "./NavLinks";
+import SocialButtons from "./SocialButton";
 
 const Footer = () => {
   return (
@@ -19,32 +19,7 @@ const Footer = () => {
         </div>
 
         {/* Social Icons (external) */}
-        <div className="flex gap-4 text-lg">
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-primary transition"
-          >
-            <FaFacebookF />
-          </a>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-primary transition"
-          >
-            <FaLinkedinIn />
-          </a>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-primary transition"
-          >
-            <FaGithub />
-          </a>
-        </div>
+       <SocialButtons></SocialButtons>
       </div>
 
       {/* Bottom Line */}

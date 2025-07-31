@@ -35,7 +35,7 @@ const socialLinks: SocialLink[] = [
 type IconSize = "sm" | "md" | "lg" | "xl" | "2xl";
 
 const iconSizeClasses: Record<IconSize, string> = {
-  sm: "text-sm",
+  sm: "text-xs",
   md: "text-base",
   lg: "text-lg",
   xl: "text-xl",
@@ -49,7 +49,7 @@ export default function SocialButtons({
   className?: string;
   iconSize?: IconSize;
 }) {
-  const iconClass = iconSizeClasses[iconSize] || "text-xl";
+  const iconClass = iconSizeClasses[iconSize] || "text-lg";
 
   return (
     <div className={`flex items-center gap-4 ${className}`}>

@@ -45,7 +45,7 @@ export default function Newsletter() {
   return (
     <div className="relative bg-gray-50 py-16 px-6 sm:px-10 overflow-hidden shadow-md rounded-2xl">
       {/* Dot Background */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-dot-pattern opacity-90 pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-xl mx-auto text-center">
         <h2 className="text-2xl md:text-3xl font-semibold text-black mb-6">
