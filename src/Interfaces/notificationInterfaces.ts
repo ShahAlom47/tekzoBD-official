@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongodb';
+
 export interface NotificationType {
-  _id: string;
+  _id: string | ObjectId;
   type:
     | "order_placed"
     | "order_cancelled"
@@ -9,12 +11,12 @@ export interface NotificationType {
     | "new_review"
     | "contact_message"
     | "other";
-  title: string; // e.g., "New Order Received"
-  message: string; // e.g., "Order #12345 has been placed"
-  link?: string; // e.g., "/admin/orders/12345" (click করলে যেখানে যাবে)
-  relatedId?: string; // Optional: orderId, productId, etc.
+  title: string;
+  message: string;
+  link?: string | null;
+  relatedId?: string | null;
   isRead: boolean;
-  adminId: string; // future-proof: multiple admin হলে কাজে লাগবে
-  createdAt: Date;
-  updatedAt?: Date;
+  adminId?: string | null;
+  createdAt: string;  // ISO string
+  updatedAt?: string; // ISO string (optional)
 }
