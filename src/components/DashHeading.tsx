@@ -1,13 +1,14 @@
 "use client";
 
-import { TiMessages } from "react-icons/ti";
-import { IoIosNotificationsOutline } from "react-icons/io";
+
 import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
 import DashSearchBox from "./DashSearchBox";
 import Logo from "./Logo";
 import { FaSearch } from "react-icons/fa";
 import { useState } from "react";
 import { MdCancel } from "react-icons/md";
+import Notification from "./Notification";
+import DashMessageBox from "./DashMessageBox";
 
 interface PropsType {
   navListOpen?: boolean;
@@ -44,12 +45,10 @@ const DashHeading = ({ navListOpen, setNavListOpen }: PropsType) => {
           </button>
         </div>
         <div className="flex items-center gap-4 text-xl text-blackDeep">
-          <button className=" hover:scale-105">
-            <TiMessages />
-          </button>
-          <button className=" hover:scale-105">
-            <IoIosNotificationsOutline />
-          </button>
+         <DashMessageBox></DashMessageBox>
+          
+         <Notification></Notification>
+       
         </div>
       </div>
        <div className={`md:hidden ${searchOpen?"px-4 py-1":"px-0 py-0"} bg-white overflow-hidden  duration-500 transition-all`}

@@ -25,9 +25,10 @@ export default withAuth(
     }
 
     // ❌ No token = unauthenticated → redirect to login
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+   if (!token) {
+  const redirectTo = req.nextUrl.pathname + req.nextUrl.search;
+  return NextResponse.redirect(new URL(`/login?redirect=${redirectTo}`, req.url));
+}
 
     // console.log("🔐 Middleware hit:", pathname, "| Role:", role);
 
