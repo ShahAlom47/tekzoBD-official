@@ -25,6 +25,8 @@
     }
   },
   "include": [
+    "types/globals.d.ts",
+    "types",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
