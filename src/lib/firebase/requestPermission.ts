@@ -13,8 +13,7 @@ export const requestFirebaseNotificationPermission = async () => {
       }
 
       const token = await getToken(messagingInstance, {
-        vapidKey:
-          "BCEU3RVtwEqGOqazFWPqlmpM6G9Cvd8IzyLnY0gTBPdWcKg6FDQyvYwlJQHQKp1GZc2fyjWT8EDVtv3PVI8nKew",
+          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
       });
       return token;
     }
