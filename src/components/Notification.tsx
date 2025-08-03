@@ -1,33 +1,34 @@
-"use client"
-import React, { useState } from 'react';
-import Drawer from './Drawer';
-import { useUser } from '@/hooks/useUser';
-import { IoIosNotificationsOutline } from 'react-icons/io';
+"use client";
+import React, { useState } from "react";
+import Drawer from "./Drawer";
+import { useUser } from "@/hooks/useUser";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Notification = () => {
-      const [isOpen, setIsOpen] = useState(false);
-      const { user } = useUser();
-      console.log(user)
+  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useUser();
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    error,
+    fetchNotifications,
+    sendNewNotification,
+    markAsRead,
+    deleteNotif,
+  } = useNotifications(user?.email||'');
 
-
-
-
-
-
-
-
-
-
-    return (
-     <div className="relative flex items-center">
+  return (
+    <div className="relative flex items-center">
       <button
         onClick={() => setIsOpen(true)}
         title="Notification"
         className="text-black md:text-3xl text-2xl font-light relative hover:scale-90 transition-transform"
       >
-      <IoIosNotificationsOutline />
+        <IoIosNotificationsOutline />
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
-        99+
+        {unreadCount>99?unreadCount:"99+"}  
         </span>
       </button>
 
@@ -39,7 +40,7 @@ const Notification = () => {
       >
         <div className="p-2 min-h-screen flex flex-col">
           <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
-           Notification
+            Notification
           </h3>
 
           <div className="flex flex-col justify-between gap-2 p-2 product h-[90vh] ">
@@ -90,14 +91,12 @@ const Notification = () => {
               )} */}
             </div>
 
-            <div>
-            
-            </div>
+            <div></div>
           </div>
         </div>
       </Drawer>
     </div>
-    );
+  );
 };
 
 export default Notification;

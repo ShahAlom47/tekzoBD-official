@@ -1,5 +1,5 @@
 "use client";
-import { requestFirebaseNotificationPermission } from "@/lib/firebase/requestPermission";
+import { requestFirebaseNotificationPermission } from "@/lib/firebaseNotification/requestPermission";
 import { useEffect } from "react";
 
 export default function PushNotificationInit() {

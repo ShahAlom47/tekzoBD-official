@@ -1,4 +1,4 @@
-import admin from "@/lib/firebase/firebase-admin";
+import admin from "@/lib/firebaseNotification/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

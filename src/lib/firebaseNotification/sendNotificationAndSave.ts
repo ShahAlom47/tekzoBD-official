@@ -1,4 +1,4 @@
-import admin from "@/lib/firebase/firebase-admin";
+import admin from "@/lib/firebaseNotification/firebase-admin";
 import { getNotificationCollection } from "../database/db_collections";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
 
