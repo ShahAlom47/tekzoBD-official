@@ -45,3 +45,6 @@ next-env.d.ts
 **/serviceAccountKey.json
 src/lib/firebase/serviceAccountKey.json
 src/lib/firebase/serviceAccountKey.json
+
+public/firebase-messaging-sw.js
+

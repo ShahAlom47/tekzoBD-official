@@ -103,22 +103,25 @@ const CheckoutPage = () => {
       return;
     }
     try {
-      // Simulated API call
-      // await axios.post("/api/orders", finalOrder);
-      const response = await addOrder(finalOrder);
-      if (response?.success && response?.insId) {
-       
-        toast.success("✅ Order placed successfully!");
-        router.push("/shop");
-        dispatch(clearCheckoutData());
-        clearCart();
-        setSuccessModalOpen(false);
-           const insId = response?.insId
-        await handleSendNotification(insId)
-      
-      }
 
-      console.log("Order response:", response);
+
+
+      
+      // const response = await addOrder(finalOrder);
+      // if (response?.success && response?.insId) {
+       
+      //   toast.success("✅ Order placed successfully!");
+      //   router.push("/shop");
+      //   dispatch(clearCheckoutData());
+      //   clearCart();
+      //   setSuccessModalOpen(false);
+      //      const insId = response?.insId
+      //   await handleSendNotification(insId)
+      // }
+
+
+ await handleSendNotification('')
+    
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("❌ Something went wrong while placing order.");

@@ -54,7 +54,7 @@ export default function Newsletter() {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-row items-center gap-2 rounded-full bg-white shadow-md overflow-hidden"
+          className="flex flex-row items-center gap-1 rounded-full bg-white shadow-md overflow-hidden px-2 "
         >
           <input
             type="email"
@@ -66,7 +66,7 @@ export default function Newsletter() {
                 message: "Please enter a valid email address",
               },
             })}
-            className={`flex-grow px-4 py-3 text-gray-700 bg-transparent outline-none
+            className={`flex-grow px-2 py-3 text-gray-700 bg-transparent outline-none 
               ${
                 errors.email ? "border-red-500" : "border-transparent"
               } focus:border-brandPrimary`}
@@ -74,7 +74,7 @@ export default function Newsletter() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-3 text-brandPrimary font-semibold uppercase hover:bg-brandPrimary hover:text-white transition rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-2 py-3  text-brandPrimary text-sm md:text-base font-semibold uppercase hover:bg-brandPrimary hover:text-white transition rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Submitting..." : "Subscribe"}
           </button>

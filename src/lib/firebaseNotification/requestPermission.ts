@@ -10,7 +10,11 @@ export const requestFirebaseNotificationPermission = async (): Promise<string | 
     if (permission !== "granted") {
       console.warn("Notification permission not granted.");
       return null;
-    }
+    } if (permission === "granted") {
+    console.log("Permission deya hoyeche");
+  } else {
+    console.log("Permission deny kora hoyeche");
+  }
 
     const messagingInstance = await getMessagingInstance();
 
@@ -22,7 +26,7 @@ export const requestFirebaseNotificationPermission = async (): Promise<string | 
     const token = await getToken(messagingInstance, {
       vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
     });
-    console.log(token)
+   
 
     return token || null;
   } catch (error) {

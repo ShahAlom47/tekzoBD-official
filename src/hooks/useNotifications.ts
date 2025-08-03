@@ -1,3 +1,4 @@
+
 import { onMessage } from "firebase/messaging";
 import { useState, useEffect, useCallback } from "react";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
@@ -9,6 +10,7 @@ import {
 } from "@/lib/allApiRequest/notificationRequest/notificationRequest";
 import { getMessagingInstance } from "@/lib/firebaseNotification/firebase";
 import { requestFirebaseNotificationPermission } from "@/lib/firebaseNotification/requestPermission";
+import { useUser } from "./useUser";
 
 type SendNotificationInput = Omit<
   NotificationType,
@@ -30,6 +32,7 @@ type UseNotificationReturn = {
 };
 
 export function useNotifications(userEmail?: string): UseNotificationReturn {
+  const {user}= useUser()
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,9 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
   const limit = 10;
 
   const fetchNotifications = useCallback(
+  
     async (reset: boolean = false) => {
+  if(user?.role!=="admin")return
       try {
         setLoading(true);
         setError(null);
@@ -71,7 +76,7 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
         setLoading(false);
       }
     },
-    [userEmail, page]
+    [userEmail, page,user,user?.role]
   );
 
   const loadMore = useCallback(() => {

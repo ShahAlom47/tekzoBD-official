@@ -74,17 +74,19 @@ const Notification = () => {
         direction="right"
         width="w-[90%] md:w-[40%]"
       >
-        <div className="p-4 min-h-screen flex flex-col">
-          <h3 className="text-lg font-semibold mb-4 border-b pb-2">
+        <div className="p-4 max-h-[97vh] flex flex-col justify-between ">
+          <h3 className="text-lg font-semibold mb-2 border-b pb-2">
             Notifications
           </h3>
 
-          <div className="overflow-y-auto flex-1 space-y-2">
-            {renderNotifications()}
+          <div className="overflow-y-scroll flex-1 space-y-2 ">
+          <div className="">
+              {renderNotifications()}
+          </div>
 
             {/* 👉 See More Button */}
             {hasMore && !loading && (
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-4 ">
                 <button
                   onClick={loadMore}
                   className="text-sm text-brandPrimary hover:underline"
