@@ -1,13 +1,10 @@
 "use client"
 import React, { useState } from 'react';
 import Drawer from './Drawer';
-import { useUser } from '@/hooks/useUser';
 import { IoIosNotificationsOutline } from 'react-icons/io';
 
 const DashMessageBox = () => {
       const [isOpen, setIsOpen] = useState(false);
-      const { user } = useUser();
-      console.log(user)
 
 
 

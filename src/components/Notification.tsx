@@ -17,7 +17,12 @@ const Notification = () => {
     sendNewNotification,
     markAsRead,
     deleteNotif,
-  } = useNotifications(user?.email||'');
+  } = useNotifications(user?.email || "");
+  console.log(
+    unreadCount,
+    unreadCount > 99 ? (unreadCount <= 0 ? 0 : unreadCount) : "99+",
+    notifications
+  );
 
   return (
     <div className="relative flex items-center">
@@ -28,7 +33,7 @@ const Notification = () => {
       >
         <IoIosNotificationsOutline />
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
-        {unreadCount>99?unreadCount:"99+"}  
+          {unreadCount <= 0 ? 0 : unreadCount > 99 ? "99+" : unreadCount}
         </span>
       </button>
 

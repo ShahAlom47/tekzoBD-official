@@ -16,7 +16,7 @@ export interface NotificationType {
   link?: string | null;
   relatedId?: string | null;
   isRead: boolean;
-  adminId?: string | null;
+  adminEmail?: string | null;
   createdAt: string;  // ISO string
   updatedAt?: string; // ISO string (optional)
 }
