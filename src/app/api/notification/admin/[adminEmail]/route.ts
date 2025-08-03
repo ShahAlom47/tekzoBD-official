@@ -2,22 +2,48 @@
 
 import { getNotificationCollection } from "@/lib/database/db_collections";
 import { withAuth } from "@/ProtectedRoute/withAuth";
-import {  NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const handler = async () => {
+const handler = async (req: NextRequest) => {
   try {
     const notificationCollection = await getNotificationCollection();
 
+    // Pagination parameters from query
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+
+    if (isNaN(page) || isNaN(limit) || page <= 0 || limit <= 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid pagination parameters",
+        },
+        { status: 400 }
+      );
+    }
+
+    const skip = (page - 1) * limit;
+
+    const total = await notificationCollection.countDocuments();
     const notifications = await notificationCollection
       .find({})
-      .sort({ createdAt: -1 }) // Latest first
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .toArray();
 
     return NextResponse.json(
       {
-        message: "Notifications fetched successfully",
         success: true,
+        message: "Notifications fetched successfully",
         data: notifications,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       },
       { status: 200 }
     );
@@ -25,14 +51,15 @@ const handler = async () => {
     console.error("Error fetching notifications:", error);
     return NextResponse.json(
       {
-        message: "Failed to fetch notifications",
         success: false,
+        message: "Failed to fetch notifications",
       },
       { status: 500 }
     );
   }
 };
 
+// Admin only access
 export const GET = withAuth(handler, {
   allowedRoles: ["admin"],
 });

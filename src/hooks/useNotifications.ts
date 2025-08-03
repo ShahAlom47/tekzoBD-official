@@ -1,4 +1,4 @@
-import { onMessage } from 'firebase/messaging';
+import { onMessage } from "firebase/messaging";
 import { useState, useEffect, useCallback } from "react";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
 import {
@@ -7,7 +7,7 @@ import {
   markNotificationAsRead,
   sendNotification,
 } from "@/lib/allApiRequest/notificationRequest/notificationRequest";
-import { getMessagingInstance } from '@/lib/firebaseNotification/firebase';
+import { getMessagingInstance } from "@/lib/firebaseNotification/firebase";
 
 type SendNotificationInput = Omit<
   NotificationType,
@@ -19,30 +19,66 @@ type UseNotificationReturn = {
   unreadCount: number;
   loading: boolean;
   error: string | null;
-  fetchNotifications: () => Promise<void>;
+  fetchNotifications: (reset?: boolean) => Promise<void>;
   sendNewNotification: (data: SendNotificationInput) => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
   deleteNotif: (id: string) => Promise<void>;
+  hasMore: boolean;
+  loadMore: () => Promise<void>;
 };
 
 export function useNotifications(adminEmail: string): UseNotificationReturn {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 10;
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await getAllNotifications(adminEmail); // ✅ এখন email ব্যবহার করা হচ্ছে
-      const data = res?.data as NotificationType[];
-      setNotifications(data);
-    } catch {
-      setError("Failed to load notifications");
-    } finally {
-      setLoading(false);
+  const fetchNotifications = useCallback(
+    async (reset: boolean = false) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const currentPage = reset ? 1 : page;
+        const res = await getAllNotifications({
+          adminEmail,
+          page: currentPage,
+          limit,
+        });
+
+        const data = res?.data as NotificationType[];
+
+        if (reset) {
+          setNotifications(data);
+          setPage(2);
+        } else {
+          setNotifications((prev) => [...prev, ...data]);
+          setPage((prev) => prev + 1);
+        }
+
+        // যদি নেক্সট পেজে আর কিছু না থাকে
+        if (data.length < limit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+      } catch {
+        setError("Failed to load notifications");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [adminEmail, page]
+  );
+
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      return fetchNotifications(false);
     }
-  }, [adminEmail]);
+    return Promise.resolve();
+  }, [fetchNotifications, hasMore, loading]);
 
   const sendNewNotification = useCallback(
     async (notifData: SendNotificationInput) => {
@@ -50,7 +86,7 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
         setLoading(true);
         setError(null);
         await sendNotification(notifData);
-        await fetchNotifications();
+        await fetchNotifications(true); // রিফ্রেশ করে নতুন লিস্ট
       } catch {
         setError("Failed to send notification");
       } finally {
@@ -80,32 +116,32 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
     }
   }, []);
 
-  const unreadCount = notifications?.filter((n) => !n.isRead).length ||0;
+  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
 
   useEffect(() => {
-    fetchNotifications();
+    fetchNotifications(true);
   }, [fetchNotifications]);
 
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
 
-useEffect(() => {
-  let unsubscribe: (() => void) | undefined;
+    const setupMessaging = async () => {
+      const messaging = await getMessagingInstance();
+      if (messaging) {
+        unsubscribe = onMessage(messaging, (payload) => {
+          console.log("🔔 Push notification received:", payload);
+          fetchNotifications(true); // নতুন নোটিফিকেশন এলে রিফ্রেশ
+        });
+      }
+    };
 
-  const setupMessaging = async () => {
-    const messaging = await getMessagingInstance();
-    if (messaging) {
-      unsubscribe = onMessage(messaging, (payload) => {
-        console.log("🔔 Push notification received:", payload);
-        fetchNotifications() 
-      });
-    }
-  };
+    setupMessaging();
 
-  setupMessaging();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
-  return () => {
-    if (unsubscribe) unsubscribe();
-  };
-}, []);
   return {
     notifications,
     unreadCount,
@@ -115,5 +151,7 @@ useEffect(() => {
     sendNewNotification,
     markAsRead,
     deleteNotif,
+    hasMore,
+    loadMore,
   };
 }

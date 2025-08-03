@@ -5,7 +5,7 @@ import Drawer from "./Drawer";
 import { useUser } from "@/hooks/useUser";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useNotifications } from "@/hooks/useNotifications";
-import NotificationCard from "./NotificationCard"; // তুমি যদি আলাদা করে নোটিফিকেশন কার্ড বানাও
+import NotificationCard from "./NotificationCard";
 
 const Notification = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,14 +18,16 @@ const Notification = () => {
     error,
     markAsRead,
     deleteNotif,
+    hasMore,
+    loadMore,
   } = useNotifications(user?.email || "");
 
   const renderNotifications = () => {
-    if (loading) {
+    if (loading && notifications.length === 0) {
       return <p className="text-center text-sm">Loading notifications...</p>;
     }
 
-    if (error) {
+    if (error && notifications.length === 0) {
       return (
         <p className="text-center text-sm text-red-500">
           Failed to load notifications.
@@ -79,6 +81,25 @@ const Notification = () => {
 
           <div className="overflow-y-auto flex-1 space-y-2">
             {renderNotifications()}
+
+            {/* 👉 See More Button */}
+            {hasMore && !loading && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={loadMore}
+                  className="text-sm text-brandPrimary hover:underline"
+                >
+                  See More
+                </button>
+              </div>
+            )}
+
+            {/* Optional Loading below See More */}
+            {loading && notifications.length > 0 && (
+              <div className="text-center text-xs text-gray-400 mt-2">
+                Loading...
+              </div>
+            )}
           </div>
         </div>
       </Drawer>
