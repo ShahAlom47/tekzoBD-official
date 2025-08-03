@@ -20,3 +20,9 @@ export interface NotificationType {
   createdAt: string;  // ISO string
   updatedAt?: string; // ISO string (optional)
 }
+
+
+export interface NotificationQueryParams {
+  page?: number;
+  limit?: number;
+}

@@ -14,19 +14,22 @@ import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { useCart } from "@/hooks/useCart";
 import { addOrder } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { useUser } from "@/hooks/useUser";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const DELIVERY_CHARGE = 100;
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const {user}=useUser();
+  const { user } = useUser();
   const checkoutData = useSelector(
     (state: RootState) => state.checkout.checkoutData
   );
   const { clearCart } = useCart();
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
+
+  const { sendNewNotification, getCurrentToken } = useNotifications();
 
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
@@ -88,7 +91,7 @@ const CheckoutPage = () => {
         orderStatus: "pending",
       },
     };
-    console.log(order);
+    // console.log(order);
     setFinalOrder(order);
     setSuccessModalOpen(true);
   };
@@ -103,12 +106,16 @@ const CheckoutPage = () => {
       // Simulated API call
       // await axios.post("/api/orders", finalOrder);
       const response = await addOrder(finalOrder);
-      if (response?.success) {
+      if (response?.success && response?.insId) {
+       
         toast.success("✅ Order placed successfully!");
         router.push("/shop");
         dispatch(clearCheckoutData());
         clearCart();
         setSuccessModalOpen(false);
+           const insId = response?.insId
+        await handleSendNotification(insId)
+      
       }
 
       console.log("Order response:", response);
@@ -117,6 +124,24 @@ const CheckoutPage = () => {
       toast.error("❌ Something went wrong while placing order.");
     }
   };
+
+const handleSendNotification = async (orderId: string) => {
+  const token = await getCurrentToken();
+  if (!token) {
+    console.warn("No FCM token available");
+    return;
+  }
+
+   sendNewNotification({
+    title: "New Order Placed",
+    message: `Customer Name: ${finalOrder?.shippingInfo?.name}\nOrder ID: ${orderId || "N/A"}\nTotal Amount: ${finalOrder?.pricing?.grandTotal} BDT\nDate: ${new Date(finalOrder?.meta?.checkoutAt || "").toLocaleString()}`,
+    type: "order_placed",
+    link: `/dashboard/manageOrders/${orderId}`,
+    relatedId: orderId,
+    token,
+  });
+};
+
 
   if (!checkoutData) {
     return <div className="text-center py-10">No checkout data found.</div>;

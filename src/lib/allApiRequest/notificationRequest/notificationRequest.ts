@@ -1,4 +1,4 @@
-import { NotificationType } from "@/Interfaces/notificationInterfaces";
+import { NotificationQueryParams, NotificationType } from "@/Interfaces/notificationInterfaces";
 import { request } from "../apiRequests";
 
 // 📩 Notification পাঠানোর জন্য
@@ -8,13 +8,8 @@ export const sendNotification = async (
   return request("POST", "/notification/send-notification", { ...data });
 };
 
-interface NotificationQueryParams {
-  adminEmail: string;
-  page?: number;
-  limit?: number;
-}
 
-export const getAllNotifications = async ({adminEmail,page = 1, limit = 10,
+export const getAllNotifications = async ({page = 1, limit = 10,
 }: NotificationQueryParams) => {
   const query = new URLSearchParams({
     page: page.toString(),
@@ -22,7 +17,7 @@ export const getAllNotifications = async ({adminEmail,page = 1, limit = 10,
   });
 
   return request(
-    "GET", `/notification/admin/${adminEmail}?${query.toString()}`
+    "GET", `/notification/admin?${query.toString()}`
   );
 };
 

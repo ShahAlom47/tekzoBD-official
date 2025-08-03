@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: true,
-          id: result.insertedId,
+          insId: result.insertedId.toString(),
           message: "Order created successfully.",
         },
         { status: 201 }

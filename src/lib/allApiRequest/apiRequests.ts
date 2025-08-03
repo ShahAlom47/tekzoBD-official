@@ -4,6 +4,7 @@ import type { AxiosError } from "axios";
 export interface IApiResponse<T = unknown> {
   success: boolean;
   message: string;
+  insId?:string;
   data?: T;
   totalData?: number;
   currentPage?: number;

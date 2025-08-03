@@ -8,6 +8,7 @@ import {
   sendNotification,
 } from "@/lib/allApiRequest/notificationRequest/notificationRequest";
 import { getMessagingInstance } from "@/lib/firebaseNotification/firebase";
+import { requestFirebaseNotificationPermission } from "@/lib/firebaseNotification/requestPermission";
 
 type SendNotificationInput = Omit<
   NotificationType,
@@ -15,6 +16,7 @@ type SendNotificationInput = Omit<
 > & { token: string };
 
 type UseNotificationReturn = {
+  getCurrentToken: () => Promise<string | null>;
   notifications: NotificationType[];
   unreadCount: number;
   loading: boolean;
@@ -27,7 +29,7 @@ type UseNotificationReturn = {
   loadMore: () => Promise<void>;
 };
 
-export function useNotifications(adminEmail: string): UseNotificationReturn {
+export function useNotifications(userEmail?: string): UseNotificationReturn {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,6 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
 
         const currentPage = reset ? 1 : page;
         const res = await getAllNotifications({
-          adminEmail,
           page: currentPage,
           limit,
         });
@@ -70,7 +71,7 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
         setLoading(false);
       }
     },
-    [adminEmail, page]
+    [userEmail, page]
   );
 
   const loadMore = useCallback(() => {
@@ -86,7 +87,7 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
         setLoading(true);
         setError(null);
         await sendNotification(notifData);
-        await fetchNotifications(true); // রিফ্রেশ করে নতুন লিস্ট
+        await fetchNotifications(true);
       } catch {
         setError("Failed to send notification");
       } finally {
@@ -116,6 +117,19 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
     }
   }, []);
 
+  
+  const getCurrentToken = useCallback(async (): Promise<string | null> => {
+    try {
+      const token = await requestFirebaseNotificationPermission();
+      console.log(token)
+      return token;
+    } catch (error) {
+      console.error("Failed to get current token:", error);
+      return null;
+    }
+  }, []);
+
+
   const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
 
   useEffect(() => {
@@ -143,6 +157,7 @@ export function useNotifications(adminEmail: string): UseNotificationReturn {
   }, []);
 
   return {
+    getCurrentToken,
     notifications,
     unreadCount,
     loading,
