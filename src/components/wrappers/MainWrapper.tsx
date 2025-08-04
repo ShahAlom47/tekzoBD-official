@@ -1,5 +1,6 @@
 "use client";
 
+import { useAdminFirebaseToken } from "@/hooks/useAdminFirebaseToken";
 import { useCategories } from "@/hooks/useCategory";
 import { useWishlist } from "@/hooks/useWishlist";
 import { usePathname } from "next/navigation";
@@ -15,6 +16,7 @@ export default function MainWrapper({
   const pathname = usePathname();
     useCategories();  // first time data load in the redux store 
     useWishlist()
+    useAdminFirebaseToken()  //  for  Firebase  notification DB Token Manage
 
   
 

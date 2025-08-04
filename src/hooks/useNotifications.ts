@@ -14,7 +14,7 @@ import { useUser } from "./useUser";
 type SendNotificationInput = Omit<
   NotificationType,
   "_id" | "createdAt" | "updatedAt" | "isRead"
-> & { token: string };
+>;
 
 type UseNotificationReturn = {
   getCurrentToken: () => Promise<string | null>;

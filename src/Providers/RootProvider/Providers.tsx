@@ -14,6 +14,7 @@ export default function RootProvider({ children }: { children: ReactNode }) {
         <QueryProvider>
           <Toaster position="top-right" />
           <PushNotificationInit></PushNotificationInit>
+          
           {children}
         </QueryProvider>
       </ReduxProvider>

@@ -1,25 +1,45 @@
-import { getNotificationCollection } from "@/lib/database/db_collections";
+import {
+  getNotificationCollection,
+  getAdminTokenCollection,
+} from "@/lib/database/db_collections";
 import admin from "@/lib/firebaseNotification/firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { token, title,  message } = body;
+    const { title, message } = body;
 
-    // Input validation
-    if (!token || !title || !message) {
+    if (!title || !message) {
       return NextResponse.json(
-        { success: false, message: "Token, title, and message are required." },
+        {
+          success: false,
+          message: "Title, and message are required.",
+        },
         { status: 400 }
       );
     }
 
-    // Optional: You can log or store the notification in DB if needed
-    const notificationCollection = await getNotificationCollection();
-    await notificationCollection.insertOne({isRead:false,...body});
+    // Get token from DB
+    const adminTokenCollection = await getAdminTokenCollection();
+    const adminDoc = await adminTokenCollection.findOne();
+       console.log(adminDoc,"dbToken")
 
-    // FCM Payload
+    if (!adminDoc?.token || typeof adminDoc.token !== "string") {
+      return NextResponse.json(
+        { success: false, message: "Token not found or invalid." },
+        { status: 404 }
+      );
+    }
+
+    const token = adminDoc.token;
+ 
+
+    // Optional: Store notification
+    const notificationCollection = await getNotificationCollection();
+    await notificationCollection.insertOne({ isRead: false, ...body });
+
+    // Payload for FCM
     const payload = {
       notification: {
         title,
@@ -38,7 +58,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 200 }
     );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Notification send error:", error);
     return NextResponse.json(

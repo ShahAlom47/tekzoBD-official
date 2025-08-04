@@ -1,8 +1,7 @@
-import { ObjectId } from "mongodb";
 
-export interface AdminTokenType {
-  _id?: string| ObjectId;         
-  adminId: string;       
+
+export interface AdminTokenType {    
+  userEmail?:string;  
   token: string;      
   createdAt?: Date;     
   updatedAt?: Date;    

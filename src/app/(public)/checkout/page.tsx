@@ -29,7 +29,7 @@ const CheckoutPage = () => {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
 
-  const { sendNewNotification, getCurrentToken } = useNotifications();
+  const { sendNewNotification, } = useNotifications();
 
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
@@ -129,11 +129,6 @@ const CheckoutPage = () => {
   };
 
 const handleSendNotification = async (orderId: string) => {
-  const token = await getCurrentToken();
-  if (!token) {
-    console.warn("No FCM token available");
-    return;
-  }
 
    sendNewNotification({
     title: "New Order Placed",
@@ -141,7 +136,6 @@ const handleSendNotification = async (orderId: string) => {
     type: "order_placed",
     link: `/dashboard/manageOrders/${orderId}`,
     relatedId: orderId,
-    token,
   });
 };
 
