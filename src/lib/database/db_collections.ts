@@ -10,6 +10,7 @@ import { Cart } from "@/Interfaces/cartInterface";
 import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { NewsletterSubscriberType } from "@/Interfaces/newsLetterInterface";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
+import { AdminTokenType } from "@/Interfaces/adminTokenInterfaces";
 
 
 // Define the User type (you can extend it as needed)
@@ -60,4 +61,9 @@ export const getNotificationCollection = async (): Promise<Collection<Notificati
   const client = await clientPromise;
   const db: Db = client.db("tekzoBd-database"); // Replace with your database name
   return db.collection<NotificationType>("Notification");
+};
+export const getAdminTokenCollection = async (): Promise<Collection<AdminTokenType>> => {
+  const client = await clientPromise;
+  const db: Db = client.db("tekzoBd-database"); // Replace with your database name
+  return db.collection<AdminTokenType>("AdminToken");
 };
