@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { token,updatedAt } = body;
+  const { token, device } = body;
 
   if (!token || typeof token !== "string") {
     return NextResponse.json({ message: "Invalid token" }, { status: 400 });
@@ -20,24 +20,47 @@ export async function POST(req: NextRequest) {
 
   try {
     const adminTokenCollection = await getAdminTokenCollection();
-    const userEmail = session?.user.email ||"";
+    const email = session.user.email || "";
 
-    const existing = await adminTokenCollection.findOne({ userEmail });
+    // Find existing admin token doc
+    const existingDoc = await adminTokenCollection.findOne({ email });
 
-    if (!existing || existing.token !== token) {
-      await adminTokenCollection.updateOne(
-        { userEmail },
-        {
-          $set: {
-            token,
-            updatedAt:updatedAt|| new Date().toISOString(),
-          },
-        },
-        { upsert: true }
-      );
+    const nowISOString = new Date().toISOString();
+
+    if (!existingDoc) {
+      // If no doc, create new
+      const newDoc = {
+        email,
+        tokens: [{ token, device, createdAt: nowISOString }],
+        createdAt: nowISOString,
+        updatedAt: nowISOString,
+      };
+      await adminTokenCollection.insertOne(newDoc);
+    } else {
+      // If doc exists, check if token already present
+      const tokens = existingDoc.tokens || [];
+      const tokenExists = tokens.some((t: { token: string }) => t.token === token);
+
+      if (!tokenExists) {
+        // Add new token object to tokens array
+        tokens.push({ token, device, createdAt: nowISOString });
+
+        await adminTokenCollection.updateOne(
+          { email },
+          {
+            $set: { tokens, updatedAt: nowISOString },
+          }
+        );
+      } else {
+        // Token already exists, update updatedAt only
+        await adminTokenCollection.updateOne(
+          { email },
+          { $set: { updatedAt: nowISOString } }
+        );
+      }
     }
 
-    return NextResponse.json({ message: "Token saved or unchanged" });
+    return NextResponse.json({ message: "Token saved or updated" });
   } catch (error) {
     console.error("Error saving admin token:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });

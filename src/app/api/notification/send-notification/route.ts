@@ -14,41 +14,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "Title, and message are required.",
+          message: "Title and message are required.",
         },
         { status: 400 }
       );
     }
 
-    // Get token from DB
+    // Get all admin docs with tokens
     const adminTokenCollection = await getAdminTokenCollection();
-    const adminDoc = await adminTokenCollection.findOne();
-       console.log(adminDoc,"dbToken")
+    const allAdminDocs = await adminTokenCollection.find().toArray();
 
-    if (!adminDoc?.token || typeof adminDoc.token !== "string") {
+    // Flatten all tokens from all admins into a single array
+    const tokens = allAdminDocs.flatMap(adminDoc => 
+      Array.isArray(adminDoc.tokens)
+        ? adminDoc.tokens.map((t: { token: string }) => t.token)
+        : []
+    );
+
+    if (tokens.length === 0) {
       return NextResponse.json(
-        { success: false, message: "Token not found or invalid." },
+        { success: false, message: "No tokens found for any admin." },
         { status: 404 }
       );
     }
 
-    const token = adminDoc.token;
- 
-
-    // Optional: Store notification
+    // Optional: Store notification in DB
     const notificationCollection = await getNotificationCollection();
     await notificationCollection.insertOne({ isRead: false, ...body });
 
-    // Payload for FCM
-    const payload = {
+    // FCM multicast payload
+    const messagePayload = {
       notification: {
         title,
         body: message,
       },
-      token,
+      tokens,
     };
 
-    const response = await admin.messaging().send(payload);
+    // Send multicast notification
+    const response = await admin.messaging().sendEachForMulticast(messagePayload);
 
     return NextResponse.json(
       {
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Notification send error:", error);
     return NextResponse.json(
