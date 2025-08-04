@@ -26,6 +26,7 @@ const handler = async (req: NextRequest) => {
     const skip = (page - 1) * limit;
 
     const total = await notificationCollection.countDocuments();
+
     const notifications = await notificationCollection
       .find({})
       .sort({ createdAt: -1 })
@@ -33,11 +34,17 @@ const handler = async (req: NextRequest) => {
       .limit(limit)
       .toArray();
 
+    // Count unread notifications
+    const unreadCount = await notificationCollection.countDocuments({
+      isRead: false,
+    });
+
     return NextResponse.json(
       {
         success: true,
         message: "Notifications fetched successfully",
         data: notifications,
+        unreadCount, // ✅ return actual unread count from DB
         pagination: {
           total,
           page,

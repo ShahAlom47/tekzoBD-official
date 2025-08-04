@@ -21,6 +21,7 @@ const Notification = () => {
     hasMore,
     loadMore,
   } = useNotifications(user?.email || "");
+  console.log(unreadCount)
 
   const renderNotifications = () => {
     if (loading && notifications.length === 0) {

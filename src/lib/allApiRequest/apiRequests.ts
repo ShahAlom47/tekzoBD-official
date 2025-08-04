@@ -5,6 +5,7 @@ export interface IApiResponse<T = unknown> {
   success: boolean;
   message: string;
   insId?:string;
+  unreadCount?:number;
   data?: T;
   totalData?: number;
   currentPage?: number;

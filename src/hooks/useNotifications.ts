@@ -1,4 +1,3 @@
-
 import { onMessage } from "firebase/messaging";
 import { useState, useEffect, useCallback } from "react";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
@@ -32,8 +31,9 @@ type UseNotificationReturn = {
 };
 
 export function useNotifications(userEmail?: string): UseNotificationReturn {
-  const {user}= useUser()
+  const { user } = useUser();
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -41,9 +41,9 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
   const limit = 10;
 
   const fetchNotifications = useCallback(
-  
     async (reset: boolean = false) => {
-  if(user?.role!=="admin")return
+      if (user?.role !== "admin") return;
+
       try {
         setLoading(true);
         setError(null);
@@ -55,6 +55,7 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
         });
 
         const data = res?.data as NotificationType[];
+        const unread = res?.unreadCount || 0;
 
         if (reset) {
           setNotifications(data);
@@ -64,19 +65,16 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
           setPage((prev) => prev + 1);
         }
 
-        // যদি নেক্সট পেজে আর কিছু না থাকে
-        if (data.length < limit) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
+        setUnreadCount(unread);
+
+        setHasMore(data.length >= limit);
       } catch {
         setError("Failed to load notifications");
       } finally {
         setLoading(false);
       }
     },
-    [userEmail, page,user,user?.role]
+    [userEmail, page, user]
   );
 
   const loadMore = useCallback(() => {
@@ -108,6 +106,7 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
       );
+      setUnreadCount((prev) => Math.max(prev - 1, 0));
     } catch {
       setError("Failed to mark as read");
     }
@@ -115,27 +114,27 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
 
   const deleteNotif = useCallback(async (id: string) => {
     try {
+      const target = notifications.find((n) => n._id === id);
       await deleteNotification(id);
       setNotifications((prev) => prev.filter((n) => n._id !== id));
+      if (target && !target.isRead) {
+        setUnreadCount((prev) => Math.max(prev - 1, 0));
+      }
     } catch {
       setError("Failed to delete notification");
     }
-  }, []);
+  }, [notifications]);
 
-  
   const getCurrentToken = useCallback(async (): Promise<string | null> => {
     try {
       const token = await requestFirebaseNotificationPermission();
-      console.log(token)
+      console.log(token);
       return token;
     } catch (error) {
       console.error("Failed to get current token:", error);
       return null;
     }
   }, []);
-
-
-  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
 
   useEffect(() => {
     fetchNotifications(true);
@@ -149,7 +148,7 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
       if (messaging) {
         unsubscribe = onMessage(messaging, (payload) => {
           console.log("🔔 Push notification received:", payload);
-          fetchNotifications(true); // নতুন নোটিফিকেশন এলে রিফ্রেশ
+          fetchNotifications(true);
         });
       }
     };

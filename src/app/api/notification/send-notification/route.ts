@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     // Optional: You can log or store the notification in DB if needed
     const notificationCollection = await getNotificationCollection();
-    await notificationCollection.insertOne(body);
+    await notificationCollection.insertOne({isRead:false,...body});
 
     // FCM Payload
     const payload = {
