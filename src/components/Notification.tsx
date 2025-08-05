@@ -5,9 +5,11 @@ import Drawer from "./Drawer";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useNotifications } from "@/hooks/useNotifications";
 import NotificationCard from "./NotificationCard";
+import { useConfirm } from "@/hooks/useConfirm";
 
 const Notification = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const {ConfirmModal}= useConfirm()
 
   const {
     notifications,
@@ -104,6 +106,7 @@ const Notification = () => {
           </div>
         </div>
       </Drawer>
+      {ConfirmModal}
     </div>
   );
 };

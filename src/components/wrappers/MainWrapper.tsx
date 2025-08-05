@@ -2,7 +2,6 @@
 
 import { useAdminFirebaseToken } from "@/hooks/useAdminFirebaseToken";
 import { useCategories } from "@/hooks/useCategory";
-import { useConfirm } from "@/hooks/useConfirm";
 import { useWishlist } from "@/hooks/useWishlist";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -18,7 +17,7 @@ export default function MainWrapper({
     useCategories();  // first time data load in the redux store 
     useWishlist()
     useAdminFirebaseToken()  //  for  Firebase  notification DB Token Manage
-      const { ConfirmModal } = useConfirm();
+
 
   
 
@@ -29,7 +28,6 @@ export default function MainWrapper({
   return (
     <main className={`${hasMargin ? "md:pt-[8%] pt-[13%]" : "pt-0"} min-h-screen `}>
       {children}
-      {ConfirmModal}
     </main>
   );
 }
