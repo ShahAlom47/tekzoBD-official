@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     // Get all admin docs with tokens
     const adminTokenCollection = await getAdminTokenCollection();
     const allAdminDocs = await adminTokenCollection.find().toArray();
+    console.log(allAdminDocs)
 
     // Flatten all tokens from all admins into a single array
     const tokens = allAdminDocs.flatMap(adminDoc => 

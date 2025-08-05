@@ -30,7 +30,7 @@ type UseNotificationReturn = {
   loadMore: () => Promise<void>;
 };
 
-export function useNotifications(userEmail?: string): UseNotificationReturn {
+export function useNotifications(): UseNotificationReturn {
   const { user } = useUser();
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
@@ -74,7 +74,8 @@ export function useNotifications(userEmail?: string): UseNotificationReturn {
         setLoading(false);
       }
     },
-    [userEmail, page, user]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [  user]
   );
 
   const loadMore = useCallback(() => {

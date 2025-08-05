@@ -14,7 +14,7 @@ export function useAdminFirebaseToken() {
   useEffect(() => {
     if (!session?.user?.role || session.user.role !== "admin") return;
 
-    // ✅ async ফাংশন আলাদা করে define করা হলো
+
     const setupToken = async () => {
       const messaging = await getMessagingInstance();
       if (!messaging) {
