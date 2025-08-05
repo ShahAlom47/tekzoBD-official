@@ -28,5 +28,5 @@ export const markNotificationAsRead = async (id: string) => {
 
 // ❌ notification delete
 export const deleteNotification = async (id: string) => {
-  return request("DELETE", `/notification/${id}`);
+  return request("DELETE", `/notification/delete/${id}`);
 };

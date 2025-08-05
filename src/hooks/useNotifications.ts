@@ -120,7 +120,8 @@ const deleteNotif = useCallback(
 
     try {
       const target = notifications.find((n) => n._id === id);
-      await deleteNotification(id);
+      const res = await deleteNotification(id);
+      if(!res?.success) return
       setNotifications((prev) => prev.filter((n) => n._id !== id));
       if (target && !target.isRead) {
         setUnreadCount((prev) => Math.max(prev - 1, 0));

@@ -59,7 +59,7 @@ const NotificationCard = ({
           <button
             className="text-blue-500 hover:underline"
             onClick={(e) => {
-              e.stopPropagation(); // বাটন ক্লিকের ইভেন্ট কার্ড ক্লিকে না ফেলে
+              e.stopPropagation(); 
               markAsRead(notification._id.toString());
             }}
           >
