@@ -2,14 +2,12 @@
 
 import React, { useState } from "react";
 import Drawer from "./Drawer";
-import { useUser } from "@/hooks/useUser";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useNotifications } from "@/hooks/useNotifications";
 import NotificationCard from "./NotificationCard";
 
 const Notification = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUser();
 
   const {
     notifications,
@@ -20,7 +18,7 @@ const Notification = () => {
     deleteNotif,
     hasMore,
     loadMore,
-  } = useNotifications(user?.email || "");
+  } = useNotifications();
   console.log(unreadCount)
 
   const renderNotifications = () => {

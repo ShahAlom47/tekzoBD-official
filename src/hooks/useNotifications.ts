@@ -10,6 +10,7 @@ import {
 import { getMessagingInstance } from "@/lib/firebaseNotification/firebase";
 import { requestFirebaseNotificationPermission } from "@/lib/firebaseNotification/requestPermission";
 import { useUser } from "./useUser";
+import { useConfirm } from "./useConfirm";
 
 type SendNotificationInput = Omit<
   NotificationType,
@@ -32,6 +33,7 @@ type UseNotificationReturn = {
 
 export function useNotifications(): UseNotificationReturn {
   const { user } = useUser();
+  const {confirm}= useConfirm()
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -113,7 +115,19 @@ export function useNotifications(): UseNotificationReturn {
     }
   }, []);
 
-  const deleteNotif = useCallback(async (id: string) => {
+
+
+const deleteNotif = useCallback(
+  async (id: string) => {
+    const ok = await confirm({
+      title: "Delete Notification",
+      message: "Are you sure you want to delete this notification?",
+      confirmText: "Yes, Delete",
+      cancelText: "Cancel",
+    });
+
+    if (!ok) return;
+
     try {
       const target = notifications.find((n) => n._id === id);
       await deleteNotification(id);
@@ -124,7 +138,10 @@ export function useNotifications(): UseNotificationReturn {
     } catch {
       setError("Failed to delete notification");
     }
-  }, [notifications]);
+  },
+  [notifications, confirm] 
+);
+
 
   const getCurrentToken = useCallback(async (): Promise<string | null> => {
     try {

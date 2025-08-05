@@ -1,30 +1,21 @@
-"use client"
-import React, { useState } from 'react';
-import Drawer from './Drawer';
-import { IoIosNotificationsOutline } from 'react-icons/io';
+"use client";
+import React, { useState } from "react";
+import Drawer from "./Drawer";
+import { TiMessages } from "react-icons/ti";
 
 const DashMessageBox = () => {
-      const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-
-
-
-
-
-
-
-
-
-    return (
-     <div className="relative flex items-center">
+  return (
+    <div className="relative flex items-center">
       <button
         onClick={() => setIsOpen(true)}
         title="Notification"
-        className="text-black md:text-3xl text-2xl font-light relative hover:scale-90 transition-transform"
+        className="text-black md:text-2xl text-xl font-light relative hover:scale-90 transition-transform"
       >
-      <IoIosNotificationsOutline />
+        <TiMessages />
         <span className="md:h-5 md:w-5 h-4 w-4 p-1 bg-brandPrimary rounded-full absolute -top-2 -right-2 md:text-[9px] text-[8px] text-white flex items-center justify-center font-semibold shadow">
-        99+
+          99+
         </span>
       </button>
 
@@ -36,11 +27,16 @@ const DashMessageBox = () => {
       >
         <div className="p-2 min-h-screen flex flex-col">
           <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
-           Message
+            Message
           </h3>
 
           <div className="flex flex-col justify-between gap-2 p-2 product h-[90vh] ">
             <div className="overflow-y-scroll flex-1 h-full product ">
+              <p className="text-red-700 italic">
+                🚧 This feature is currently under construction. Please check
+                back later.
+              </p>
+
               {/* {isLoading && !products && <Loading />} */}
 
               {/* {isError && (
@@ -87,14 +83,12 @@ const DashMessageBox = () => {
               )} */}
             </div>
 
-            <div>
-            
-            </div>
+            <div></div>
           </div>
         </div>
       </Drawer>
     </div>
-    );
+  );
 };
 
 export default DashMessageBox;
