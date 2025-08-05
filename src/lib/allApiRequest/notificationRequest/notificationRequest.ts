@@ -21,7 +21,7 @@ export const getAllNotifications = async ({page = 1, limit = 10,
   );
 };
 
-// ✅ একটিকে read হিসেবে mark করার জন্য
+
 export const markNotificationAsRead = async (id: string) => {
   return request("PATCH", `/notification/mark-as-read/${id}`);
 };

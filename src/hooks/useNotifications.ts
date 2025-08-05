@@ -10,6 +10,7 @@ import {
 import { getMessagingInstance } from "@/lib/firebaseNotification/firebase";
 import { requestFirebaseNotificationPermission } from "@/lib/firebaseNotification/requestPermission";
 import { useUser } from "./useUser";
+import toast from "react-hot-toast";
 
 type SendNotificationInput = Omit<
   NotificationType,
@@ -122,6 +123,7 @@ const deleteNotif = useCallback(
       const target = notifications.find((n) => n._id === id);
       const res = await deleteNotification(id);
       if(!res?.success) return
+      toast.success("Successfully Completed")
       setNotifications((prev) => prev.filter((n) => n._id !== id));
       if (target && !target.isRead) {
         setUnreadCount((prev) => Math.max(prev - 1, 0));
