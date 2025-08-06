@@ -10,7 +10,10 @@ import GlobalSearchBox from "./GlobalSearchBox";
 import NavCart from "./NavCart";
 import NavWishList from "./NavWishList";
 import SocialButtons from "./SocialButton";
+import { useUser } from "@/hooks/useUser";
+import Notification from "./Notification";
 const Navbar = () => {
+  const {user}= useUser()
   const { scrollY, scrollDirection } = useScreenInfo();
   const showNavbar = scrollDirection === "up" || scrollY < 100;
   const showShadow = scrollY > 50;
@@ -47,9 +50,14 @@ const Navbar = () => {
           <GlobalSearchBox></GlobalSearchBox>
         </div>
         <div className="flex items-center justify-center gap-4   px-2 ">
-          <NavWishList></NavWishList>
+         
+          {user?.role==="admin"?
+          (<Notification></Notification>):
+          ( <NavWishList></NavWishList>)
+          }
           
           <NavCart></NavCart>
+         
           <AuthMenu />
         </div>
       </div>

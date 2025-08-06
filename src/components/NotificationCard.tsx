@@ -55,17 +55,7 @@ const NotificationCard = ({
       <h4 className="font-semibold text-sm">{notification.title}</h4>
       <p className="text-xs text-gray-600">{notification.message}</p>
       <div className="flex justify-end gap-2 mt-2 text-xs">
-        {!notification.isRead && (
-          <button
-            className="text-blue-500 hover:underline"
-            onClick={(e) => {
-              e.stopPropagation(); 
-              markAsRead(notification._id.toString());
-            }}
-          >
-            Mark as read
-          </button>
-        )}
+       
         <button
           className="text-red-500 hover:underline"
           onClick={(e) => {

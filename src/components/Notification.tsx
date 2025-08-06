@@ -81,7 +81,7 @@ const Notification = () => {
           </h3>
 
           <div className="overflow-y-scroll flex-1 space-y-2 ">
-          <div className="">
+          <div className=" space-y-2">
               {renderNotifications()}
           </div>
 
