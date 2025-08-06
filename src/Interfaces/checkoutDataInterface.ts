@@ -44,6 +44,7 @@ export interface CheckoutMeta {
   userEmail: string;
   userId:string|ObjectId; // optional, can be null for guest checkout
   orderStatus: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  cancelledByUser?: boolean
 }
 
 // main Type  for checkout data

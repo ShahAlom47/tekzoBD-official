@@ -56,6 +56,7 @@ const OrderDetailsContent = ({ order }: { order: CheckoutDataType }) => {
             <OrderStatusSelect
               status={meta?.orderStatus}
               id={_id?.toString() ?? ""}
+               cancelledByUser={order.meta.cancelledByUser}
             />
           </div>
           <p>

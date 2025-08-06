@@ -22,9 +22,25 @@ const statusOptions: OrderStatus[] = [
   "cancelled",
 ];
 
-const OrderStatusSelect: React.FC<Props> = ({ id, status, onStatusChange }) => {
+interface Props {
+  id: string | ObjectId;
+  status: OrderStatus;
+  cancelledByUser?: boolean;   // নতুন প্রপ
+  onStatusChange?: (newStatus: OrderStatus) => void;
+}
+
+const OrderStatusSelect: React.FC<Props> = ({ id, status, cancelledByUser = false, onStatusChange }) => {
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(status);
   const { ConfirmModal, confirm } = useConfirm();
+
+  // যদি ইউজারই cancel করে থাকে, তাহলে admin কে status update থেকে আটকাবে
+  if (cancelledByUser) {
+    return (
+      <div className="inline-block text-red-600 font-semibold">
+        Order cancelled by user. Status updates are disabled.
+      </div>
+    );
+  }
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as OrderStatus;
@@ -92,3 +108,4 @@ const OrderStatusSelect: React.FC<Props> = ({ id, status, onStatusChange }) => {
 };
 
 export default OrderStatusSelect;
+

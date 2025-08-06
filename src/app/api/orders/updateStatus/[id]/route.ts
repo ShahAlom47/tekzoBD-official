@@ -6,6 +6,8 @@ import { ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
+// interface OrderStatus {status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled"}
+
 const handler = async (
   req: NextRequest,
   context: { params: { id: string } }
@@ -81,9 +83,20 @@ const handler = async (
     );
   }
 
+  // Prepare update object
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateData: any = {
+    "meta.orderStatus": status,
+  };
+
+  // If user cancels, set cancelledByUser = true
+  if (isUser && isCancelling) {
+    updateData["meta.cancelledByUser"] = true;
+  }
+
   const result = await orderCollection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { "meta.orderStatus": status } }
+    { $set: updateData }
   );
 
   if (result.matchedCount === 0) {

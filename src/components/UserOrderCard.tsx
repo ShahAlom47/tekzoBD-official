@@ -55,7 +55,7 @@ const handleCancelClick = async () => {
 
   try {
     setIsCancelling(true);
-    const response = await updateOrderStatus(_id.toString(), "cancelled");
+    const response = await updateOrderStatus(_id.toString(), "cancelled",true);
     if (response?.success) {
       toast.success("Order status updated successfully");
 
