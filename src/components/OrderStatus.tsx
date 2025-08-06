@@ -36,8 +36,8 @@ const OrderStatusSelect: React.FC<Props> = ({ id, status, cancelledByUser = fals
   // যদি ইউজারই cancel করে থাকে, তাহলে admin কে status update থেকে আটকাবে
   if (cancelledByUser) {
     return (
-      <div className="inline-block text-red-600 font-semibold">
-        Order cancelled by user. Status updates are disabled.
+      <div className="inline-block text-red-600 font-semibold text-xs">
+        Order cancelled by user
       </div>
     );
   }

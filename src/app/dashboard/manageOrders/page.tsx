@@ -121,7 +121,7 @@ const ManageOrders = () => {
       deliveryMethods: paymentInfo?.method || "N/A",
       deliveryType:  shippingInfo?.deliveryMethod || "N/A",
       total: `${pricing.grandTotal.toFixed(2)} TK`,
-      status: (<OrderStatus status={meta?.orderStatus} id={order._id?.toString() || ""} />),
+      status: (<OrderStatus status={meta?.orderStatus} cancelledByUser={meta?.cancelledByUser} id={order._id?.toString() || "" } />),
       date: new Date(meta.checkoutAt).toLocaleDateString("en-GB"),
       action: (
         <div className="flex gap-2 items-center">
