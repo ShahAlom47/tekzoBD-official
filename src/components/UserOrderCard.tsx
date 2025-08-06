@@ -7,12 +7,12 @@ import { useConfirm } from "@/hooks/useConfirm";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { queryClient } from "@/Providers/QueryProvider";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface OrderCardProps {
   order: CheckoutDataType;
 }
 
-// স্ট্যাটাস অনুযায়ী রঙের ম্যাপিং
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   confirmed: "bg-green-400 text-black",
@@ -31,6 +31,8 @@ const UserOrderCard: React.FC<OrderCardProps> = ({ order }) => {
     shippingInfo,
   } = order;
 
+    const { sendNewNotification, } = useNotifications();
+
   const [isCancelling, setIsCancelling] = useState(false);
   const { confirm, ConfirmModal } = useConfirm();
 
@@ -39,36 +41,45 @@ const UserOrderCard: React.FC<OrderCardProps> = ({ order }) => {
     : "Date not available";
 
   const statusClass = statusColors[meta?.orderStatus ?? "pending"];
+const handleCancelClick = async () => {
+  if (!(_id)) return;
 
-  const handleCancelClick = async () => {
-    if (!(_id)) return;
+  const confirmed = await confirm({
+    title: "Update Order Status",
+    message: `Are you sure you want to cancel your Order?`,
+    confirmText: "Yes",
+    cancelText: "No",
+  });
 
-    const confirmed = await confirm({
-      title: "Update Order Status",
-      message: `Are you sure you want to cancel your Order?`,
-      confirmText: "Yes",
-      cancelText: "No",
-    });
+  if (!confirmed) return;
 
-    if (!confirmed) return;
+  try {
+    setIsCancelling(true);
+    const response = await updateOrderStatus(_id.toString(), "cancelled");
+    if (response?.success) {
+      toast.success("Order status updated successfully");
 
-    try {
-      setIsCancelling(true);
-      const response = await updateOrderStatus(_id.toString(), "cancelled");
-      if (response?.success) {
-        toast.success("Order status updated successfully");
-         queryClient.invalidateQueries({ queryKey: ["userOrders"] });
-        
-      } else {
-        toast.error(response?.message || "Failed to update order status");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error updating order status");
-    } finally {
-      setIsCancelling(false);
+      // Invalidate query to refetch updated order list
+      queryClient.invalidateQueries({ queryKey: ["userOrders"] });
+
+      // Send cancellation notification to admin
+      await sendNewNotification({
+        title: "Order Cancelled",
+      message: `${shippingInfo?.name || "A customer"} cancelled order ${_id || ""} worth ${pricing?.grandTotal?.toFixed(2) || "N/A"} BDT on ${new Date(meta?.checkoutAt || "").toLocaleString()}.`,
+        type: "order_cancelled",
+        link: `/dashboard/manageOrders/${_id}`,
+        relatedId: _id.toString(),
+      });
+    } else {
+      toast.error(response?.message || "Failed to update order status");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    toast.error("Error updating order status");
+  } finally {
+    setIsCancelling(false);
+  }
+};
 
   return (
     <div className="rounded-xl shadow-lg border border-gray-300 p-6 bg-white hover:shadow-xl transition-shadow duration-300 h-full flex flex-col justify-between">
