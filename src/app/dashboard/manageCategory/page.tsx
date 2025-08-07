@@ -1,35 +1,33 @@
 "use client";
 
+import React, { useState } from "react";
+import { FaBox, FaPlus } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { ObjectId } from "mongodb";
+import { useQuery } from "@tanstack/react-query";
+
 import AddCategory from "@/components/AddCategory";
-import DashPageTitle from "@/components/DashPageTitle";
 import EditCategory from "@/components/EditCategory";
+import DashPageTitle from "@/components/DashPageTitle";
 import PrimaryButton from "@/components/PrimaryButton";
 import CustomModal from "@/components/ui/CustomModal";
 import { CustomTable } from "@/components/ui/CustomTable";
 import { DashPaginationButton } from "@/components/ui/DashPaginationButton";
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
-import { FaPlus } from "react-icons/fa";
 import { useAppSelector } from "@/redux/hooks/reduxHook";
 import Loading from "@/app/loading";
 import ErrorComponent from "@/app/error";
-import { CategoryType } from "@/Interfaces/categoryInterfaces";
-import {
-  deleteCategory,
-  getAllCategories,
-} from "@/lib/allApiRequest/categoryRequest/categoryRequest";
 import { useConfirm } from "@/hooks/useConfirm";
-import toast from "react-hot-toast";
-import { ObjectId } from "mongodb";
+
+import { CategoryType } from "@/Interfaces/categoryInterfaces";
+import { deleteCategory, getAllCategories } from "@/lib/allApiRequest/categoryRequest/categoryRequest";
+import { iconOptions } from "@/utils/iconOptions";
 
 const ManageCategory = () => {
   const { confirm, ConfirmModal } = useConfirm();
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState<"add" | "edit">("add");
   const [selectedId, setSelectedId] = useState<string | undefined>("");
-  const searchValue = useAppSelector(
-    (state) => state.dashSearch.dashSearchValue
-  );
+  const searchValue = useAppSelector((state) => state.dashSearch.dashSearchValue);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -43,9 +41,9 @@ const ManageCategory = () => {
     data: category,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery({
-    queryKey: ["getAllCategories", searchValue],
+    queryKey: ["getAllCategories", searchValue, page],
     queryFn: async () => {
       const response = await getAllCategories({
         currentPage: page,
@@ -60,9 +58,7 @@ const ManageCategory = () => {
     refetchOnWindowFocus: false,
   });
 
-
-  console.log(category)
-  const handleDelete = async (id: string |ObjectId) => {
+  const handleDelete = async (id: string | ObjectId) => {
     const ok = await confirm({
       title: "Delete Category",
       message: "Are you sure you want to delete this category?",
@@ -74,16 +70,15 @@ const ManageCategory = () => {
       const res = await deleteCategory(id);
       if (res?.success) {
         toast.success("Category deleted!");
-        refetch()
+        refetch();
       } else {
-        toast?.error(res?.message || "Failed to delete");
+        toast.error(res?.message || "Failed to delete");
       }
-    } else {
-      console.log("User cancelled delete");
     }
   };
 
   const columns = [
+    { header: "Icon", accessor: "icon" },
     { header: "Name", accessor: "name" },
     { header: "Slug", accessor: "slug" },
     { header: "Parent", accessor: "parentCategory" },
@@ -92,29 +87,43 @@ const ManageCategory = () => {
   ];
 
   const data =
-    (category?.data as CategoryType[] | undefined)?.map((cat) => ({
-      name: cat.name,
-      slug: cat.slug,
-      parentCategory: cat.parentCategory || "—",
-      edit: (
-        <button
-          className="btn-bordered"
-          onClick={() =>
-            handleModal(
-              "edit",
-              typeof cat._id === "string" ? cat._id : cat._id.toString()
-            )
-          }
-        >
-          Edit
-        </button>
-      ),
-      delete: (
-        <button className="btn-bordered border-red-700 hover:bg-red-700" onClick={() => handleDelete(cat?._id)}>
-          Delete
-        </button>
-      ),
-    })) || [];
+    (category?.data as CategoryType[] | undefined)?.map((cat) => {
+      const matchedIcon = iconOptions.find(
+        (opt) => opt.value.toLowerCase() === cat.icon?.toLowerCase()
+      );
+      const IconComponent = matchedIcon?.icon || FaBox;
+
+      return {
+        icon: (
+          <div className="flex justify-center text-2xl text-brandPrimary">
+            <IconComponent />
+          </div>
+        ),
+        name: cat.name,
+        slug: cat.slug,
+        parentCategory: cat.parentCategory || "—",
+        edit: (
+          <button
+            className="btn-bordered"
+            onClick={() =>
+              handleModal("edit", typeof cat._id === "string" ? cat._id : cat._id?.toString())
+            }
+          >
+            Edit
+          </button>
+        ),
+        delete: (
+          <button
+            className="btn-bordered border-red-700 hover:bg-red-700"
+            onClick={() =>
+              handleDelete(typeof cat._id === "string" ?  cat._id?.toString():'')
+            }
+          >
+            Delete
+          </button>
+        ),
+      };
+    }) || [];
 
   return (
     <div>
@@ -122,7 +131,7 @@ const ManageCategory = () => {
         <DashPageTitle>Manage Category</DashPageTitle>
         <PrimaryButton
           onClick={() => handleModal("add")}
-          className=" rounded-sm text-sm h-8"
+          className="rounded-sm text-sm h-8"
         >
           <FaPlus /> Add Category
         </PrimaryButton>
@@ -155,6 +164,7 @@ const ManageCategory = () => {
           <EditCategory id={selectedId || ""} setOpenModal={setOpenModal} />
         )}
       </CustomModal>
+
       {ConfirmModal}
     </div>
   );

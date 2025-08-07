@@ -12,6 +12,7 @@ type SlidePropsType = {
 };
 
 const BannerSlide = ({ bannerData }: SlidePropsType) => {
+  if(!bannerData) return null
   return (
     <div
       className="w-full"

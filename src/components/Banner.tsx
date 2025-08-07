@@ -1,14 +1,16 @@
-// app/components/Banner.tsx or wherever your Banner is
 import { getBannerData } from "@/DemoDataModel/bannerData";
 import BannerSlide from "./HomeComponents/BannerSlide";
 import { BannerType } from "@/Interfaces/bannerInterfaces";
+import ClientOnly from "./wrappers/ClientOnly";
 
 const Banner = async () => {
-  let bannerData: BannerType[];
+  let bannerData: BannerType[] = [];
 
   try {
     bannerData = await getBannerData();
-  } catch  {
+  } catch (error) {
+    console.error("Failed to fetch banner data:", error);
+
     // fallback data if fetch fails
     bannerData = [
       {
@@ -16,23 +18,30 @@ const Banner = async () => {
         title: "Welcome to Tekzo",
         subtitle: "Your gadget zone.",
         link: "/products",
-        image: "../assets/banner/defultBanner.png",
+        image: "/assets/banner/defaultBanner.png", // path ঠিক করলাম relative এর পরিবর্তে absolute path
         bg: "", 
         order: 1,
-        isActive:true,
+        isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
     ];
   }
 
-  // filter unpublished banners (optional safety)
-  const filteredBanners = bannerData.filter((banner) => banner.isActive);
+  // Filter only active banners
+  const activeBanners = bannerData.filter(banner => banner.isActive);
 
-  // sort by priority (optional)
-  const sortedBanners = filteredBanners.sort((a, b) => a.order - b.order);
+  // Sort banners by order ascending
+  const sortedBanners = activeBanners.sort((a, b) => a.order - b.order);
 
-  return <BannerSlide bannerData={sortedBanners} />;
+  // যদি কোনো banner না থাকে, null রিটার্ন করো
+  if (sortedBanners.length === 0) return null;
+
+  return (
+    <ClientOnly>
+      <BannerSlide bannerData={sortedBanners} />
+    </ClientOnly>
+  );
 };
 
 export default Banner;

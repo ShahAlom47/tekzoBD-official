@@ -1,16 +1,21 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-const ClientOnly: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isClient, setIsClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
-  return <>{children}</>;
+type ClientOnlyProps = {
+  children: ReactNode;
+  fallback?: ReactNode; // Optional: লোডিং বা ফাঁকা UI দিতে চাইলে
 };
 
-export default ClientOnly;
+export default function ClientOnly({ 
+  children, 
+  fallback = null 
+}: ClientOnlyProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true); 
+  }, []);
+
+  return isMounted ? <>{children}</> : fallback;
+}

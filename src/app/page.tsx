@@ -8,8 +8,9 @@ import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
 import Newsletter from "@/components/HomeComponents/NewsLetter";
-import ClientOnly from "@/components/wrappers/ClientOnly";
 import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
+import ClientOnly from "@/components/wrappers/ClientOnly";
+
 
 interface HomeDataType {
   topRatedProducts: ProductType[];
@@ -17,6 +18,8 @@ interface HomeDataType {
   bestSellingProducts: ProductType[];
   categories: CategoryType[];
 }
+
+
 
 
 
@@ -38,7 +41,9 @@ const Home = async () => {
 
   return (
     <div className="min-h-screen">
-      <Banner />
+      
+        <Banner />
+    
 
       {/* searchParams এখন blank object পাঠানো হয়েছে */}
       <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
