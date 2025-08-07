@@ -7,8 +7,9 @@ import ActiveOfferProducts from "@/components/HomeComponents/ActiveOfferProducts
 import { getHomeData } from "@/lib/allApiRequest/homeDataRequest/homeDataRequest";
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
 import { ProductType } from "@/Interfaces/productInterfaces";
-import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 import Newsletter from "@/components/HomeComponents/NewsLetter";
+import ClientOnly from "@/components/wrappers/ClientOnly";
+import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 
 interface HomeDataType {
   topRatedProducts: ProductType[];
@@ -17,12 +18,14 @@ interface HomeDataType {
   categories: CategoryType[];
 }
 
+
+
 const Home = async () => {
   let homeData: HomeDataType | null = null;
 
   try {
     const res = await getHomeData();
-    console.log(res)
+    console.log(res);
     homeData = res?.data as HomeDataType;
   } catch (error) {
     console.error("Home data fetch failed", error);
@@ -37,12 +40,14 @@ const Home = async () => {
     <div className="min-h-screen">
       <Banner />
 
-          {/* searchParams এখন blank object পাঠানো হয়েছে */}
+      {/* searchParams এখন blank object পাঠানো হয়েছে */}
       <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
 
       {/* Only render if data is available, else skip section */}
       {categories.length > 0 && <CategorySection categories={categories} />}
-      <AboutUsSection></AboutUsSection>
+      <ClientOnly>
+        <AboutUsSection></AboutUsSection>
+      </ClientOnly>
 
       {topRatedProducts.length > 0 && (
         <TopRatedProducts products={topRatedProducts} />
