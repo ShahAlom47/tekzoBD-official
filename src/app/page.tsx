@@ -28,7 +28,6 @@ const Home = async () => {
 
   try {
     const res = await getHomeData();
-    console.log(res);
     homeData = res?.data as HomeDataType;
   } catch (error) {
     console.error("Home data fetch failed", error);

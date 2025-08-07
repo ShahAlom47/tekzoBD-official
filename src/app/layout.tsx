@@ -10,8 +10,11 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import SmartChatWidget from "@/components/SmartChatWidget";
 
 export const metadata: Metadata = {
-  title: "Shah Alom Official",
+  title: "TeckzoBD",
   description: "Shah Alom's official website",
+   icons: {
+    icon: "/fIcon.png",
+  },
 };
 
 export default function RootLayout({

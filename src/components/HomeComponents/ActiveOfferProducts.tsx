@@ -26,7 +26,7 @@ const offerProducts = products.filter((product) => {
 });
 
 
-  console.log(products)
+ 
 
   if (offerProducts.length === 0) {
     return (

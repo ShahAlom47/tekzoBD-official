@@ -6,7 +6,7 @@ export default function PushNotificationInit() {
   useEffect(() => {
     requestFirebaseNotificationPermission().then((token) => {
       if (token) {
-        console.log("Device token:", token);
+        // console.log("Device token:", token);
       }
     });
   }, []);
