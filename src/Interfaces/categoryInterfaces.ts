@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 export interface CategoryType {
-  _id: string | ObjectId;               // Unique ID বা slug (e.g., "electronics")
+  _id?: string | ObjectId;               // Unique ID বা slug (e.g., "electronics")
   name: string;              // Category নাম (e.g., "Electronics")
   slug: string;              // URL-friendly slug (e.g., "electronics")
   icon?: string;             // static ReactIcon

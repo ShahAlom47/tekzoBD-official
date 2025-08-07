@@ -36,9 +36,13 @@ const CategoryForm: React.FC<Props> = ({
     },
   });
 
-  useEffect(() => {
+useEffect(() => {
+  if (defaultValues && Object.keys(defaultValues).length > 0) {
     reset(defaultValues);
-  }, [defaultValues, reset]);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [defaultValues]);
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -94,7 +98,7 @@ const CategoryForm: React.FC<Props> = ({
           <select id="parentCategory" {...register("parentCategory")} className="my-input w-full">
             <option value="">None</option>
             {parentCategoryList.map((cat) => (
-              <option key={cat._id.toString()} value={cat._id.toString()}>
+              <option key={cat._id?cat._id.toString():''} value={cat._id?cat._id.toString():''}>
                 {cat.name}
               </option>
             ))}

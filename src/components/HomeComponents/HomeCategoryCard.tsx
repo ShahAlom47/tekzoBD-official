@@ -1,8 +1,9 @@
 "use client";
 
 import { CategoryType } from "@/Interfaces/categoryInterfaces";
-import SafeImage from "../SafeImage";
 import { useRouter } from "next/navigation";
+import { iconOptions } from "@/utils/iconOptions";
+import { FaBox } from "react-icons/fa"; // Default icon
 
 type Props = {
   category: CategoryType;
@@ -15,6 +16,10 @@ const CategoryCard = ({ category, key }: Props) => {
   const handleClick = () => {
     router.push(`/shop?category=${category.slug}`);
   };
+
+  // iconOptions থেকে মেলানো, না পেলে FaBox fallback
+  const matchedIcon = iconOptions.find((opt) => opt.value === category.icon);
+  const IconComponent = matchedIcon?.icon || FaBox;
 
   return (
     <div
@@ -29,12 +34,14 @@ const CategoryCard = ({ category, key }: Props) => {
         }
       }}
     >
-      <SafeImage
-        src={category?.icon}
-        alt={category.name}
-        className="w-full h-24 md:h-32 object-cover rounded-md mb-3"
-      />
-      <h3 className="text-sm md:text-lg font-semibold text-gray-800">{category.name}</h3>
+      {/* Icon render */}
+      <div className="flex justify-center mb-3 text-4xl text-brandPrimary">
+        <IconComponent />
+      </div>
+
+      <h3 className="text-sm md:text-lg font-semibold text-gray-800">
+        {category.name}
+      </h3>
     </div>
   );
 };

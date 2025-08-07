@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import SortFilter from './SortFiltering';
 import CategoryFilter from './CategoryFilter';

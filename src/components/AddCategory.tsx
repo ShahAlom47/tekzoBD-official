@@ -1,24 +1,30 @@
+"use client";
+
 import { useState } from "react";
-import CategoryForm from "./CategoryForm";
-import { addCategory } from "@/lib/allApiRequest/categoryRequest/categoryRequest";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-const AddCategory = () => {
-  const [loading, setLoading] = useState(false);
+import CategoryForm from "./CategoryForm";
+import { addCategory } from "@/lib/allApiRequest/categoryRequest/categoryRequest";
+import { CategoryType } from "@/Interfaces/categoryInterfaces";
+
+const AddCategory: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
-  const handleAdd = async (data) => {
+  const handleAdd = async (data: CategoryType) => {
     try {
       setLoading(true);
       const res = await addCategory(data);
+
       if (res?.success) {
         toast.success(res.message || "Category added!");
         queryClient.invalidateQueries({ queryKey: ["getAllCategories"] });
       } else {
-        toast.error(res.message || "Failed to add");
+        toast.error(res.message || "Failed to add category");
       }
-    } catch {
+    } catch (error) {
+      console.error("AddCategory error:", error);
       toast.error("Error adding category");
     } finally {
       setLoading(false);
@@ -26,7 +32,11 @@ const AddCategory = () => {
   };
 
   return (
-    <CategoryForm onSubmit={handleAdd} loading={loading} submitText="Add Category" />
+    <CategoryForm
+      onSubmit={handleAdd}
+      loading={loading}
+      submitText="Add Category"
+    />
   );
 };
 
