@@ -21,7 +21,6 @@ const Notification = () => {
     hasMore,
     loadMore,
   } = useNotifications();
-  console.log(unreadCount)
 
   const renderNotifications = () => {
     if (loading && notifications.length === 0) {

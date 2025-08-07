@@ -25,7 +25,7 @@ const CategoryCard = ({ category, key }: Props) => {
     <div
       key={key}
       onClick={handleClick}
-      className="cursor-pointer border border-brandPrimary hover:scale-95 shadow-lg shadow-blue-800 rounded-lg transition-all duration-300 p-4 text-center"
+      className="  cursor-pointer border border-brandPrimary hover:scale-95 drop-shadow-2xl shadow-blue-800 rounded-xl transition-all duration-300 p-4 text-center"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {

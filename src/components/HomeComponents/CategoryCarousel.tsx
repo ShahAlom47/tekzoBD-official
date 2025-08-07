@@ -49,12 +49,12 @@ const CategoryCarousel = ({ categories }: Props) => {
   return (
     <div
       ref={sliderRef}
-      className="keen-slider"
+      className="keen-slider  p-3 "
       onMouseEnter={() => setPause(true)}    // hover এ autoplay pause
       onMouseLeave={() => setPause(false)}   // mouse ছাড়লে autoplay চালু
     >
       {categories.map((category) => (
-        <div key={category._id.toString()} className="keen-slider__slide">
+        <div key={category._id?category._id.toString():category?.name} className="keen-slider__slide">
           <HomeCategoryCard category={category} />
         </div>
       ))}
