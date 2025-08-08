@@ -8,6 +8,7 @@ import ConditionalWrapper from "@/components/wrappers/ConditionalWrapper";
 import MainWrapper from "@/components/wrappers/MainWrapper"; // 👈 import here
 import ScrollTopButton from "@/components/ScrollTopButton";
 import SmartChatWidget from "@/components/SmartChatWidget";
+import GoogleAnalyticsWrapper from "@/components/wrappers/GoogleAnalyticsWrapper";
 
 export const metadata: Metadata = {
   title: "TeckzoBD",
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en" className="dar">
       <body className="min-h-screen bg-white relative">
         <Providers>
+          <GoogleAnalyticsWrapper>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
           </ConditionalWrapper>
@@ -38,6 +40,7 @@ export default function RootLayout({
           <ConditionalWrapper hideOn={["dashboard", "login"]}>
             <Footer />
           </ConditionalWrapper>
+          </GoogleAnalyticsWrapper>
         </Providers>
       </body>
     </html>
