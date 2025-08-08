@@ -61,6 +61,7 @@ const AboutUsSection = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isClient,setClient]= useState<boolean>(false)
 
+
   useEffect(()=>{
 setClient(true)
   },[])
@@ -74,6 +75,10 @@ setClient(true)
     return () => clearInterval(interval);
   }, []);
 
+
+
+
+
    if(!isClient) return null
 
   return (
@@ -81,6 +86,9 @@ setClient(true)
       className=" py-20 px-4 sm:px-8 md:px-16 bg-slate-100"
       id="about"
     >
+
+
+       
       <div className="max-w mx-auto">
         <HomeSecHeading animation>{aboutUsContent.title}</HomeSecHeading>
 

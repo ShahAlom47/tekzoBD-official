@@ -19,7 +19,7 @@ export default function GoogleAnalyticsWrapper({ children }: { children: React.R
         page_path: fullPath,
       });
 
-      console.log("GA pageview sent:", fullPath);  // debug purpose
+      console.log("GA pageview sent:", fullPath,GA_MEASUREMENT_ID);  // debug purpose
     }
   }, [pathname, searchParams]);
 

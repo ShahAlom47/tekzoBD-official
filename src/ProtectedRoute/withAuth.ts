@@ -29,7 +29,7 @@ export function withAuth(
 ) {
   return async (req: NextRequest, context: { params: any }) => {
     const token = await getToken({ req, secret: process.env.NEXT_AUTH_SECRET });
-    console.log("Token in withAuth:", token);
+    // console.log("Token in withAuth:", token);
 
     if (!token) {
       return NextResponse.json(
