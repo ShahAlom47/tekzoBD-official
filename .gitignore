@@ -48,3 +48,9 @@ src/lib/firebase/serviceAccountKey.json
 
 public/firebase-messaging-sw.js
 
+keys/
+/keys
+**keys/
+**keys/
+**/keys
+
