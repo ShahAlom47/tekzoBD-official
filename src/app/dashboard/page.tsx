@@ -5,8 +5,8 @@ import React from 'react';
 const DashboardHome = () => {
     return (
         <div>
-           <TrafficAnalytics></TrafficAnalytics>
            <OverviewContent></OverviewContent>
+           <TrafficAnalytics></TrafficAnalytics>
         </div>
     );
 };

@@ -6,3 +6,9 @@ export const getAllTrafficInfo = async ({ startDate, endDate }: any) => {
 
   return request("GET", url);
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getAllOverview = async ({ startDate, endDate }: any) => {
+  const url = `/overview?startDate=${startDate}&endDate=${endDate}`;
+
+  return request("GET", url);
+};
