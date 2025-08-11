@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import path from "path";
 
@@ -11,11 +11,17 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
   ),
 });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+ 
+   // query params থেকে তারিখগুলো নেওয়া
+    const { searchParams } = new URL(req.url);
+    const startDate = searchParams.get("startDate") || "30daysAgo";
+    const endDate = searchParams.get("endDate") || "today";
+
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
-      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dateRanges: [{ startDate, endDate }],
       metrics: [
         { name: "eventCount" },      // মোট ইভেন্ট সংখ্যা
         { name: "totalUsers" },      // মোট ইউজার সংখ্যা
