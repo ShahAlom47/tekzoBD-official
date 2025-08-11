@@ -1,21 +1,19 @@
 "use client";
 import PageHeading from "@/components/PageHeading";
-import { useGAnalytics } from "@/hooks/useGAnalytics";
 import React from "react";
 
 const About = () => {
-  const { event } = useGAnalytics();
 
-  const handleGoogle = async () => {
-   event({
-      action: "click",
-      category: "button",
-      label: "about_page_button3",
-      value: 1,
-    });
+  // const handleGoogle = async () => {
+  //  event({
+  //     action: "click",
+  //     category: "button",
+  //     label: "about_page_buttonFrom About 2",
+  //     value: 1,
+  //   });
 
 
-  };
+  // };
   return (
     <div className=" max-w">
       <PageHeading title="About Me"></PageHeading>
@@ -24,9 +22,9 @@ const About = () => {
           MD. Shah Alom
         </h2>
 
-        <button className=" my-9 btn-base" onClick={() => handleGoogle()}>
+        {/* <button className=" my-9 btn-base" onClick={() => handleGoogle()}>
           Clik Gogle
-        </button>
+        </button> */}
         <p className="text-grayDeep mb-4">
           I`m a passionate Front-End Developer based in Fujairah, UAE,
           originally from Moulvibazar, Sylhet, Bangladesh. I specialize in

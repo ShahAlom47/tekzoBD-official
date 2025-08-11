@@ -1,9 +1,10 @@
+import TrafficAnalytics from '@/components/DashOverView/TrafficAnalytics';
 import React from 'react';
 
 const DashboardHome = () => {
     return (
         <div>
-            DashboardHome
+           <TrafficAnalytics></TrafficAnalytics>
         </div>
     );
 };

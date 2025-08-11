@@ -12,14 +12,15 @@ export default function GoogleAnalyticsWrapper({ children }: { children: React.R
 
   useEffect(() => {
     if (typeof window.gtag === "function") {
-      // পুরো URL path + search params একসাথে তৈরি করলাম
       const fullPath = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
 
       window.gtag("config", GA_MEASUREMENT_ID, {
         page_path: fullPath,
       });
 
-      console.log("GA pageview sent:", fullPath,GA_MEASUREMENT_ID);  // debug purpose
+      if (process.env.NODE_ENV === "development") {
+        console.log("GA pageview sent:", fullPath, GA_MEASUREMENT_ID);
+      }
     }
   }, [pathname, searchParams]);
 
@@ -37,9 +38,6 @@ export default function GoogleAnalyticsWrapper({ children }: { children: React.R
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}', {
-              page_path: window.location.pathname + window.location.search,
-            });
           `,
         }}
       />

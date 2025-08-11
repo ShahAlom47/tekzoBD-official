@@ -1,37 +1,39 @@
-// app/api/analytics/route.ts
 import { NextResponse } from "next/server";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import path from "path";
 
-// const analyticsDataClient = new BetaAnalyticsDataClient();
 const PROPERTY_ID = process.env.NEXT_PUBLIC_GA4_PROPERTY_ID || "";
 
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(process.cwd(), process.env.NEXT_PUBLIC_GOOGLE_APPLICATION_CREDENTIALS || '')
+  keyFilename: path.join(
+    process.cwd(),
+    process.env.NEXT_PUBLIC_GOOGLE_APPLICATION_CREDENTIALS || "/keys/service-account.json"
+  ),
 });
 
 export async function GET() {
-    console.log(PROPERTY_ID,analyticsDataClient)
   try {
-    // প্রয়োজন হলে URL থেকে query param নেয়া যাবে, এখন ধরে নিচ্ছি 7 দিন আগ থেকে আজ পর্যন্ত ডেটা চাই
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
-      dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
       metrics: [
-        { name: "screenPageViews" },    // পেজ ভিউ
-        { name: "addToCarts" },         // Add to Cart event count (GA4 এ event হিসেবে থাকা দরকার)
-        { name: "purchaseRevenue" }     // বিক্রয়ের রেভিনিউ (অথবা যেটা দরকার)
+        { name: "eventCount" },      // মোট ইভেন্ট সংখ্যা
+        { name: "totalUsers" },      // মোট ইউজার সংখ্যা
+        { name: "screenPageViews" }, // পেজ ভিউ
       ],
-      dimensions: [{ name: "pagePath" }],
+      dimensions: [
+        { name: "pagePath" },     // কোন পেজ
+        { name: "pageTitle" },    // পেজের নাম
+        { name: "eventName" },    // ইভেন্টের নাম (page_view, click ইত্যাদি)
+        { name: "linkText" },     // লিঙ্ক বা বাটনের টেক্সট (যদি ক্লিক ইভেন্টে পাঠাও)
+        { name: "date" },         // কোন দিনে হয়েছে
+      ],
+      orderBys: [
+        { metric: { metricName: "eventCount" }, desc: true }
+      ]
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: response,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, data: response }, { status: 200 });
   } catch (error) {
     console.error("GET /api/analytics error:", error);
     return NextResponse.json(
