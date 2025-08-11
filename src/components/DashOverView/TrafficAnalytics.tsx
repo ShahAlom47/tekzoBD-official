@@ -48,7 +48,7 @@ export default function TrafficAnalytics() {
 
       {/* Data display */}
       <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96">
-        {JSON.stringify(data, null, 2)}
+ Trafic data
       </pre>
     </div>
   );
