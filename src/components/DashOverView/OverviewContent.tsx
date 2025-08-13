@@ -11,12 +11,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getAllOverview } from "@/lib/allApiRequest/dashOverviewRequest/dashOverviewRequest";
 import { DashboardOverviewData } from "@/Interfaces/dashOverViewInterfaces";
-import { HiOutlineRefresh } from "react-icons/hi";
+import TimeRangeSelector, { FilterType } from "./TimeRangeSelector";
 
 const OverviewContent = () => {
-  const [filter, setFilter] = useState<"week" | "month" | "year" | "all">(
-    "week"
-  ); // default filter
+  const [filter, setFilter] = useState<FilterType>("week"); // default filter
 
   // Fetch data with react-query
   const { data, isLoading, isError, refetch } = useQuery({
@@ -25,6 +23,8 @@ const OverviewContent = () => {
       const res = await getAllOverview({ filter });
       return res?.data as DashboardOverviewData;
     },
+    staleTime: 5 * 1000, // 5 seconds → previous data kept briefly
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) return <p>Loading overview data...</p>;
@@ -83,28 +83,11 @@ const OverviewContent = () => {
   return (
     <div className="p-4 bg-gray-50 rounded shadow-md">
       {/* Filter Dropdown */}
-      <div className="flex items-center gap-4 mb-6 ">
-    
-        <select
-          id="filter"
-          value={filter}
-          onChange={(e) =>
-            setFilter(e.target.value as "week" | "month" | "year" | "all")
-          }
-          className=" my-input max-w-fit"
-        >
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="year">This Year</option>
-          <option value="all">All Time</option>
-        </select>
-        <button
-          onClick={() => refetch()}
-          className="btn-bordered rounded-sm"
-        >
-          <HiOutlineRefresh />
-        </button>
-      </div>
+      <TimeRangeSelector
+        filter={filter}
+        onFilterChange={setFilter}
+        onRefresh={refetch}
+      />
 
       {/* Cards */}
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">

@@ -14,7 +14,7 @@ interface SummaryCardProps {
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ children, title, values,className }) => {
   return (
-    <div className={`bg-white shadow-sm shadow-brandPrimary rounded p-4 min-w-[200px] w-full  ${className} `}>
+    <div className={`bg-white shadow-lg shadow-gray-800 rounded p-4 min-w-[200px] w-full  ${className} `}>
       <div className="flex items-center gap-2 mb-3 text-lg font-semibold py-2 border-b-2 border-brandPrimary">
         {children}
         <span>{title}</span>

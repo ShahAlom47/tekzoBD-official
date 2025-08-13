@@ -21,7 +21,7 @@ const handler = async (
 
   const { id } = context.params;
   const body = await req.json();
-  const { status } = body;
+  const { status ,updatedAt} = body;
 
   const allowedStatuses = [
     "pending",
@@ -93,6 +93,10 @@ const handler = async (
   if (isUser && isCancelling) {
     updateData["meta.cancelledByUser"] = true;
   }
+
+ // Update meta.updatedAt field
+updateData["meta.updatedAt"] = updatedAt || new Date().toISOString();
+
 
   const result = await orderCollection.updateOne(
     { _id: new ObjectId(id) },

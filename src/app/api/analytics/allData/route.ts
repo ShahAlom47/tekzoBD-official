@@ -11,32 +11,61 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
   ),
 });
 
+// Helper function: filter → {startDate, endDate}
+function getDateRangeFromFilter(filter:"today"| "week" | "month" | "year" | "all") {
+  const today = new Date();
+  const endDate = today.toISOString().split("T")[0]; // yyyy-mm-dd
+  const start = new Date(today);
+
+  switch (filter) {
+    case "today":
+  start.setDate(today.getDate()); // আজকের দিন
+  break;
+    case "week":
+      start.setDate(today.getDate() - 7);
+      break;
+    case "month":
+      start.setMonth(today.getMonth() - 1);
+      break;
+    case "year":
+      start.setFullYear(today.getFullYear() - 1);
+      break;
+    case "all":
+      // GA4 maximum 5 years back supported
+      start.setFullYear(today.getFullYear() - 5);
+      break;
+    default:
+      start.setDate(today.getDate() - 30); // fallback: last 30 days
+  }
+
+  const startDate = start.toISOString().split("T")[0];
+  return { startDate, endDate };
+}
+
 export async function GET(req: NextRequest) {
   try {
- 
-   // query params থেকে তারিখগুলো নেওয়া
     const { searchParams } = new URL(req.url);
-    const startDate = searchParams.get("startDate") || "30daysAgo";
-    const endDate = searchParams.get("endDate") || "today";
+    const filter = (searchParams.get("filter") as "today"
+  | "week" | "month" | "year" | "all") || "month";
+
+    const { startDate, endDate } = getDateRangeFromFilter(filter);
 
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate, endDate }],
       metrics: [
-        { name: "eventCount" },      // মোট ইভেন্ট সংখ্যা
-        { name: "totalUsers" },      // মোট ইউজার সংখ্যা
-        { name: "screenPageViews" }, // পেজ ভিউ
+        { name: "eventCount" },
+        { name: "totalUsers" },
+        { name: "screenPageViews" },
       ],
       dimensions: [
-        { name: "pagePath" },     // কোন পেজ
-        { name: "pageTitle" },    // পেজের নাম
-        { name: "eventName" },    // ইভেন্টের নাম (page_view, click ইত্যাদি)
-        { name: "linkText" },     // লিঙ্ক বা বাটনের টেক্সট (যদি ক্লিক ইভেন্টে পাঠাও)
-        { name: "date" },         // কোন দিনে হয়েছে
+        { name: "pagePath" },
+        { name: "pageTitle" },
+        { name: "eventName" },
+        { name: "linkText" },
+        { name: "date" },
       ],
-      orderBys: [
-        { metric: { metricName: "eventCount" }, desc: true }
-      ]
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
     });
 
     return NextResponse.json({ success: true, data: response }, { status: 200 });
