@@ -9,23 +9,41 @@ import {
 export async function GET(req: NextRequest) {
   try {
     const userCollection = await getUserCollection();
-    const orderCollection =await getOrderCollection();
-    const productCollection =await getProductCollection();
+    const orderCollection = await getOrderCollection();
+    const productCollection = await getProductCollection();
     const categoryCollection = await getCategoryCollection();
 
-    // Get date range from query params or default to last 7 days for new users
+    // Get filter type from query (week, month, year, all)
     const url = new URL(req.url);
-    const startDateStr = url.searchParams.get("startDate");
-    const endDateStr = url.searchParams.get("endDate");
+    const filterType = url.searchParams.get("filter") || "week";
+
     const now = new Date();
-    const startDate = startDateStr ? new Date(startDateStr) : new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const endDate = endDateStr ? new Date(endDateStr) : now;
+    let startDate: Date | null = null;
+
+    switch (filterType) {
+      case "week":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        break;
+      case "month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case "year":
+        startDate = new Date(now.getFullYear(), 0, 1);
+        break;
+      case "all":
+        startDate = null; // No date filter
+        break;
+      default:
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+    }
+
+    const dateFilter = startDate
+      ? { createdAt: { $gte: startDate, $lte: now } }
+      : {};
 
     // Users
     const totalUsers = await userCollection.countDocuments({});
-    const newUsers = await userCollection.countDocuments({
-      createdAt: { $gte: startDate, $lte: endDate },
-    });
+    const newUsers = await userCollection.countDocuments(dateFilter);
 
     // Orders
     const totalOrders = await orderCollection.countDocuments({});
@@ -33,9 +51,9 @@ export async function GET(req: NextRequest) {
     const completedOrders = await orderCollection.countDocuments({ "meta.orderStatus": "delivered" });
     const cancelledOrders = await orderCollection.countDocuments({ "meta.orderStatus": "cancelled" });
 
-    // Total sales amount (sum grandTotal of completed/delivered orders)
+    // Sales
     const salesAgg = await orderCollection.aggregate([
-      { $match: { "meta.orderStatus": "delivered" } },
+      { $match: { "meta.orderStatus": "delivered", ...(startDate ? { createdAt: { $gte: startDate, $lte: now } } : {}) } },
       {
         $group: {
           _id: null,
@@ -53,7 +71,7 @@ export async function GET(req: NextRequest) {
     // Categories
     const totalCategories = await categoryCollection.countDocuments({});
 
-    // Compose response
+    // Response
     const responseData = {
       users: { totalUsers, newUsers },
       orders: { totalOrders, pendingOrders, completedOrders, cancelledOrders },
