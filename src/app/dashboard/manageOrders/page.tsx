@@ -64,6 +64,8 @@ const ManageOrders = () => {
   const orderData = (orderRes?.data as CheckoutDataType[]) || [];
   const totalPages = orderRes?.totalPages || 1;
 
+  console.log(orderData)
+
   const handleDelete = async (id: ObjectId | string | undefined) => {
     const ok = await confirm({
       title: "Delete Order",

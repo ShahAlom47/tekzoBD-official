@@ -31,6 +31,8 @@ const UserOrderCard: React.FC<OrderCardProps> = ({ order }) => {
     shippingInfo,
   } = order;
 
+  console.log(cartProducts)
+
     const { sendNewNotification, } = useNotifications();
 
   const [isCancelling, setIsCancelling] = useState(false);

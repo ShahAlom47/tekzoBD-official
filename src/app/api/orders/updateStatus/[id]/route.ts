@@ -1,12 +1,8 @@
-// app/api/orders/[id]/route.ts
-
-import { getOrderCollection } from "@/lib/database/db_collections";
+import { getOrderCollection, getProductCollection } from "@/lib/database/db_collections";
 import { withAuth } from "@/ProtectedRoute/withAuth";
 import { ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-
-// interface OrderStatus {status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled"}
 
 const handler = async (
   req: NextRequest,
@@ -21,7 +17,7 @@ const handler = async (
 
   const { id } = context.params;
   const body = await req.json();
-  const { status ,updatedAt} = body;
+  const { status, updatedAt } = body;
 
   const allowedStatuses = [
     "pending",
@@ -46,8 +42,10 @@ const handler = async (
   }
 
   const orderCollection = await getOrderCollection();
+  const productCollection = await getProductCollection();
 
   const order = await orderCollection.findOne({ _id: new ObjectId(id) });
+  console.log(order);
 
   if (!order) {
     return NextResponse.json(
@@ -56,9 +54,8 @@ const handler = async (
     );
   }
 
-  const user = req.user as User; // Type assertion for user
+  const user = req.user as User;
 
-  // If user role is "user", only update own order
   if (
     user?.role === "user" &&
     (!order.meta?.userEmail || order?.meta?.userEmail !== user.email)
@@ -84,19 +81,14 @@ const handler = async (
   }
 
   // Prepare update object
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     "meta.orderStatus": status,
+    "meta.updatedAt": updatedAt || new Date().toISOString(),
   };
 
-  // If user cancels, set cancelledByUser = true
   if (isUser && isCancelling) {
     updateData["meta.cancelledByUser"] = true;
   }
-
- // Update meta.updatedAt field
-updateData["meta.updatedAt"] = updatedAt || new Date().toISOString();
-
 
   const result = await orderCollection.updateOne(
     { _id: new ObjectId(id) },
@@ -109,6 +101,23 @@ updateData["meta.updatedAt"] = updatedAt || new Date().toISOString();
       { status: 404 }
     );
   }
+
+  // ⬇️ Stock restore if order is cancelled
+if (isCancelling && order.cartProducts.length > 0) {
+  const nowISO = new Date().toISOString();
+
+  const bulkOps = order.cartProducts.map(item => ({
+    updateOne: {
+      filter: { _id: new ObjectId(item.productId) },
+      update: {
+        $inc: { stock: item.quantity }, // stock += quantity
+        $set: { updatedAt: nowISO },    // updatedAt update
+      },
+    },
+  }));
+
+  await productCollection.bulkWrite(bulkOps);
+}
 
   return NextResponse.json(
     { message: "Order status updated successfully", success: true },

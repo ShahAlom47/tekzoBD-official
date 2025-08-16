@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import authOptions from "../../auth/authOptions/authOptions";
 import { SortOptions } from "@/Interfaces/productInterfaces";
+import { ObjectId } from "mongodb";
 
 export async function GET(req: NextRequest) {
   try {
@@ -81,23 +82,31 @@ export async function GET(req: NextRequest) {
     }
 
     // Search filter
-    if (searchTrim) {
-      filter.$or = [
-        { title: { $regex: searchTrim, $options: "i" } },
-        { slug: { $regex: searchTrim, $options: "i" } },
-        { description: { $regex: searchTrim, $options: "i" } },
-        // category slug filter is replaced by categoryId filter below
-        { "sourceInfo.supplierName": { $regex: searchTrim, $options: "i" } },
-        {
-          "sourceInfo.productSourceLink": { $regex: searchTrim, $options: "i" },
-        },
-        {
-          "sourceInfo.supplierProductId": { $regex: searchTrim, $options: "i" },
-        },
-        { "sourceInfo.returnPolicy": { $regex: searchTrim, $options: "i" } },
-        { "sourceInfo.deliveryTime": { $regex: searchTrim, $options: "i" } },
-      ];
-    }
+
+
+if (searchTrim) {
+  const orConditions: any[] = [
+    { title: { $regex: searchTrim, $options: "i" } },
+    { slug: { $regex: searchTrim, $options: "i" } },
+    { description: { $regex: searchTrim, $options: "i" } },
+    { "sourceInfo.supplierName": { $regex: searchTrim, $options: "i" } },
+    { "sourceInfo.productSourceLink": { $regex: searchTrim, $options: "i" } },
+    { "sourceInfo.supplierProductId": { $regex: searchTrim, $options: "i" } },
+    { "sourceInfo.returnPolicy": { $regex: searchTrim, $options: "i" } },
+    { "sourceInfo.deliveryTime": { $regex: searchTrim, $options: "i" } },
+  ];
+
+  // ObjectId হিসেবে search
+  try {
+    const id = new ObjectId(searchTrim);
+    orConditions.push({ _id: id });
+  } catch  {
+    // invalid ObjectId ignore
+  }
+
+  filter.$or = orConditions;
+}
+
 
     // Price filter
 
