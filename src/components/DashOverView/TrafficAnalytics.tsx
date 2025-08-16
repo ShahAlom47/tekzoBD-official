@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import TimeRangeSelector, { FilterType } from "./TimeRangeSelector";
 import SummaryCard from "./SummaryCard";
+import { CustomTable } from "../ui/CustomTable";
 
 export default function TrafficAnalytics() {
   const [filter, setFilter] = useState<FilterType>("week");
@@ -74,32 +75,31 @@ export default function TrafficAnalytics() {
       );
       const totalUsers = parseInt(row.metricValues[1].value);
 
-      // Home
-      if (pagePath === "/") {
-        homeViews += totalUsers;
-      }
-      // Shop (but not product details)
-      if (pagePath === "/shop") {
-        shopViews += totalUsers;
-      }
-      // Product details (any subpage under /shop/)
+      if (pagePath === "/") homeViews += totalUsers;
+      if (pagePath === "/shop") shopViews += totalUsers;
       if (pagePath.startsWith("/shop/") || pagePath.startsWith("/product/")) {
         productViews += totalUsers;
       }
-      // Add to cart
-      if (eventName === "add_to_cart") {
-        addToCart += totalUsers;
-      }
-      // Checkout
-      if (eventName === "begin_checkout") {
-        checkout += totalUsers;
-      }
+      if (eventName === "add_to_cart") addToCart += totalUsers;
+      if (eventName === "begin_checkout") checkout += totalUsers;
     });
 
     return { homeViews, shopViews, productViews, addToCart, checkout };
   }, [data]);
 
   const rowsToShow = showAll ? tableRows : tableRows.slice(0, 20);
+
+  // ✅ Columns for CustomTable
+  const columns = [
+    { header: "Date", accessor: "date" },
+    { header: "Page Path", accessor: "pagePath" },
+    { header: "Page Title", accessor: "pageTitle" },
+    { header: "Event", accessor: "eventName" },
+    { header: "Link Text", accessor: "linkText" },
+    { header: "Event Count", accessor: "eventCount" },
+    { header: "Users", accessor: "totalUsers" },
+    { header: "Page Views", accessor: "pageViews" },
+  ];
 
   return (
     <div className="p-6 bg-white rounded shadow max-w-7xl mx-auto">
@@ -113,65 +113,25 @@ export default function TrafficAnalytics() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <SummaryCard title="Total Users" value={summary.totalUsers} />
-        <SummaryCard title="Page Views" value={summary.pageViews} />
-        <SummaryCard title="Event Count" value={summary.events} />
+        <SummaryCard title="Total Users" values={[{ value: summary.totalUsers }]} />
+        <SummaryCard title="Page Views" values={[{ value: summary.pageViews }]} />
+        <SummaryCard title="Event Count" values={[{ value: summary.events }]} />
+        <SummaryCard title="Home Page Views" values={[{ value: extraMetrics.homeViews || 0 }]} />
+        <SummaryCard title="Shop Page Views" values={[{ value: extraMetrics.shopViews || 0 }]} />
+        <SummaryCard title="Product Views" values={[{ value: extraMetrics.productViews || 0 }]} />
+        <SummaryCard title="Add to Cart" values={[{ value: extraMetrics.addToCart || 0 }]} />
+        <SummaryCard title="Checkout Clicks" values={[{ value: extraMetrics.checkout || 0 }]} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
-        <SummaryCard title="Home Page Views" value={extraMetrics.homeViews || 0} />
-        <SummaryCard title="Shop Page Views" value={extraMetrics.shopViews || 0} />
-        <SummaryCard title="Product Views" value={extraMetrics.productViews || 0} />
-        <SummaryCard title="Add to Cart" value={extraMetrics.addToCart || 0} />
-        <SummaryCard title="Checkout Clicks" value={extraMetrics.checkout || 0} />
-      </div>
-
-      {/* Table */}
-      <div className="mt-6 overflow-x-auto border rounded">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="p-2">Date</th>
-              <th className="p-2">Page Path</th>
-              <th className="p-2">Page Title</th>
-              <th className="p-2">Event</th>
-              <th className="p-2">Link Text</th>
-              <th className="p-2 text-right">Event Count</th>
-              <th className="p-2 text-right">Users</th>
-              <th className="p-2 text-right">Page Views</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={8} className="p-4 text-center">
-                  Loading...
-                </td>
-              </tr>
-            )}
-            {isError && (
-              <tr>
-                <td colSpan={8} className="p-4 text-center text-red-500">
-                  Failed to load data.
-                </td>
-              </tr>
-            )}
-            {!isLoading &&
-              !isError &&
-              rowsToShow.map((row, i) => (
-                <tr key={i} className="border-t hover:bg-gray-50">
-                  <td className="p-2">{row.date}</td>
-                  <td className="p-2">{row.pagePath}</td>
-                  <td className="p-2">{row.pageTitle}</td>
-                  <td className="p-2">{row.eventName}</td>
-                  <td className="p-2">{row.linkText}</td>
-                  <td className="p-2 text-right">{row.eventCount}</td>
-                  <td className="p-2 text-right">{row.totalUsers}</td>
-                  <td className="p-2 text-right">{row.pageViews}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+      {/* ✅ Replace old table with CustomTable */}
+      <div className="mt-6">
+        {isLoading ? (
+          <p className="text-center py-4">Loading...</p>
+        ) : isError ? (
+          <p className="text-center text-red-500 py-4">Failed to load data.</p>
+        ) : (
+          <CustomTable columns={columns} data={rowsToShow} />
+        )}
       </div>
 
       {/* Show More Button */}
@@ -179,7 +139,7 @@ export default function TrafficAnalytics() {
         <div className="text-center mt-4">
           <button
             onClick={() => setShowAll(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="btn-bordered"
           >
             Show More
           </button>
