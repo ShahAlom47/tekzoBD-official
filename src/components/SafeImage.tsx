@@ -6,6 +6,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 type LocalOrRemoteSrc = string | StaticImageData | null | undefined;
 
 type Props = {
+  key?: React.Key;
   src?: LocalOrRemoteSrc | StaticImageData | StaticImport;
   alt: string;
   width?: number;
@@ -15,6 +16,7 @@ type Props = {
 } & Omit<ImageProps, "src" | "alt" | "width" | "height" | "className">;
 
 const SafeImage: React.FC<Props> = ({
+  key,
   src,
   alt,
   width,
@@ -40,6 +42,7 @@ const SafeImage: React.FC<Props> = ({
 
   return (
     <Image
+      key={key}
       src={finalSrc}
       alt={alt}
       width={width}

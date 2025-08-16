@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BannerType } from "@/Interfaces/bannerInterfaces";
 import SafeImage from "../SafeImage";
+import Link from "next/link";
 
 interface BannerImageProps {
   bannerData: BannerType[];
@@ -11,7 +12,7 @@ interface BannerImageProps {
 
 const BannerImageSlider: React.FC<BannerImageProps> = ({
   bannerData,
-  slideInterval = 3000,
+  slideInterval = 4000,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -26,15 +27,36 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
   const currentBanner = bannerData[currentIndex];
 
   return (
-    <div className="relative w-full overflow-hidden pt-2">
+    <div className="relative w-full overflow-hidden mt-10 sm:mt-2 rounded-lg">
+      {/* Single Slide */}
       <SafeImage
         src={currentBanner.bg}
-        alt={`Banner ${currentIndex + 1}`}
-        width={1920} // maximum expected width
-        height={1080} // placeholder height, actual height auto
-        style={{ width: "100%", height: "auto", objectFit: "cover" }}
-        className="block"
+        alt={currentBanner.title}
+        width={1920}
+        height={1080}
+        style={{ width: "100%", height: "auto", objectFit: "cover", transition: "opacity 1s" }}
       />
+
+      {/* Button Overlay */}
+      <Link
+        href="/shop"
+        className="btn-base rounded-full absolute bottom-5 left-1/2 -translate-x-1/2 z-20 transition-transform hover:scale-105"
+      >
+        See Products
+      </Link>
+
+      {/* Dot Indicators */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+        {bannerData.map((_, idx) => (
+          <span
+            key={idx}
+            className={`w-3 h-3 rounded-full cursor-pointer ${
+              idx === currentIndex ? "bg-blue-700" : "bg-gray-300/50 border border-blue-700"
+            }`}
+            onClick={() => setCurrentIndex(idx)}
+          ></span>
+        ))}
+      </div>
     </div>
   );
 };
