@@ -5,29 +5,32 @@ import { useState, useMemo } from "react";
 import TimeRangeSelector, { FilterType } from "./TimeRangeSelector";
 import SummaryCard from "./SummaryCard";
 import { CustomTable } from "../ui/CustomTable";
+import { ExtraMetrics, SummaryMetrics, TrafficApiResponse, TrafficRow } from "@/Interfaces/googleAnalyticsInterface";
+
+
 
 export default function TrafficAnalytics() {
   const [filter, setFilter] = useState<FilterType>("week");
   const [showAll, setShowAll] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery<TrafficApiResponse>({
     queryKey: ["traffic-data", filter],
     queryFn: async () => {
       const res = await getAllTrafficInfo({ filter });
-      return res?.data;
+      return res?.data as TrafficApiResponse;
     },
     staleTime: 5 * 1000,
     refetchOnWindowFocus: false,
   });
 
   // Prepare table data
-  const tableRows = useMemo(() => {
+  const tableRows: TrafficRow[] = useMemo(() => {
     if (!data?.rows) return [];
-    return data.rows.map((row: any) => {
+    return data.rows.map((row): TrafficRow => {
       const [pagePath, pageTitle, eventName, linkText, rawDate] =
-        row.dimensionValues.map((d: any) => d.value);
+        row.dimensionValues.map((d) => d.value);
       const [eventCount, totalUsers, pageViews] = row.metricValues.map(
-        (m: any) => m.value
+        (m) => m.value
       );
       const dateFormatted = `${rawDate.slice(6, 8)}/${rawDate.slice(
         4,
@@ -47,7 +50,7 @@ export default function TrafficAnalytics() {
   }, [data]);
 
   // Summary metrics
-  const summary = useMemo(() => {
+  const summary: SummaryMetrics = useMemo(() => {
     let totalUsers = 0,
       pageViews = 0,
       events = 0;
@@ -60,8 +63,9 @@ export default function TrafficAnalytics() {
   }, [tableRows]);
 
   // Extract specific metrics
-  const extraMetrics = useMemo(() => {
-    if (!data?.rows) return {};
+  const extraMetrics: ExtraMetrics = useMemo(() => {
+    if (!data?.rows)
+      return { homeViews: 0, shopViews: 0, productViews: 0, addToCart: 0, checkout: 0 };
 
     let homeViews = 0;
     let shopViews = 0;
@@ -69,10 +73,8 @@ export default function TrafficAnalytics() {
     let addToCart = 0;
     let checkout = 0;
 
-    data.rows.forEach((row: any) => {
-      const [pagePath, , eventName] = row.dimensionValues.map(
-        (d: any) => d.value
-      );
+    data.rows.forEach((row) => {
+      const [pagePath, , eventName] = row.dimensionValues.map((d) => d.value);
       const totalUsers = parseInt(row.metricValues[1].value);
 
       if (pagePath === "/") homeViews += totalUsers;
@@ -116,11 +118,11 @@ export default function TrafficAnalytics() {
         <SummaryCard title="Total Users" values={[{ value: summary.totalUsers }]} />
         <SummaryCard title="Page Views" values={[{ value: summary.pageViews }]} />
         <SummaryCard title="Event Count" values={[{ value: summary.events }]} />
-        <SummaryCard title="Home Page Views" values={[{ value: extraMetrics.homeViews || 0 }]} />
-        <SummaryCard title="Shop Page Views" values={[{ value: extraMetrics.shopViews || 0 }]} />
-        <SummaryCard title="Product Views" values={[{ value: extraMetrics.productViews || 0 }]} />
-        <SummaryCard title="Add to Cart" values={[{ value: extraMetrics.addToCart || 0 }]} />
-        <SummaryCard title="Checkout Clicks" values={[{ value: extraMetrics.checkout || 0 }]} />
+        <SummaryCard title="Home Page Views" values={[{ value: extraMetrics.homeViews }]} />
+        <SummaryCard title="Shop Page Views" values={[{ value: extraMetrics.shopViews }]} />
+        <SummaryCard title="Product Views" values={[{ value: extraMetrics.productViews }]} />
+        <SummaryCard title="Add to Cart" values={[{ value: extraMetrics.addToCart }]} />
+        <SummaryCard title="Checkout Clicks" values={[{ value: extraMetrics.checkout }]} />
       </div>
 
       {/* ✅ Replace old table with CustomTable */}
@@ -137,10 +139,7 @@ export default function TrafficAnalytics() {
       {/* Show More Button */}
       {!showAll && tableRows.length > 20 && (
         <div className="text-center mt-4">
-          <button
-            onClick={() => setShowAll(true)}
-            className="btn-bordered"
-          >
+          <button onClick={() => setShowAll(true)} className="btn-bordered">
             Show More
           </button>
         </div>
