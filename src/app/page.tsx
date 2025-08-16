@@ -39,7 +39,7 @@ const Home = async () => {
   const categories = homeData?.categories || [];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       
         <Banner />
     

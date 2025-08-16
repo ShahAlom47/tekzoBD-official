@@ -27,7 +27,7 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
   const currentBanner = bannerData[currentIndex];
 
   return (
-    <div className="relative w-full overflow-hidden mt-10 sm:mt-2 rounded-lg">
+    <div className="relative w-full overflow-hidden   ">
       {/* Single Slide */}
       <SafeImage
         src={currentBanner.bg}
@@ -40,7 +40,7 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
       {/* Button Overlay */}
       <Link
         href="/shop"
-        className="btn-base rounded-full absolute bottom-5 left-1/2 -translate-x-1/2 z-20 transition-transform hover:scale-105"
+        className="btn-base rounded-full absolute md:bottom-5 bottom-3 left-1/2 -translate-x-1/2 z-20 transition-transform hover:scale-105 md:text-base text-xs"
       >
         See Products
       </Link>
@@ -50,7 +50,7 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
         {bannerData.map((_, idx) => (
           <span
             key={idx}
-            className={`w-3 h-3 rounded-full cursor-pointer ${
+            className={`md:w-3 md:h-3 h-1 w-1 rounded-full cursor-pointer ${
               idx === currentIndex ? "bg-blue-700" : "bg-gray-300/50 border border-blue-700"
             }`}
             onClick={() => setCurrentIndex(idx)}

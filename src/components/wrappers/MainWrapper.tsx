@@ -26,7 +26,7 @@ export default function MainWrapper({
   );
 
   return (
-    <main className={`${hasMargin ? "md:pt-[8%] pt-[13%]" : "pt-0"} min-h-screen `}>
+    <main className={`${hasMargin ? " top-4 md:pt-[7%] pt-[13%]" : "pt-0"} min-h-screen `}>
       {children}
     </main>
   );
