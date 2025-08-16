@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { StaticImageData, StaticImport } from 'next/dist/shared/lib/get-img-props';
 // interfaces/banner.interface.ts
 
 export interface BannerType {
@@ -8,7 +8,7 @@ export interface BannerType {
   subtitle?: string;
   link: string;
   image: string | StaticImport;
-  bg?: string;
+  bg?: string | StaticImport | StaticImageData;
   order: number; // 1 = highest
   createdAt?: string; // ISO date
   updatedAt?: string;

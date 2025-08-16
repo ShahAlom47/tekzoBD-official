@@ -1,11 +1,12 @@
 import Image, { ImageProps, StaticImageData } from "next/image";
 import React from "react";
 import defaultImage from "@/assets/image/default-image.jpg";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 type LocalOrRemoteSrc = string | StaticImageData | null | undefined;
 
 type Props = {
-  src?: LocalOrRemoteSrc | StaticImageData;
+  src?: LocalOrRemoteSrc | StaticImageData | StaticImport;
   alt: string;
   width?: number;
   height?: number;

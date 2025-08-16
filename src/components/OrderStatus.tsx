@@ -34,7 +34,7 @@ const OrderStatusSelect: React.FC<Props> = ({ id, status, cancelledByUser = fals
   const { ConfirmModal, confirm } = useConfirm();
 
   // যদি ইউজারই cancel করে থাকে, তাহলে admin কে status update থেকে আটকাবে
-  if (!cancelledByUser) {
+  if (cancelledByUser) {
     return (
       <div className="inline-block text-red-600 font-semibold text-xs">
         Order cancelled by user
