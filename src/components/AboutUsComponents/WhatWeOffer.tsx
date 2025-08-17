@@ -83,8 +83,8 @@ const WhatWeOffer: React.FC = () => {
           </div>
 
           {/* Mobile + md layout */}
-          <div className=" inset-  flex gap-4 flex-col lg:hidden items-center justify-between py-4">
-            <div className="flex gap-2 justify-between w-full px-6 ">
+          <div className=" inset-  flex gap-4 flex-col lg:hidden items-center justify-between py-4  w-full max-w-md">
+            <div className="flex gap-10   justify-between w-full px-6 ">
               <OfferItem {...offers[0]} />
               <OfferItem {...offers[1]} />
             </div>
