@@ -11,7 +11,7 @@ type SocialLink = {
 
 const socialLinks: SocialLink[] = [
   {
-    href: "https://www.facebook.com/yourPage",
+    href: "https://www.facebook.com/profile.php?id=61579126510916",
     Icon: FaFacebookF,
     label: "Facebook",
   },
