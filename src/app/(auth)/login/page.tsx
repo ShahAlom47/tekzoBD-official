@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PrimaryButton from "@/components/PrimaryButton";
+import PasswordInput from "@/components/PasswordInput";
 
 type LoginFormInputs = {
   email: string;
@@ -87,26 +88,17 @@ const Login: React.FC = () => {
         </div>
 
         {/* Password Field */}
-        <div>
-          <label className="ml-2">Password:</label>
-          <input
-            type="password"
-            placeholder="Enter password"
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+          <PasswordInput
+          label="Password"
+          register={register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
+          })}
+          error={errors.password?.message}
+        />
 
         <PrimaryButton type="submit">Login</PrimaryButton>
 
