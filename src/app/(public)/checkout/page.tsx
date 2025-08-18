@@ -17,6 +17,7 @@ import { useUser } from "@/hooks/useUser";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const DELIVERY_CHARGE = 100;
+const COD_EXTRA_CHARGE = 10;
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +30,7 @@ const CheckoutPage = () => {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
 
-  const { sendNewNotification, } = useNotifications();
+  const { sendNewNotification } = useNotifications();
 
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
@@ -49,7 +50,7 @@ const CheckoutPage = () => {
   };
 
   const handleConfirmOrder = () => {
-    const phoneRegex = /^01[0-9]{9}$/; // BD phone validation: starts with 01 and total 11 digits
+    const phoneRegex = /^01[0-9]{9}$/;
 
     if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
       toast.error("Please fill all required shipping fields");
@@ -66,6 +67,11 @@ const CheckoutPage = () => {
       return;
     }
 
+    const grandTotal =
+      (checkoutData?.pricing?.grandTotal ?? 0) +
+      DELIVERY_CHARGE +
+      (paymentMethod === "cod" ? COD_EXTRA_CHARGE : 0);
+
     const order: CheckoutDataType = {
       cartProducts: checkoutData?.cartProducts ?? [],
       coupon: checkoutData?.coupon ?? null,
@@ -75,7 +81,7 @@ const CheckoutPage = () => {
         totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
         couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
         totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
-        grandTotal: (checkoutData?.pricing?.grandTotal ?? 0) + DELIVERY_CHARGE,
+        grandTotal,
       },
       shippingInfo,
       paymentInfo: {
@@ -87,58 +93,48 @@ const CheckoutPage = () => {
         checkoutAt: new Date().toISOString(),
         userName: user?.name || "Guest",
         userEmail: user?.email || "guest@example.com",
-        userId: user?.id ? user.id.toString() : "", // Use empty string for guest checkout
+        userId: user?.id ? user.id.toString() : "",
         orderStatus: "pending",
       },
     };
-    // console.log(order);
+
     setFinalOrder(order);
-    setSuccessModalOpen(true);
+    console.log(order)
+    // setSuccessModalOpen(true);
   };
 
   const handleModalConfirm = async () => {
-    console.log("Modal confirm clicked");
     if (!finalOrder) {
       toast.error("No order data available");
       return;
     }
     try {
-
-
-
-      
       const response = await addOrder(finalOrder);
       if (response?.success && response?.insId) {
-       
         toast.success("✅ Order placed successfully!");
         router.push("/shop");
         dispatch(clearCheckoutData());
         clearCart();
         setSuccessModalOpen(false);
-           const insId = response?.insId
-        await handleSendNotification(insId)
+
+        const insId = response?.insId;
+        await handleSendNotification(insId);
       }
-
-
-
-    
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("❌ Something went wrong while placing order.");
     }
   };
 
-const handleSendNotification = async (orderId: string) => {
-
-   sendNewNotification({
-    title: "New Order Placed",
-    message: `Customer Name: ${finalOrder?.shippingInfo?.name}\nOrder ID: ${orderId || "N/A"}\nTotal Amount: ${finalOrder?.pricing?.grandTotal} BDT\nDate: ${new Date(finalOrder?.meta?.checkoutAt || "").toLocaleString()}`,
-    type: "order_placed",
-    link: `/dashboard/manageOrders/${orderId}`,
-    relatedId: orderId,
-  });
-};
-
+  const handleSendNotification = async (orderId: string) => {
+    sendNewNotification({
+      title: "New Order Placed",
+      message: `Customer Name: ${finalOrder?.shippingInfo?.name}\nOrder ID: ${orderId || "N/A"}\nTotal Amount: ${finalOrder?.pricing?.grandTotal} BDT\nDate: ${new Date(finalOrder?.meta?.checkoutAt || "").toLocaleString()}`,
+      type: "order_placed",
+      link: `/dashboard/manageOrders/${orderId}`,
+      relatedId: orderId,
+    });
+  };
 
   if (!checkoutData) {
     return <div className="text-center py-10">No checkout data found.</div>;
@@ -172,18 +168,22 @@ const handleSendNotification = async (orderId: string) => {
             <p>Subtotal: {checkoutData.pricing?.subtotal} TK</p>
             <p>Discount: -{checkoutData.pricing?.totalDiscount} TK</p>
             <p>After Discount: {checkoutData.pricing?.totalAfterDiscount} TK</p>
-            <p>
-              Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK
-            </p>
-            <p className="font-semibold">
-              Delivery Charge: +{DELIVERY_CHARGE} TK
-            </p>
+            <p>Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK</p>
+            <p className="font-semibold">Delivery Charge: +{DELIVERY_CHARGE} TK</p>
+            {paymentMethod === "cod" && (
+              <p className="font-semibold text-red-600">
+                Cash on Delivery Charge: +{COD_EXTRA_CHARGE} TK
+              </p>
+            )}
             <p className="font-semibold">
               Total Quantity: {checkoutData?.pricing?.totalQuantity || 0}
             </p>
             <p className="font-bold text-lg">
               Grand Total:{" "}
-              {(checkoutData.pricing?.grandTotal || 0) + DELIVERY_CHARGE} TK
+              {(checkoutData.pricing?.grandTotal || 0) +
+                DELIVERY_CHARGE +
+                (paymentMethod === "cod" ? COD_EXTRA_CHARGE : 0)}{" "}
+              TK
             </p>
           </div>
 
