@@ -16,8 +16,12 @@ import { addOrder } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { useUser } from "@/hooks/useUser";
 import { useNotifications } from "@/hooks/useNotifications";
 
+import bkashQR from "@/assets/image/bkashQR.jpg";
+import bkashQRinfo from "@/assets/image/bkashQRinfo.jpg";
+import SafeImage from "@/components/SafeImage";
+
 const DELIVERY_CHARGE = 100;
-const COD_EXTRA_CHARGE = 10;
+const COD_EXTRA_CHARGE = 10; // Cash on Delivery extra charge
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
@@ -43,15 +47,19 @@ const CheckoutPage = () => {
 
   const [paymentMethod, setPaymentMethod] = useState<"full" | "cod">("cod");
   const [transactionId, setTransactionId] = useState("");
+  const [bkashNumber, setBkashNumber] = useState("");
 
+  // Handle shipping info input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Confirm Order function
   const handleConfirmOrder = () => {
     const phoneRegex = /^01[0-9]{9}$/;
 
+    // Validation for shipping info
     if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
       toast.error("Please fill all required shipping fields");
       return;
@@ -62,11 +70,19 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (paymentMethod === "full" && !transactionId) {
-      toast.error("Please enter your Bkash transaction ID");
+    // Validation for Bkash payment
+    if (paymentMethod === "full") {
+      if (!transactionId || !bkashNumber) {
+        toast.error("Please enter both Bkash Number and Transaction ID");
+        return;
+      }
+    }
+        if (!phoneRegex.test(bkashNumber)) {
+      toast.error("Please enter a valid 11-digit Bangladeshi phone number");
       return;
     }
 
+    // Calculate grand total including delivery and COD charges
     const grandTotal =
       (checkoutData?.pricing?.grandTotal ?? 0) +
       DELIVERY_CHARGE +
@@ -81,13 +97,14 @@ const CheckoutPage = () => {
         totalAfterDiscount: checkoutData?.pricing?.totalAfterDiscount ?? 0,
         couponDiscountAmount: checkoutData?.pricing?.couponDiscountAmount ?? 0,
         totalQuantity: checkoutData?.pricing?.totalQuantity ?? 0,
-        grandTotal,
+        grandTotal, // ✅ Grand total updated with COD charge if applicable
       },
       shippingInfo,
       paymentInfo: {
         method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
         paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
         transactionId: paymentMethod === "full" ? transactionId : undefined,
+        paymentMethodDetails: paymentMethod === "full" ? { bkashNumber } : undefined,
       },
       meta: {
         checkoutAt: new Date().toISOString(),
@@ -99,8 +116,7 @@ const CheckoutPage = () => {
     };
 
     setFinalOrder(order);
-    console.log(order)
-    // setSuccessModalOpen(true);
+    setSuccessModalOpen(true); 
   };
 
   const handleModalConfirm = async () => {
@@ -215,15 +231,26 @@ const CheckoutPage = () => {
 
             {paymentMethod === "full" && (
               <div className="mt-4 space-y-2">
-                <p className="text-sm font-medium text-gray-700">
-                  Pay to: <span className="font-bold">017XXXXXXXX</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 my-3">
+                  <SafeImage src={bkashQR} alt="Bkash Logo" width={400} height={400} />
+                  <SafeImage src={bkashQRinfo} alt="Bkash Info" width={400} height={400} />
+                </div>
+                <p className="text-lg font-medium text-gray-700">
+                  Pay to: <span className="font-bold">01773133145</span>
                 </p>
                 <input
                   type="text"
                   placeholder="Transaction ID"
                   value={transactionId}
                   onChange={(e) => setTransactionId(e.target.value)}
-                  className="w-full border p-2 rounded"
+                  className="w-full my-input"
+                />
+                <input
+                  type="text"
+                  placeholder="Your Bkash Number"
+                  value={bkashNumber}
+                  onChange={(e) => setBkashNumber(e.target.value)}
+                  className="w-full my-input"
                 />
               </div>
             )}
@@ -246,9 +273,7 @@ const CheckoutPage = () => {
         {finalOrder && (
           <OrderSuccessContent
             orderData={finalOrder}
-            onConfirm={() => {
-              handleModalConfirm();
-            }}
+            onConfirm={() => handleModalConfirm()}
           />
         )}
       </CustomModal>

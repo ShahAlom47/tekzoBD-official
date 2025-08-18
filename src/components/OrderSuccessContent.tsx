@@ -34,7 +34,10 @@ const OrderSuccessContent: React.FC<OrderSuccessContentProps> = ({ orderData, on
         <p><strong>Method:</strong> {paymentInfo?.method || "N/A"}</p>
         <p><strong>Paid:</strong> {paymentInfo?.paymentStatus === "paid" ? "Yes" : "No"}</p>
         {paymentInfo?.transactionId && (
+          <>
+          <p><strong>Transaction ID:</strong> {paymentInfo.paymentMethodDetails?.bkashNumber}</p>
           <p><strong>Transaction ID:</strong> {paymentInfo.transactionId}</p>
+          </>
         )}
         <p><strong>Total Paid:</strong> TK {pricing?.grandTotal || 0}</p>
       </div>

@@ -36,6 +36,10 @@ export interface PaymentInfo {
   method: "card" | "cash-on-delivery" | "bkash" | "nagad";
   paymentStatus: "unpaid" | "paid";
   transactionId?: string;
+  paymentMethodDetails?: {
+    bkashNumber?: string;
+    cardType?: string; 
+  };
 }
 
 export interface CheckoutMeta {
