@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PrimaryButton from "@/components/PrimaryButton";
 import PasswordInput from "@/components/PasswordInput";
+import SocialLogin from "@/components/SocialLogin";
 
 type LoginFormInputs = {
   email: string;
@@ -101,6 +102,8 @@ const Login: React.FC = () => {
         />
 
         <PrimaryButton type="submit">Login</PrimaryButton>
+
+        <SocialLogin />
 
         {/* Links */}
         <div className="flex gap-2 flex-wrap items-center mt-2">
