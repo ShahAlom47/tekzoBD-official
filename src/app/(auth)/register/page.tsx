@@ -10,6 +10,7 @@ import { RegisterUser } from "@/Interfaces/userInterfaces";
 import PrimaryButton from "@/components/PrimaryButton";
 import { registerUser } from "@/lib/allApiRequest/authRequest/authRequest";
 import PasswordInput from "@/components/PasswordInput";
+import { signIn } from "next-auth/react";
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -21,37 +22,52 @@ const Register: React.FC = () => {
     formState: { errors },
   } = useForm<RegisterUser>();
 
+  const password = watch("password");
+
   const onSubmit = async (data: RegisterUser) => {
     try {
+      // 1️⃣ প্রথমে user register হবে
       const res = await registerUser({ ...data });
-      console.log("Response from server:", res);
+      console.log("Server Response:", res);
 
       if (res?.success) {
         toast.success(res.message || "Registration successful");
-        router.push("/login"); // Redirect to login page after successful registration
+
+        // 2️⃣ তারপর automatic login করানো হবে
+        const loginRes = await signIn("credentials", {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+        });
+
+        if (loginRes?.ok) {
+          toast.success("Logged in successfully!");
+          router.push("/"); // home বা যেকোন default route
+        } else {
+          toast.error("Registration successful, but login failed. Please login manually.");
+          router.push("/login");
+        }
       } else {
         toast.error(res.message || "Registration failed");
-        console.warn("Server responded with success: false", res);
       }
     } catch (error) {
-      handleApiError(error); // Use the centralized error handler
+      handleApiError(error);
+      console.error("Registration error:", error);
     } finally {
-      console.log("Form Data:", data);
+      console.log("Form Submitted Data:", data);
     }
   };
 
-  const password = watch("password");
-
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen max-w   ">
-      <h1 className=" text-xl font-semibold text-black">Sign Up</h1>
+    <div className="flex flex-col justify-center items-center min-h-screen max-w">
+      <h1 className="text-xl font-semibold text-black">Sign Up</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="text-sm w-full space-y-4 p-3  text-brandNeutral max-w-xl "
+        className="text-sm w-full space-y-4 p-3 text-brandNeutral max-w-xl"
       >
         {/* Name Field */}
         <div>
-          <label className=" ml-2">User Name:</label>
+          <label className="ml-2">User Name:</label>
           <input
             type="text"
             placeholder="Enter your name"
@@ -62,9 +78,10 @@ const Register: React.FC = () => {
             <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
           )}
         </div>
+
         {/* Email Field */}
         <div>
-          <label className=" ml-2">User Email:</label>
+          <label className="ml-2">User Email:</label>
           <input
             type="email"
             placeholder="Enter your email"
@@ -75,19 +92,17 @@ const Register: React.FC = () => {
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
+
         {/* Password Field */}
-      
         <PasswordInput
           label="Password"
           register={register("password", {
             required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
-            },
+            minLength: { value: 6, message: "Password must be at least 6 characters" },
           })}
           error={errors.password?.message}
         />
+
         <PasswordInput
           label="Confirm Password"
           register={register("confirmPassword", {
@@ -96,14 +111,14 @@ const Register: React.FC = () => {
           })}
           error={errors.confirmPassword?.message}
         />
+
         {/* Submit Button */}
         <PrimaryButton type="submit">Register</PrimaryButton>
+
+        {/* Links */}
         <p className="flex gap-2 justify-center items-center text-xs text-gray-400 mt-2">
           Already have an account?
-          <Link
-            className=" btn-link btn underline hover:scale-105"
-            href="/login"
-          >
+          <Link className="btn-link btn underline hover:scale-105" href="/login">
             Login
           </Link>
         </p>
