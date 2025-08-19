@@ -5,8 +5,8 @@ import Drawer from "./Drawer";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { useWishlist } from "@/hooks/useWishlist";
 import WishListContent from "./WishListContent";
-import Loading from "@/app/loading";
 import { useUser } from "@/hooks/useUser";
+import Link from "next/link";
 
 const NavWishList = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,30 +22,25 @@ const NavWishList = () => {
     stableProductIdList,
   } = useWishlist();
 
-  // Make sure the component is rendered on client only
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-   const wishCount = useMemo(() => {
+  const wishCount = useMemo(() => {
     const count = productIdList?.length || 0;
     return count > 98 ? "99+" : `${count}`;
   }, [productIdList]);
 
-
-  
-
-  // Trigger refetch only when drawer opens and user is logged in
+  // Refetch products only when drawer opens
   useEffect(() => {
-    if (isClient && user && isOpen && stableProductIdList?.length>0) {
+    if (isClient && user && isOpen && stableProductIdList?.length > 0) {
       refetchProducts();
     }
-  }, [isClient, user, isOpen, refetchProducts]);
-
- 
+  }, [isClient, user, isOpen, refetchProducts, stableProductIdList]);
 
   return (
     <div className="relative flex items-center">
+      {/* Wishlist Icon */}
       <button
         onClick={() => setIsOpen(true)}
         className="text-gray-700 md:text-3xl text-xl font-light relative hover:scale-90 transition-transform"
@@ -57,46 +52,72 @@ const NavWishList = () => {
         </span>
       </button>
 
+      {/* Drawer */}
       <Drawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         direction="right"
         width="w-[90%] md:w-[40%]"
       >
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">My Wishlist</h3>
+        {isOpen && (
+          <div className="p-4">
+            <h3 className="text-lg font-semibold mb-2 pb-2 border-b-2">
+              My Wishlist
+            </h3>
 
-          <div className="max-h-[86vh] overflow-y-auto">
-            {isProductsLoading && !wishlistProducts && <Loading />}
-
-            {isProductsError && (
-              <div className="text-red-500 text-sm text-center">
-                Failed to load wishlist.{" "}
-                <button
-                  onClick={() => refetchProducts()}
-                  className="underline text-brandPrimary hover:text-red-600"
-                >
-                  Try again
-                </button>
-              </div>
-            )}
-
-            {!isProductsLoading &&
-              !isProductsError &&
-              wishlistProducts?.length === 0 && (
-                <div className="text-center text-gray-500 mt-6">
-                  No products in your wishlist.
+            <div className="max-h-[86vh] overflow-y-auto">
+              {/* Loading skeleton */}
+              {isProductsLoading && (
+                <div className="space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-gray-200 animate-pulse rounded-md"
+                    />
+                  ))}
                 </div>
               )}
 
-            {!isProductsLoading &&
-              !isProductsError &&
-              productIdList &&
-              wishlistProducts?.length > 0 && (
-                <WishListContent products={wishlistProducts} contentType="drawer" />
+              {/* Error State */}
+              {isProductsError && (
+                <div className="text-red-500 text-sm text-center mt-16">
+                  Failed to load wishlist.{" "}
+                  <button
+                    onClick={() => refetchProducts()}
+                    className="underline text-brandPrimary hover:text-red-600"
+                  >
+                    Try again
+                  </button>
+                </div>
               )}
+
+              {/* Empty State */}
+              {!isProductsLoading &&
+                !isProductsError &&
+                wishlistProducts?.length === 0 && (
+                  <div className="flex flex-col items-center justify-center text-gray-500 mt-16 ">
+                    <p className="mb-2">No products in your wishlist.</p>
+                    <Link
+                      href="/shop"
+                      className="btn-bordered"
+                    >
+                      Browse Products
+                    </Link>
+                  </div>
+                )}
+
+              {/* Wishlist Items */}
+              {!isProductsLoading &&
+                !isProductsError &&
+                wishlistProducts?.length > 0 && (
+                  <WishListContent
+                    products={wishlistProducts}
+                    contentType="drawer"
+                  />
+                )}
+            </div>
           </div>
-        </div>
+        )}
       </Drawer>
     </div>
   );
