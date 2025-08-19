@@ -24,18 +24,27 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
     return () => clearInterval(interval);
   }, [bannerData.length, slideInterval]);
 
-  const currentBanner = bannerData[currentIndex];
-
   return (
-    <div className="relative w-full overflow-hidden   ">
-      {/* Single Slide */}
-      <SafeImage
-        src={currentBanner.bg}
-        alt={currentBanner.title}
-        width={1920}
-        height={1080}
-        style={{ width: "100%", height: "auto", objectFit: "cover", transition: "opacity 1s" }}
-      />
+    <div className="relative w-full overflow-hidden mt-10 sm:mt-8 md:mt-0 lg:mt-0">
+      {/* Slides wrapper with aspect ratio (responsive) */}
+      <div className="relative w-full min-h-[150px] sm:min-h-[250px] md:min-h-[400px] lg:min-h-[700px] h-auto">
+        {bannerData.map((banner, idx) => (
+          <div
+            key={idx}
+            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
+              idx === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <SafeImage
+              src={banner.bg}
+              alt={banner.title}
+              width={1920}
+              height={1080}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
 
       {/* Button Overlay */}
       <Link
@@ -51,7 +60,9 @@ const BannerImageSlider: React.FC<BannerImageProps> = ({
           <span
             key={idx}
             className={`md:w-3 md:h-3 h-1 w-1 rounded-full cursor-pointer ${
-              idx === currentIndex ? "bg-blue-700" : "bg-gray-300/50 border border-blue-700"
+              idx === currentIndex
+                ? "bg-blue-700"
+                : "bg-gray-300/50 border border-blue-700"
             }`}
             onClick={() => setCurrentIndex(idx)}
           ></span>
