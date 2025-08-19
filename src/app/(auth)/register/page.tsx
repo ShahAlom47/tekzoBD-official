@@ -11,6 +11,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { registerUser } from "@/lib/allApiRequest/authRequest/authRequest";
 import PasswordInput from "@/components/PasswordInput";
 import { signIn } from "next-auth/react";
+import SocialLogin from "@/components/SocialLogin";
 
 const Register: React.FC = () => {
   const router = useRouter();
@@ -114,6 +115,7 @@ const Register: React.FC = () => {
 
         {/* Submit Button */}
         <PrimaryButton type="submit">Register</PrimaryButton>
+        <SocialLogin />
 
         {/* Links */}
         <p className="flex gap-2 justify-center items-center text-xs text-gray-400 mt-2">
