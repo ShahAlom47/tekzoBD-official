@@ -15,8 +15,9 @@ const Settings = () => {
       return res?.data as Users;
     },
   });
+  console.log("user dta ",userData);
 
- const [formData, setFormData] = useState<Partial<Users>>({
+  const [formData, setFormData] = useState<Partial<Users>>({
   name: "",
   phone: "",
   address: "",
