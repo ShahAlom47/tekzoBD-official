@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 import { Users } from "@/Interfaces/userInterfaces";
 import { useUser } from "@/hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
-import { getUserInfo } from "@/lib/allApiRequest/userRequest/userRequest";
+import { getUserInfo, updateUserInfo } from "@/lib/allApiRequest/userRequest/userRequest";
 import Loading from "@/app/loading";
 import Error from "next/error";
 import UploadProfilePhoto from "@/components/UploadProfilePhoto";
+import toast from "react-hot-toast";
 
 const Settings: React.FC = () => {
   const { user } = useUser();
@@ -72,14 +73,21 @@ const Settings: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("Form data to save:", formData);
-      // TODO: Add API call to update user info
-      // await updateUserInfo(user?.email, formData);
-      alert("Settings updated successfully!");
-      refetch(); // Refetch user data after update
-    } catch (err) {
-      console.error("Failed to update settings:", err);
-      alert("Failed to update settings. Try again.");
+
+      if (!userData?.email) {
+        throw new globalThis.Error("User email not found");
+      }
+      const res = await updateUserInfo(userData.email, formData);
+      console.log(res);
+      if(res?.success){
+        toast.success("Settings updated successfully!");
+        refetch();
+      }
+
+    
+     
+    } catch {
+        toast.error("Failed to update settings. Try again.");
     }
   };
 

@@ -76,9 +76,9 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage })
         {/* Edit button */}
         <button
           onClick={() => setOpen(true)}
-          className="absolute -bottom-1 -right-2 btn-base rounded-full w-8 h-8 p-1"
+          className="absolute -bottom-1 -right-1 btn-base rounded-full w-6 h-6 p-1"
         >
-        <RiImageEditLine className=" text-2xl" />
+        <RiImageEditLine className=" text-xl" />
         </button>
       </div>
 
