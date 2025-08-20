@@ -3,48 +3,39 @@ import { getNewsLetterCollection, getUserCollection } from "@/lib/database/db_co
 import { withAuth } from "@/ProtectedRoute/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
-const handler = async (
-  req: NextRequest,
-  context: { params: { userEmail: string } }
-) => {
+const handler = async (req: NextRequest, context: { params: { userEmail: string } }) => {
   try {
     if (req.method !== "PATCH") {
-      return NextResponse.json(
-        { message: "Method Not Allowed" },
-        { status: 405 }
-      );
+      return NextResponse.json({ message: "Method Not Allowed" }, { status: 405 });
     }
 
     const { userEmail } = context.params;
     const body = await req.json();
-    if (!userEmail) {
-      return NextResponse.json(
-        { message: "User email is required" },
-        { status: 400 }
-      );
-    }
 
-    console.log("update body:", body);
+    if (!userEmail) {
+      return NextResponse.json({ message: "User email is required" }, { status: 400 });
+    }
 
     const userCollection = await getUserCollection();
     const newsLetterCollection = await getNewsLetterCollection();
 
     const userInfo = await userCollection.findOne({ email: userEmail });
     if (!userInfo) {
-      return NextResponse.json(
-        { message: "User not found", data: {} },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    // ✅ user update
+    // 🔹 Remove any sensitive fields from body
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...safeBody } = body;
+
+    // ✅ Update only safe fields
     const updatedUser = await userCollection.findOneAndUpdate(
       { email: userEmail },
-      { $set: body },
+      { $set: safeBody },
       { returnDocument: "after" }
     );
 
-    // ✅ Newsletter subscription toggle
+    // ✅ Newsletter toggle
     if (body.hasOwnProperty("isNewsletter")) {
       if (body.isNewsletter === true) {
         await newsLetterCollection.updateOne(
@@ -57,15 +48,19 @@ const handler = async (
       }
     }
 
+    // 🔹 Prepare safe return data (exclude sensitive info)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...returnUser } = updatedUser || {};
+
     return NextResponse.json({
       success: true,
       message: "User info updated successfully",
-      data: updatedUser, // ✅ only return updated document
+      data: returnUser,userEmail,
     });
   } catch (error) {
     console.error("Error updating user info:", error);
     return NextResponse.json(
-      { success: false, message: "Internal server error", error },
+      { success: false, message: "Internal server error" },
       { status: 500 }
     );
   }

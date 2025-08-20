@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 
 const Settings: React.FC = () => {
   const { user } = useUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch user info from API
   const {
@@ -58,9 +59,7 @@ const Settings: React.FC = () => {
   }, [userData]);
 
   // Input change handler
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
     const { name, value, type } = target;
     setFormData((prev) => ({
@@ -69,36 +68,51 @@ const Settings: React.FC = () => {
     }));
   };
 
+  // Check if form has changes compared to userData
+  const hasChanges = () => {
+    if (!userData) return false;
+    return (
+      formData.name !== (userData.name || "") ||
+      formData.phone !== (userData.phone || "") ||
+      formData.address !== (userData.address || "") ||
+      formData.city !== (userData.city || "") ||
+      formData.state !== (userData.state || "") ||
+      formData.zipcode !== (userData.zipcode || "") ||
+      formData.country !== (userData.country || "") ||
+      formData.newsletter !== (userData.newsletter || false)
+    );
+  };
+
   // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
 
-      if (!userData?.email) {
-        throw new globalThis.Error("User email not found");
-      }
+    if (!hasChanges()) {
+      toast.error("No changes to save.");
+      return;
+    }
+
+    try {
+      if (!userData?.email) throw new globalThis.Error("User email not found");
+      setIsSubmitting(true);
+
       const res = await updateUserInfo(userData.email, formData);
-      console.log(res);
-      if(res?.success){
+      if (res?.success) {
         toast.success("Settings updated successfully!");
         refetch();
-      }
-
-    
-     
-    } catch {
+      } else {
         toast.error("Failed to update settings. Try again.");
+      }
+    } catch  {
+      toast.error("Something went wrong!");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (isLoading) return <Loading />;
   if (isError)
-    return (
-      <Error
-        statusCode={500}
-        title="Failed to load user settings. Please refresh."
-      />
-    );
+    return <Error statusCode={500} title="Failed to load user settings. Please refresh." />;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -107,9 +121,8 @@ const Settings: React.FC = () => {
         Manage your account information and preferences.
       </p>
 
-      <div className="">
-
-        <UploadProfilePhoto initialImage={userData?.image|| ''} />
+      <div className="mt-4">
+        <UploadProfilePhoto initialImage={userData?.image || ""} />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">
@@ -225,11 +238,13 @@ const Settings: React.FC = () => {
           </label>
         </div>
 
+        {/* Submit button */}
         <button
           type="submit"
           className="btn-base mt-4"
+          disabled={isSubmitting }
         >
-          Save Changes
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>
