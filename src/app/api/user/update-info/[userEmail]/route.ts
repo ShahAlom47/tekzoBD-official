@@ -1,5 +1,5 @@
 // app/api/user/info/[userEmail]/route.ts
-import { getUserCollection } from "@/lib/database/db_collections";
+import { getNewsLetterCollection, getUserCollection } from "@/lib/database/db_collections";
 import { withAuth } from "@/ProtectedRoute/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,7 @@ const handler = async (
     }
 
     const { userEmail } = context.params;
-    const body = await req.json(); // fixed
+    const body = await req.json();
     if (!userEmail) {
       return NextResponse.json(
         { message: "User email is required" },
@@ -27,6 +27,7 @@ const handler = async (
     console.log("update body:", body);
 
     const userCollection = await getUserCollection();
+    const newsLetterCollection = await getNewsLetterCollection();
 
     const userInfo = await userCollection.findOne({ email: userEmail });
     if (!userInfo) {
@@ -36,17 +37,30 @@ const handler = async (
       );
     }
 
-    // Update only provided fields
+    // ✅ user update
     const updatedUser = await userCollection.findOneAndUpdate(
       { email: userEmail },
-      { $set: body }, // only update given fields
-      { returnDocument: "after" } // return updated doc
+      { $set: body },
+      { returnDocument: "after" }
     );
+
+    // ✅ Newsletter subscription toggle
+    if (body.hasOwnProperty("isNewsletter")) {
+      if (body.isNewsletter === true) {
+        await newsLetterCollection.updateOne(
+          { email: userEmail },
+          { $set: { email: userEmail, subscribedAt: new Date().toISOString(), isActive: true } },
+          { upsert: true }
+        );
+      } else if (body.isNewsletter === false) {
+        await newsLetterCollection.deleteOne({ email: userEmail });
+      }
+    }
 
     return NextResponse.json({
       success: true,
       message: "User info updated successfully",
-      data: updatedUser,
+      data: updatedUser, // ✅ only return updated document
     });
   } catch (error) {
     console.error("Error updating user info:", error);
