@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/lib/allApiRequest/userRequest/userRequest";
 import Loading from "@/app/loading";
 import Error from "next/error";
+import UploadProfilePhoto from "@/components/UploadProfilePhoto";
 
 const Settings: React.FC = () => {
   const { user } = useUser();
@@ -97,6 +98,11 @@ const Settings: React.FC = () => {
       <p className="mt-2 text-gray-600">
         Manage your account information and preferences.
       </p>
+
+      <div className="">
+
+        <UploadProfilePhoto initialImage={userData?.image|| ''} />
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         {/* Name */}
