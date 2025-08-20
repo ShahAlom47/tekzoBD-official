@@ -1,13 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import toast from "react-hot-toast";
 import CustomModal from "./ui/CustomModal";
+import SafeImage from "./SafeImage";
+import defaultProfile from "@/assets/image/defaultUser.png"
+import { RiImageEditLine } from "react-icons/ri";
 
 interface UploadProfilePhotoProps {
-  initialImage?: string; // আগের image যদি থাকে props দিয়ে আসবে
+  initialImage?: string; 
 }
 
 const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage }) => {
@@ -16,19 +18,18 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage })
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(initialImage || null);
 
-  // Default image (যদি আগের না থাকে)
-  const defaultImage = "/default-profile.png"; // public ফোল্ডারে একটা default image রাখবে
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
+      setSelectedFile(file);  
       setPreview(URL.createObjectURL(file));
     }
   };
 
   const uploadPhoto = async () => {
-    if (!selectedFile || !user?._id) {
+    if (!selectedFile || !user?.email) {
       toast.error("No file selected or user not available");
       return;
     }
@@ -41,7 +42,7 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage })
       formData.append("image", imageUrl);
 
       const res = await axios.patch(
-        `https://zinvera.vercel.app/api/user/${user._id}`,
+        `https://zinvera.vercel.app/api/user/${user.email}`,
         formData,
         { withCredentials: true }
       );
@@ -61,11 +62,11 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage })
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col my-5">
       {/* Profile image wrapper */}
-      <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-pink-500">
-        <Image
-          src={preview || defaultImage}
+      <div className="relative w-24 h-24 rounded-full  border-4 border-brandPrimary ">
+        <SafeImage
+          src={preview || defaultProfile}
           alt="Profile"
           width={96}
           height={96}
@@ -75,9 +76,9 @@ const UploadProfilePhoto: React.FC<UploadProfilePhotoProps> = ({ initialImage })
         {/* Edit button */}
         <button
           onClick={() => setOpen(true)}
-          className="absolute bottom-0 right-0 bg-pink-600 hover:bg-pink-700 text-white text-xs px-2 py-1 rounded-full shadow"
+          className="absolute -bottom-1 -right-2 btn-base rounded-full w-8 h-8 p-1"
         >
-          Edit
+        <RiImageEditLine className=" text-2xl" />
         </button>
       </div>
 
