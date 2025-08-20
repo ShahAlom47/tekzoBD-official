@@ -4,11 +4,16 @@ import React, { useState, useEffect } from "react";
 import { Users } from "@/Interfaces/userInterfaces";
 import { useUser } from "@/hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
-import { getUserInfo, updateUserInfo } from "@/lib/allApiRequest/userRequest/userRequest";
+import {
+  getUserInfo,
+  updateUserInfo,
+} from "@/lib/allApiRequest/userRequest/userRequest";
 import Loading from "@/app/loading";
 import Error from "next/error";
 import UploadProfilePhoto from "@/components/UploadProfilePhoto";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import {  FaArrowRight } from "react-icons/fa";
 
 const Settings: React.FC = () => {
   const { user } = useUser();
@@ -59,12 +64,15 @@ const Settings: React.FC = () => {
   }, [userData]);
 
   // Input change handler
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const target = e.target as HTMLInputElement | HTMLSelectElement;
     const { name, value, type } = target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -103,7 +111,7 @@ const Settings: React.FC = () => {
       } else {
         toast.error("Failed to update settings. Try again.");
       }
-    } catch  {
+    } catch {
       toast.error("Something went wrong!");
     } finally {
       setIsSubmitting(false);
@@ -112,7 +120,12 @@ const Settings: React.FC = () => {
 
   if (isLoading) return <Loading />;
   if (isError)
-    return <Error statusCode={500} title="Failed to load user settings. Please refresh." />;
+    return (
+      <Error
+        statusCode={500}
+        title="Failed to load user settings. Please refresh."
+      />
+    );
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -141,7 +154,9 @@ const Settings: React.FC = () => {
 
         {/* Email */}
         <div>
-          <label className="block font-medium mb-1">Email (cannot change)</label>
+          <label className="block font-medium mb-1">
+            Email (cannot change)
+          </label>
           <input
             type="email"
             value={user?.email ?? ""}
@@ -239,14 +254,26 @@ const Settings: React.FC = () => {
         </div>
 
         {/* Submit button */}
-        <button
-          type="submit"
-          className="btn-base mt-4"
-          disabled={isSubmitting }
-        >
+        <button type="submit" className="btn-base mt-4" disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </form>
+
+      <div
+        className={`border-l-4 border-blue-500 bg-blue-100 text-blue-950 p-4 rounded-md  my-4`}
+      >
+        <p className="text-sm">
+          🔒 To change your password, please use the `Forgot Password`` option.
+          You cannot change it directly from the settings page.
+        </p>
+        <p className="text-sm mt-1">
+          🔒 পাসওয়ার্ড পরিবর্তন করতে, `ফরগট পাসওয়ার্` অপশন ব্যবহার করুন।
+          সেটিংস পেজ থেকে সরাসরি পরিবর্তন করা সম্ভব নয়।
+        </p>
+        <Link href="/auth/forgot-password" className="text-blue-600 underline mt-3 flex gap-2 items-center ml-5">
+        <FaArrowRight></FaArrowRight> Forgot Password?
+        </Link>
+      </div>
     </div>
   );
 };
