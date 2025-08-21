@@ -1,15 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
-import path from "path";
 
 const PROPERTY_ID = process.env.NEXT_PUBLIC_GA4_PROPERTY_ID || "";
+const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL || "";
+const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n") || "";
+
+// const analyticsDataClient = new BetaAnalyticsDataClient({
+//   keyFilename: path.join(
+//     process.cwd(),
+//     process.env.NEXT_PUBLIC_GOOGLE_APPLICATION_CREDENTIALS || "/keys/service-account.json"
+//   ),
+// });
+
 
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(
-    process.cwd(),
-    process.env.NEXT_PUBLIC_GOOGLE_APPLICATION_CREDENTIALS || "/keys/service-account.json"
-  ),
+  credentials: {
+    client_email:GOOGLE_CLIENT_EMAIL,
+    private_key:GOOGLE_PRIVATE_KEY,
+  },
 });
+
+console.log( PROPERTY_ID, GOOGLE_PRIVATE_KEY);
 
 // Helper function: filter → {startDate, endDate}
 function getDateRangeFromFilter(filter:"today"| "week" | "month" | "year" | "all") {
