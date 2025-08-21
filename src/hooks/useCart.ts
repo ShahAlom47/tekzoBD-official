@@ -24,10 +24,12 @@ import {
   clearCartItems,
 } from "@/redux/features/cartSlice/cartSlice";
 import debounce from "lodash.debounce";
+import { useGAnalytics } from "./useGAnalytics";
 
 export const useCart = () => {
   const dispatch = useAppDispatch();
   const { user } = useUser();
+  const {event}= useGAnalytics()
   const userEmail = user?.email || "";
   const reduxCartItems = useAppSelector((state) => state.cart.items);
   const itemCount = reduxCartItems.length;
@@ -69,6 +71,13 @@ export const useCart = () => {
   // ✅ Add to cart
   const addToCart = useCallback(
     async (productId: string) => {
+      event({
+      action: "add_to_cart",
+      category: "ecommerce",
+      value: 1,
+    });
+
+
       const exists = reduxCartItems.find((item) => item.productId === productId);
       if (exists) {
         toast.error("Already in cart");
@@ -82,6 +91,8 @@ export const useCart = () => {
       };
 
       dispatch(addOrUpdateCartItem(newItem));
+
+       
 
       try {
         if (userEmail) {

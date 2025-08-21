@@ -2,7 +2,7 @@
 "use client";
 
 interface EventParams {
-  action: string;
+  action: "checkout"| "add_to_cart";
   category: string;
   label?: string;
   value?: number;

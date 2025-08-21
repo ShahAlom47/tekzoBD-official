@@ -22,7 +22,7 @@ export default function TrafficAnalytics() {
     staleTime: 5 * 1000,
     refetchOnWindowFocus: false,
   });
-
+console.log(data)
   // Prepare table data
   const tableRows: TrafficRow[] = useMemo(() => {
     if (!data?.rows) return [];
@@ -83,7 +83,7 @@ export default function TrafficAnalytics() {
         productViews += totalUsers;
       }
       if (eventName === "add_to_cart") addToCart += totalUsers;
-      if (eventName === "begin_checkout") checkout += totalUsers;
+      if (eventName === "checkout") checkout += totalUsers;
     });
 
     return { homeViews, shopViews, productViews, addToCart, checkout };
