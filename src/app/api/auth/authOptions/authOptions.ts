@@ -4,6 +4,7 @@ import FacebookProvider from "next-auth/providers/facebook";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import { getUserCollection } from "@/lib/database/db_collections";
+// authOptions.ts file
 
 // Extend the User type to include the 'role' and 'image' properties
 declare module "next-auth" {
@@ -78,7 +79,9 @@ export const authOptions: NextAuthOptions = {
           // 🔐 Password check
           const isValid = await bcrypt.compare(
             credentials.password,
-            existingUser.password
+            typeof existingUser.password === "string"
+              ? existingUser.password
+              : ""
           );
           if (!isValid) {
             throw new Error(
@@ -118,10 +121,10 @@ export const authOptions: NextAuthOptions = {
     }),
     // 🟢 Google OAuth Provider (optional)
 
-    GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!,
-    }),
+   GoogleProvider({
+  clientId: process.env.GOOGLE_CLIENT_ID!,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+}),
     FacebookProvider({
       clientId: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID!,
       clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_SECRET!,
@@ -177,6 +180,6 @@ export const authOptions: NextAuthOptions = {
   },
 
   // ✅ 6. Secret for signing JWT tokens
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };
 export default authOptions;

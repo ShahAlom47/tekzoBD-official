@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { FaFacebookF, FaGoogle } from "react-icons/fa";
-import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 const SocialLogin: React.FC = () => {
   const handleSocialLogin = async (provider: string) => {
     try {
-      const res = await signIn(provider, { redirect: false });
+      const res = await signIn(provider, {callbackUrl: "/login" });
       if (res?.error) {
         toast.error("Login failed. Please try again.");
         console.error("Social login error:", res.error);

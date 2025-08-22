@@ -45,7 +45,9 @@ const Register: React.FC = () => {
           toast.success("Logged in successfully!");
           router.push("/"); // home বা যেকোন default route
         } else {
-          toast.error("Registration successful, but login failed. Please login manually.");
+          toast.error(
+            "Registration successful, but login failed. Please login manually."
+          );
           router.push("/login");
         }
       } else {
@@ -60,11 +62,11 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen max-w">
+    <div className="flex flex-col justify-center items-center min-h-screen max-w-xl mx-auto">
       <h1 className="text-xl font-semibold text-black">Sign Up</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="text-sm w-full space-y-4 p-3 text-brandNeutral max-w-xl"
+        className="text-sm w-full space-y-4 p-3 text-brandNeutral "
       >
         {/* Name Field */}
         <div>
@@ -99,7 +101,10 @@ const Register: React.FC = () => {
           label="Password"
           register={register("password", {
             required: "Password is required",
-            minLength: { value: 6, message: "Password must be at least 6 characters" },
+            minLength: {
+              value: 6,
+              message: "Password must be at least 6 characters",
+            },
           })}
           error={errors.password?.message}
         />
@@ -112,19 +117,22 @@ const Register: React.FC = () => {
           })}
           error={errors.confirmPassword?.message}
         />
-
-        {/* Submit Button */}
         <PrimaryButton type="submit">Register</PrimaryButton>
+      </form>
+      <div className=" w-full px-4 ">
         <SocialLogin />
 
         {/* Links */}
-        <p className="flex gap-2 justify-center items-center text-xs text-gray-400 mt-2">
+        <p className="flex gap-2  items-center text-xs text-gray-400 mt-2">
           Already have an account?
-          <Link className="btn-link btn underline hover:scale-105" href="/login">
+          <Link
+            className="btn-link btn underline hover:scale-105"
+            href="/login"
+          >
             Login
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 };
