@@ -19,6 +19,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import bkashQR from "@/assets/image/bkashQR.jpg";
 import bkashQRinfo from "@/assets/image/bkashQRinfo.jpg";
 import SafeImage from "@/components/SafeImage";
+import { useGAnalytics } from "@/hooks/useGAnalytics";
 
 const DELIVERY_CHARGE = 100;
 const COD_EXTRA_CHARGE = 10; // Cash on Delivery extra charge
@@ -27,6 +28,7 @@ const CheckoutPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user } = useUser();
+  const { event } = useGAnalytics();
   const checkoutData = useSelector(
     (state: RootState) => state.checkout.checkoutData
   );
@@ -57,6 +59,7 @@ const CheckoutPage = () => {
 
   // Confirm Order function
   const handleConfirmOrder = () => {
+   
     const phoneRegex = /^01[0-9]{9}$/;
 
     // Validation for shipping info
@@ -114,7 +117,11 @@ const CheckoutPage = () => {
         orderStatus: "pending",
       },
     };
-
+   event({
+      action: "checkout",
+      category: "ecommerce",
+      value: 1,
+    });
     setFinalOrder(order);
     setSuccessModalOpen(true); 
   };
