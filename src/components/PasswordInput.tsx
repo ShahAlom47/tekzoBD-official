@@ -29,7 +29,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         type={showPassword ? "text" : "password"}
         placeholder={placeholder}
         {...register}
-        className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary pr-10"
+      className="my-input rounded-full "
       />
       <button
         type="button"

@@ -62,20 +62,20 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen max-w-xl mx-auto">
+    <div className="flex flex-col justify-center items-center min-h-screen max-w-xl mx-auto ">
       <h1 className="text-xl font-semibold text-black">Sign Up</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="text-sm w-full space-y-4 p-3 text-brandNeutral "
+        className="text-sm w-full space-y-4 p-3 text-brandNeutral  max-w-xl flex flex-col justify-center items-center "
       >
         {/* Name Field */}
-        <div>
+        <div className="w-full">
           <label className="ml-2">User Name:</label>
           <input
             type="text"
             placeholder="Enter your name"
             {...register("name", { required: "Name is required" })}
-            className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
+       className="my-input rounded-full "
           />
           {errors.name && (
             <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
@@ -83,13 +83,13 @@ const Register: React.FC = () => {
         </div>
 
         {/* Email Field */}
-        <div>
+    <div className="w-full">
           <label className="ml-2">User Email:</label>
           <input
             type="email"
             placeholder="Enter your email"
             {...register("email", { required: "Email is required" })}
-            className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
+          className="my-input rounded-full "
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -119,7 +119,7 @@ const Register: React.FC = () => {
         />
         <PrimaryButton type="submit">Register</PrimaryButton>
       </form>
-      <div className=" w-full px-4 ">
+      <div className=" w-full  max-w-xl flex flex-col justify-center items-center mt-3 ">
         <SocialLogin />
 
         {/* Links */}

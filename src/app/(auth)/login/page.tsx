@@ -72,16 +72,16 @@ const Login: React.FC = () => {
       <h1 className="text-xl font-semibold text-black">Login</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="text-sm w-full space-y-4 p-3 text-brandNeutral max-w-2xl"
+        className="text-sm w-full space-y-4 p-3 text-brandNeutral max-w-xl flex flex-col justify-center items-center"
       >
         {/* Email Field */}
-        <div>
+        <div className=" w-full">
           <label className="ml-2">User Email:</label>
           <input
             type="email"
             placeholder="Enter email"
             {...register("email", { required: "Email is required" })}
-            className="w-full px-2 py-1 rounded-full bg-transparent border border-brandNeutral text-black outline-none focus:ring-2 focus:brandPrimary"
+            className="my-input rounded-full w-full "
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -106,11 +106,11 @@ const Login: React.FC = () => {
         <SocialLogin />
 
         {/* Links */}
-        <div className="flex gap-2 flex-wrap items-center mt-2">
-          <p className="text-xs text-gray-400">
+        <div className="flex flex-col items-center gap-2 flex-wrap  mt-2">
+          <p className="text-sm text-gray-700">
             Don’t have an account?
             <Link
-              className="underline hover:scale-105 ml-1"
+              className="underline hover:scale-105 ml-1 text-blue-700"
               href="/register"
             >
               Register
@@ -119,8 +119,8 @@ const Login: React.FC = () => {
           </p>
 
           <Link
-            className="underline hover:scale-105 text-xs"
-            href="/forgetPassword"
+            className="underline  text-xs text-blue-700"
+            href="/forget-password"
           >
             Lost your password?
           </Link>

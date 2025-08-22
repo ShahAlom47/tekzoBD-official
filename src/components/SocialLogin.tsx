@@ -26,12 +26,13 @@ const SocialLogin: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center gap-2">
+    <div className="flex flex-col justify-center  gap-2">
       <button
-        className="btn-bordered rounded-full w-10 h-10 p-1 text-red-600 hover:bg-red-50 transition"
+        className="btn-base rounded-sm p-[2px] pr-2 w-fit "
         onClick={() => handleSocialLogin("google")}
       >
-        <FcGoogle className="text-2xl" />
+        <FcGoogle className="text-2xl  bg-white rounded-sm mr-2" /> 
+        Sign in with Google
       </button>
     </div>
   );
