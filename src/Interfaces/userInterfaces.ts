@@ -44,6 +44,7 @@ export interface UsersRequestData {
   state?: string;
   zipcode?: string;
   country?: string;
+  provider?: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   newsletter?: boolean; // user wants newsletter or not

@@ -17,7 +17,7 @@ const Navbar = () => {
   const { scrollY, scrollDirection } = useScreenInfo();
   const showNavbar = scrollDirection === "up" || scrollY < 100;
   const showShadow = scrollY > 50;
-
+  console.log("Current User:", user);
   return (
     <nav
       className={`fixed top-0 left-0 w-full  z-50  duration-500 transition-all  backdrop-blur-sm bg-white   ${
