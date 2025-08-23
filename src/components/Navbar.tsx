@@ -12,6 +12,7 @@ import NavWishList from "./NavWishList";
 import SocialButtons from "./SocialButton";
 import { useUser } from "@/hooks/useUser";
 import Notification from "./Notification";
+import Link from "next/link";
 const Navbar = () => {
   const {user}= useUser()
   const { scrollY, scrollDirection } = useScreenInfo();
@@ -26,6 +27,8 @@ const Navbar = () => {
           : "shadow-none  "
       } `}
     >
+
+      
       <div
         className={`bg-gray-100  text-sm  duration-500 transition-all overflow-hidden
           ${showNavbar ? " px-4 py-1 " : "  px-4 p-0"} `}
@@ -33,6 +36,7 @@ const Navbar = () => {
           maxHeight: showNavbar ? "200px  " : "0px",
         }}
       >
+
         <div className="max-w flex justify-between items-center gap-3">
           <div className=" flex-center  flex-1  gap-3 px-3">
             <h1 className=" text-brandNeutral">Welcome to TekzoBD</h1>
@@ -45,6 +49,7 @@ const Navbar = () => {
       <div className=" lg:flex md:flex hidden items-center justify-between  max-w  ">
         <div className=" flex items-center gap-4  ">
           <Logo></Logo>
+          <Link className="bb text-black" href={`verify-email?token=${111}`} >verify Page</Link>
         </div>
         <div className="flex-1 ">
           <GlobalSearchBox></GlobalSearchBox>
