@@ -34,11 +34,41 @@ export const POST = async (req: Request): Promise<NextResponse> => {
     }
 
     const existingUser = await usersCollection.findOne({ email });
+
     if (existingUser) {
-      return NextResponse.json(
-        { message: "Email already exists", success: false },
-        { status: 409 }
-      );
+      if (existingUser.verified) {
+        // Already verified user → cannot register again
+        return NextResponse.json(
+          { message: "Email already exists", success: false },
+          { status: 409 }
+        );
+      } else {
+        // User exists but NOT verified → regenerate token and resend verification email
+        const emailVerificationToken = generateRandomToken(10);
+        await usersCollection.updateOne(
+          { email },
+          {
+            $set: { emailVerificationToken, updatedAt: new Date().toISOString() },
+          }
+        );
+
+        const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${emailVerificationToken}&userEmail=${email}`;
+        const htmlContent = `
+          <h3>Hello ${existingUser.name},</h3>
+          <p>You have already registered but did not verify your email. Please verify your email by clicking the link below:</p>
+          <a href="${verificationUrl}" style="display:inline-block;padding:10px 20px;background:#4caf50;color:white;text-decoration:none;border-radius:5px;">Verify Email</a>
+          <p>If you did not create an account, you can ignore this email.</p>
+        `;
+        await sendEmail(email, "Verify your email", htmlContent);
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: "You have already registered. Verification email resent. Please check your inbox.",
+          },
+          { status: 200 }
+        );
+      }
     }
 
     // Hash password

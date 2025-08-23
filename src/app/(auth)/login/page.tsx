@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import "../../../style/authpage.css";
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PrimaryButton from "@/components/PrimaryButton";
@@ -19,6 +18,7 @@ const Login: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/"; // default: home
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const {
     register,
@@ -34,6 +34,8 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setLoginError(null); // আগে error clear
+
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -42,28 +44,30 @@ const Login: React.FC = () => {
       });
 
       if (res?.ok) {
-        toast.success("Logged in successfully!");
         router.push(redirectPath);
       } else {
         const rawError = res?.error || "";
 
-        if (rawError.includes("EC6B0000") || rawError.includes("ssl")) {
-          toast.error(
-            "Secure connection failed. Please check your internet or try again later."
+        // ✅ New: Verified check
+        if (rawError.includes("not verified")) {
+          setLoginError(
+            "⚠ আপনার ইমেইল যাচাই করা হয়নি। / Your email is not verified. একটি verification email পাঠানো হয়েছে। / A new verification email has been sent."
           );
         } else if (rawError.includes("No account")) {
-          toast.error("No account found with this email.");
+          setLoginError(
+            "❌ এই ইমেইল দিয়ে কোন একাউন্ট নেই। / No account found with this email."
+          );
         } else if (rawError.includes("Incorrect password")) {
-          toast.error("The password you entered is incorrect.");
+          setLoginError("❌ পাসওয়ার্ড ভুল হয়েছে। / Incorrect password.");
         } else {
-          toast.error("Login failed. Please try again.");
+          setLoginError(
+            "⚠ লগইন ব্যর্থ হয়েছে। / Login failed. Please try again."
+          );
         }
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(
-        "Something went wrong during login. Please check your network and try again."
-      );
+      setLoginError("⚠ কিছু সমস্যা হয়েছে। / Something went wrong. Try again.");
     }
   };
 
@@ -89,7 +93,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Password Field */}
-          <PasswordInput
+        <PasswordInput
           label="Password"
           register={register("password", {
             required: "Password is required",
@@ -100,6 +104,12 @@ const Login: React.FC = () => {
           })}
           error={errors.password?.message}
         />
+
+        {loginError && (
+          <div className="my-2 p-3 w-full max-w-xl text-center text-red-600 bg-red-100 rounded-md">
+            {loginError}
+          </div>
+        )}
 
         <PrimaryButton type="submit">Login</PrimaryButton>
 

@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import { getUserCollection } from "@/lib/database/db_collections";
+import { sendVerificationEmail } from "@/utils/sendVerificationEmail";
 
 // Extend the User type to include 'role' and 'image'
 declare module "next-auth" {
@@ -41,29 +42,38 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const usersCollection = await getUserCollection();
+  const usersCollection = await getUserCollection();
 
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required.");
-        }
+  if (!credentials?.email || !credentials?.password) {
+    throw new Error("Email and password are required.");
+  }
 
-        const existingUser = await usersCollection.findOne({ email: credentials.email });
-        if (!existingUser) throw new Error("No account found with this email.");
+  const existingUser = await usersCollection.findOne({ email: credentials.email });
+  if (!existingUser) throw new Error("No account found with this email.");
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          typeof existingUser.password === "string" ? existingUser.password : ""
-        );
-        if (!isValid) throw new Error("Incorrect password. Please try again.");
+  // ✅ Add verified check
+ if (!existingUser.verified) {
+  // Send verification email using your function
+  await sendVerificationEmail(existingUser.email, existingUser.name);
 
-        return {
-          id: existingUser._id.toString(),
-          name: existingUser.name,
-          email: existingUser.email,
-          role: existingUser.role || "user",
-          image: existingUser.image || null,
-        };
-      },
+  throw new Error("Your email is not verified. A new verification email has been sent.");
+}
+
+  const isValid = await bcrypt.compare(
+    credentials.password,
+    typeof existingUser.password === "string" ? existingUser.password : ""
+  );
+  if (!isValid) throw new Error("Incorrect password. Please try again.");
+
+  return {
+    id: existingUser._id.toString(),
+    name: existingUser.name,
+    email: existingUser.email,
+    role: existingUser.role || "user",
+    image: existingUser.image || null,
+  };
+}
+
     }),
 
     GoogleProvider({
