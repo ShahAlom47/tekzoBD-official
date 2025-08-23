@@ -10,7 +10,6 @@ import { RegisterUser } from "@/Interfaces/userInterfaces";
 import PrimaryButton from "@/components/PrimaryButton";
 import { registerUser } from "@/lib/allApiRequest/authRequest/authRequest";
 import PasswordInput from "@/components/PasswordInput";
-import { signIn } from "next-auth/react";
 import SocialLogin from "@/components/SocialLogin";
 
 const Register: React.FC = () => {
@@ -26,40 +25,26 @@ const Register: React.FC = () => {
   const password = watch("password");
 
   const onSubmit = async (data: RegisterUser) => {
-    try {
-      // 1️⃣ প্রথমে user register হবে
-      const res = await registerUser({ ...data });
-      console.log("Server Response:", res);
+  try {
+    // 1️⃣ user register হবে
+    const res = await registerUser({ ...data });
+    console.log("Server Response:", res);
 
-      if (res?.success) {
-        toast.success(res.message || "Registration successful");
+    if (res?.success) {
+      toast.success(res.message || "Registration successful");
 
-        // 2️⃣ তারপর automatic login করানো হবে
-        const loginRes = await signIn("credentials", {
-          redirect: false,
-          email: data.email,
-          password: data.password,
-        });
-
-        if (loginRes?.ok) {
-          toast.success("Logged in successfully!");
-          router.push("/"); // home বা যেকোন default route
-        } else {
-          toast.error(
-            "Registration successful, but login failed. Please login manually."
-          );
-          router.push("/login");
-        }
-      } else {
-        toast.error(res.message || "Registration failed");
-      }
-    } catch (error) {
-      handleApiError(error);
-      console.error("Registration error:", error);
-    } finally {
-      console.log("Form Submitted Data:", data);
+      // 2️⃣ auto login বাদ, verify page এ redirect
+      router.push("/verify-email"); // user কে verification message দেখানোর page এ পাঠানো
+    } else {
+      toast.error(res.message || "Registration failed");
     }
-  };
+  } catch (error) {
+    handleApiError(error);
+    console.error("Registration error:", error);
+  } finally {
+    console.log("Form Submitted Data:", data);
+  }
+};
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen max-w-xl mx-auto ">

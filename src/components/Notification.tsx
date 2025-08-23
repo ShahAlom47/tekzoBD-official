@@ -23,7 +23,7 @@ const Notification = () => {
   } = useNotifications();
 
   const renderNotifications = () => {
-    if (loading && notifications.length === 0) {
+    if (loading && notifications?.length === 0) {
       return <p className="text-center text-sm">Loading notifications...</p>;
     }
 
@@ -35,7 +35,7 @@ const Notification = () => {
       );
     }
 
-    if (!notifications || notifications.length === 0) {
+    if (!notifications || notifications?.length === 0) {
       return (
         <p className="text-center text-sm text-gray-600">
           No notifications available.
@@ -43,7 +43,7 @@ const Notification = () => {
       );
     }
 
-    return notifications.map((notif) => (
+    return notifications?.map((notif) => (
       <NotificationCard
         key={notif._id.toString()}
         notification={notif}

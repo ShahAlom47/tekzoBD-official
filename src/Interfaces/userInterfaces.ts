@@ -12,7 +12,7 @@ export interface RegisterUser {
 
 
 export interface Users {
-  _id: string | ObjectId;
+  _id?: string | ObjectId;
   email: string; // not editable
   name: string;
   password?: string; // optional, only for password update
@@ -24,6 +24,9 @@ export interface Users {
   state?: string;
   zipcode?: string;
   country?: string;
+    isActive?: boolean;
+  verified?: boolean;
+  emailVerificationToken?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   newsletter?: boolean; // user wants newsletter or not

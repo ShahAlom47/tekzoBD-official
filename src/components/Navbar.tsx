@@ -12,7 +12,6 @@ import NavWishList from "./NavWishList";
 import SocialButtons from "./SocialButton";
 import { useUser } from "@/hooks/useUser";
 import Notification from "./Notification";
-import Link from "next/link";
 const Navbar = () => {
   const {user}= useUser()
   const { scrollY, scrollDirection } = useScreenInfo();
@@ -49,7 +48,7 @@ const Navbar = () => {
       <div className=" lg:flex md:flex hidden items-center justify-between  max-w  ">
         <div className=" flex items-center gap-4  ">
           <Logo></Logo>
-          <Link className="bb text-black" href={`verify-email?token=${111}`} >verify Page</Link>
+ 
         </div>
         <div className="flex-1 ">
           <GlobalSearchBox></GlobalSearchBox>

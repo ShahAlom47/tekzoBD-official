@@ -6,6 +6,8 @@ import {  CartItem, RequestBody } from "@/Interfaces/cartInterface";
 
 
 export async function POST(req: Request) {
+
+
   try {
     const body: RequestBody = await req.json();
     const { productId, quantity, userEmail, createdAt,

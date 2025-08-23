@@ -16,3 +16,5 @@ declare global {
     gtag?: (...args: any[]) => void;
   }
 }
+
+declare module "nodemailer";

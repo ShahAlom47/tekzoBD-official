@@ -13,8 +13,8 @@ export interface IApiResponse<T = unknown> {
 }
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-    withCredentials: true,
+  baseURL: `http://localhost:3000/api`,
+  withCredentials: true,
 });
 
 export const request = async <T>(
