@@ -9,17 +9,9 @@ import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
 import { ObjectId } from "mongodb";
 
 export async function POST(request: NextRequest) {
-
   try {
     const body = (await request.json()) as CheckoutDataType;
     const productCollection = await getProductCollection();
-
-
-
-
- 
-
-
 
     if (
       !body?.cartProducts?.length ||
@@ -58,8 +50,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (bulkOperations.length > 0) {
-        const bulkResult = await productCollection.bulkWrite(bulkOperations);
-        console.log("bulkResult:", bulkResult);
+        await productCollection.bulkWrite(bulkOperations);
       }
 
       return NextResponse.json(

@@ -7,19 +7,21 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { usePathname } from "next/navigation";
 
 const MyWishListContent = () => {
-  const { wishlistProducts, isProductsLoading, refetchProducts ,stableProductIdList} =
-    useWishlist();
+  const {
+    wishlistProducts,
+    isProductsLoading,
+    refetchProducts,
+    stableProductIdList,
+  } = useWishlist();
   const pathname = usePathname();
 
-    // Trigger refetch only when drawer opens and user is logged in
-    
+  // Trigger refetch only when drawer opens and user is logged in
 
-    useEffect(() => {
-    if (pathname?.includes("/my-wishlist") && stableProductIdList?.length>0 ) {
-        console.log(pathname?.includes("/my-wishlist"))
+  useEffect(() => {
+    if (pathname?.includes("/my-wishlist") && stableProductIdList?.length > 0) {
       refetchProducts();
     }
-  }, [pathname,stableProductIdList]);
+  }, [pathname, stableProductIdList,refetchProducts]);
 
   return (
     <div>

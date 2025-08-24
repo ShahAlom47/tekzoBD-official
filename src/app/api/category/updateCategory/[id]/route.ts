@@ -3,7 +3,10 @@ import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 // ✅ Update a category by ID
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = params.id;
 
@@ -15,7 +18,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     const body = await req.json();
-    console.log(body)
 
     if (!body || typeof body !== "object") {
       return NextResponse.json(

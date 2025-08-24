@@ -23,10 +23,9 @@ export async function POST(req: NextRequest) {
     // Get all admin docs with tokens
     const adminTokenCollection = await getAdminTokenCollection();
     const allAdminDocs = await adminTokenCollection.find().toArray();
-    console.log(allAdminDocs)
 
     // Flatten all tokens from all admins into a single array
-    const tokens = allAdminDocs.flatMap(adminDoc => 
+    const tokens = allAdminDocs.flatMap((adminDoc) =>
       Array.isArray(adminDoc.tokens)
         ? adminDoc.tokens.map((t: { token: string }) => t.token)
         : []
@@ -53,7 +52,9 @@ export async function POST(req: NextRequest) {
     };
 
     // Send multicast notification
-    const response = await admin.messaging().sendEachForMulticast(messagePayload);
+    const response = await admin
+      .messaging()
+      .sendEachForMulticast(messagePayload);
 
     return NextResponse.json(
       {
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Notification send error:", error);
     return NextResponse.json(

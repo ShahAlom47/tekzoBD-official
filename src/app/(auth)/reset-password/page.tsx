@@ -10,7 +10,6 @@ const ResetPassword = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const userEmail = searchParams.get("userEmail");
-  console.log(userEmail)
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

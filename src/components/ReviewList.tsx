@@ -58,7 +58,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ productId }) => {
         queryKey: ["reviews", productId],
       });
     } else {
-      console.log("User cancelled delete");
+      // console.log("User cancelled delete");
     }
   };
 

@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
       createdAt ,
       updatedAt
     } = body;
-console.log(productId,userEmail,rating)
     // Basic validation
     if (!productId || !userEmail || typeof rating !== "number") {
       return NextResponse.json(

@@ -28,7 +28,7 @@ export default function isAuth<P>(
       ) {
         router.replace("/unauthorized");
       }
-    }, [status, session, roles, router]);
+    }, [status, session, router]);
 
     if (status === "loading") {
       return (

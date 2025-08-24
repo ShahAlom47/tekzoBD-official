@@ -11,25 +11,20 @@ type Props = {
 };
 
 const RelatedProducts = ({ productId }: Props) => {
-    console.log(productId)
-
-  const {data:relatedProducts,isLoading}= useQuery({
-    queryKey:["relatedProducts",productId],
-    queryFn:async()=>{
-        const res= await getRelatedProductsById(productId)
-        console.log(res)
-        return res?.data as ProductType []
-    }
-  })
-
-
+  const { data: relatedProducts, isLoading } = useQuery({
+    queryKey: ["relatedProducts", productId],
+    queryFn: async () => {
+      const res = await getRelatedProductsById(productId);
+      return res?.data as ProductType[];
+    },
+  });
 
   if (isLoading) {
     return (
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-4">Related Products</h2>
         <div className="flex justify-center items-center w-full">
-            <Loading />
+          <Loading />
         </div>
       </div>
     );
@@ -42,7 +37,7 @@ const RelatedProducts = ({ productId }: Props) => {
       <h2 className="text-xl font-semibold mb-4">Related Products</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {relatedProducts.map((product) => (
-          <RelatedProductCard key={product._id.toString()} product={product}  />
+          <RelatedProductCard key={product._id.toString()} product={product} />
         ))}
       </div>
     </div>

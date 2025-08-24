@@ -34,8 +34,6 @@ const OrderDetails = () => {
       />
     );
 
-
-    console.log("Order Details:", order,orderId);
   return (
     <div className="p-4">
     <DashPageTitle > Order Details</DashPageTitle>

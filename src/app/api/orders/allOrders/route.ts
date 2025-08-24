@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getOrderCollection } from "@/lib/database/db_collections";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import authOptions from "../../auth/authOptions/authOptions";
+// import authOptions from "../../auth/authOptions/authOptions";
 
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const orderCollection = await getOrderCollection();
-    const session = await getServerSession(authOptions);
-    const user = session?.user || null;
+    // const session = await getServerSession(authOptions);
+    // const user = session?.user || null;
 
-    const isDashboard = req.headers.get("x-from-dashboard") === "true";
-    const isPublic = !isDashboard || !user;
-    console.log("Is Dashboard Request:", isDashboard, "Is Public:", isPublic);
+    // const isDashboard = req.headers.get("x-from-dashboard") === "true";
+    // const isPublic = !isDashboard || !user;
 
-    const currentPage = parseInt(url.searchParams.get("currentPage") || "1", 10);
+    const currentPage = parseInt(
+      url.searchParams.get("currentPage") || "1",
+      10
+    );
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10", 10);
     const skip = (currentPage - 1) * pageSize;
 
@@ -73,7 +75,9 @@ export async function GET(req: NextRequest) {
     const sortQuery: any = {};
     if (sort.includes("-")) {
       const [field, order] = sort.split("-");
-      if (["checkoutAt", "orderStatus", "userName", "userEmail"].includes(field)) {
+      if (
+        ["checkoutAt", "orderStatus", "userName", "userEmail"].includes(field)
+      ) {
         sortQuery[`meta.${field}`] = order === "desc" ? -1 : 1;
       } else {
         sortQuery[field] = order === "desc" ? -1 : 1;
@@ -83,7 +87,12 @@ export async function GET(req: NextRequest) {
     }
 
     const [data, total] = await Promise.all([
-      orderCollection.find(filter).sort(sortQuery).skip(skip).limit(pageSize).toArray(),
+      orderCollection
+        .find(filter)
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(pageSize)
+        .toArray(),
       orderCollection.countDocuments(filter),
     ]);
 

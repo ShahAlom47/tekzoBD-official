@@ -15,7 +15,6 @@ const handler = async (
   const body = await req.json();
   const { newPassword, token } = body;
 
-  console.log(userEmail,newPassword,token,"uuuuuuu")
 
   if (!token || !newPassword ||!userEmail) {
     return NextResponse.json(

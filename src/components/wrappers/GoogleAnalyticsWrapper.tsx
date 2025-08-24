@@ -19,7 +19,7 @@ export default function GoogleAnalyticsWrapper({ children }: { children: React.R
       });
 
       if (process.env.NODE_ENV === "development") {
-        console.log("GA pageview sent:", fullPath, GA_MEASUREMENT_ID);
+        // console.log("GA pageview sent:", fullPath, GA_MEASUREMENT_ID);
       }
     }
   }, [pathname, searchParams]);

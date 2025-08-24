@@ -12,12 +12,12 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     },
   });
 
-  const info = await transporter.sendMail({
+ await transporter.sendMail({
     from: `"TekzoBD" <${process.env.SMTP_USER}>`,
     to,
     subject,
     html,
   });
 
-  console.log("Email sent: %s", info.messageId);
+  // console.log("Email sent: %s", info.messageId);
 };

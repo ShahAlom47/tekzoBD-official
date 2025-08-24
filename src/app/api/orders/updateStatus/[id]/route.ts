@@ -45,7 +45,6 @@ const handler = async (
   const productCollection = await getProductCollection();
 
   const order = await orderCollection.findOne({ _id: new ObjectId(id) });
-  console.log(order);
 
   if (!order) {
     return NextResponse.json(

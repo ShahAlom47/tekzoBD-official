@@ -1,6 +1,5 @@
 import { request } from "../apiRequests";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getAllTrafficInfo = async ({ filter }:{filter:string}) => {
   const url = `/analytics/allData?filter=${filter}`;
 

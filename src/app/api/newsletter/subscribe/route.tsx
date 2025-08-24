@@ -1,4 +1,3 @@
-
 import { getNewsLetterCollection } from "@/lib/database/db_collections";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,17 +12,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-  
-
     const collection = await getNewsLetterCollection();
 
     const newSubscriber = {
       email: body.email,
       subscribedAt: new Date().toISOString(),
       isActive: true,
-      ...body
+      ...body,
     };
-  console.log(body,newSubscriber)
     const result = await collection.insertOne(newSubscriber);
 
     if (!result.acknowledged) {

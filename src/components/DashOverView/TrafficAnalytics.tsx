@@ -5,9 +5,12 @@ import { useState, useMemo } from "react";
 import TimeRangeSelector, { FilterType } from "./TimeRangeSelector";
 import SummaryCard from "./SummaryCard";
 import { CustomTable } from "../ui/CustomTable";
-import { ExtraMetrics, SummaryMetrics, TrafficApiResponse, TrafficRow } from "@/Interfaces/googleAnalyticsInterface";
-
-
+import {
+  ExtraMetrics,
+  SummaryMetrics,
+  TrafficApiResponse,
+  TrafficRow,
+} from "@/Interfaces/googleAnalyticsInterface";
 
 export default function TrafficAnalytics() {
   const [filter, setFilter] = useState<FilterType>("week");
@@ -22,7 +25,6 @@ export default function TrafficAnalytics() {
     staleTime: 5 * 1000,
     refetchOnWindowFocus: false,
   });
-console.log(data)
   // Prepare table data
   const tableRows: TrafficRow[] = useMemo(() => {
     if (!data?.rows) return [];
@@ -65,7 +67,13 @@ console.log(data)
   // Extract specific metrics
   const extraMetrics: ExtraMetrics = useMemo(() => {
     if (!data?.rows)
-      return { homeViews: 0, shopViews: 0, productViews: 0, addToCart: 0, checkout: 0 };
+      return {
+        homeViews: 0,
+        shopViews: 0,
+        productViews: 0,
+        addToCart: 0,
+        checkout: 0,
+      };
 
     let homeViews = 0;
     let shopViews = 0;
@@ -115,14 +123,35 @@ console.log(data)
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <SummaryCard title="Total Users" values={[{ value: summary.totalUsers }]} />
-        <SummaryCard title="Page Views" values={[{ value: summary.pageViews }]} />
+        <SummaryCard
+          title="Total Users"
+          values={[{ value: summary.totalUsers }]}
+        />
+        <SummaryCard
+          title="Page Views"
+          values={[{ value: summary.pageViews }]}
+        />
         <SummaryCard title="Event Count" values={[{ value: summary.events }]} />
-        <SummaryCard title="Home Page Views" values={[{ value: extraMetrics.homeViews }]} />
-        <SummaryCard title="Shop Page Views" values={[{ value: extraMetrics.shopViews }]} />
-        <SummaryCard title="Product Views" values={[{ value: extraMetrics.productViews }]} />
-        <SummaryCard title="Add to Cart" values={[{ value: extraMetrics.addToCart }]} />
-        <SummaryCard title="Checkout Clicks" values={[{ value: extraMetrics.checkout }]} />
+        <SummaryCard
+          title="Home Page Views"
+          values={[{ value: extraMetrics.homeViews }]}
+        />
+        <SummaryCard
+          title="Shop Page Views"
+          values={[{ value: extraMetrics.shopViews }]}
+        />
+        <SummaryCard
+          title="Product Views"
+          values={[{ value: extraMetrics.productViews }]}
+        />
+        <SummaryCard
+          title="Add to Cart"
+          values={[{ value: extraMetrics.addToCart }]}
+        />
+        <SummaryCard
+          title="Checkout Clicks"
+          values={[{ value: extraMetrics.checkout }]}
+        />
       </div>
 
       {/* ✅ Replace old table with CustomTable */}

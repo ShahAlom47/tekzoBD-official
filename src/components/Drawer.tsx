@@ -41,7 +41,7 @@ const Drawer: React.FC<DrawerProps> = ({
     if (isOpen) {
       onClose();
     }
-  }, [pathname]);  // jekono route change hole
+  }, [pathname,isOpen,onClose]);  // jekono route change hole
 
   const getPositionClasses = () => {
     switch (direction) {

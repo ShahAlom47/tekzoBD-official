@@ -58,7 +58,6 @@ const ManageProduct = () => {
 
   const productData = (product?.data as ProductType[]) || [];
   const totalPages = product?.totalPages || 1;
-  console.log(productData)
 
   const handleDelete = async (id: ObjectId | string | undefined) => {
     const ok = await confirm({

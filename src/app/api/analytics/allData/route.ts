@@ -20,7 +20,6 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
   },
 });
 
-console.log( PROPERTY_ID, GOOGLE_PRIVATE_KEY);
 
 // Helper function: filter → {startDate, endDate}
 function getDateRangeFromFilter(filter:"today"| "week" | "month" | "year" | "all") {

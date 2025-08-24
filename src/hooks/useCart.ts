@@ -112,7 +112,7 @@ export const useCart = () => {
         console.error(err);
       }
     },
-    [reduxCartItems, userEmail, dispatch]
+    [reduxCartItems, userEmail, dispatch,event]
   );
 
   // ✅ Remove from cart
@@ -177,7 +177,7 @@ export const useCart = () => {
         debouncedUpdateMap[productId](updatedItem);
       }
     },
-    [reduxCartItems, dispatch, userEmail]
+    [reduxCartItems, dispatch, userEmail,debouncedUpdateMap]
   );
 
   // ✅ Clear all

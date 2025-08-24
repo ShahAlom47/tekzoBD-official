@@ -11,9 +11,9 @@ export const requestFirebaseNotificationPermission = async (): Promise<string | 
       console.warn("Notification permission not granted.");
       return null;
     } if (permission === "granted") {
-    console.log("Permission deya hoyeche");
+    // console.log("Permission deya hoyeche");
   } else {
-    console.log("Permission deny kora hoyeche");
+    // console.log("Permission deny kora hoyeche");
   }
 
     const messagingInstance = await getMessagingInstance();

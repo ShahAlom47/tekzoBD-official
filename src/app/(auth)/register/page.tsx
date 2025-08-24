@@ -28,7 +28,6 @@ const Register: React.FC = () => {
   try {
     // 1️⃣ user register হবে
     const res = await registerUser({ ...data });
-    console.log("Server Response:", res);
 
     if (res?.success) {
       toast.success(res.message || "Registration successful");
@@ -42,7 +41,7 @@ const Register: React.FC = () => {
     handleApiError(error);
     console.error("Registration error:", error);
   } finally {
-    console.log("Form Submitted Data:", data);
+    // console.log("Form Submitted Data:", data);
   }
 };
 

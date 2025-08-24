@@ -50,10 +50,7 @@ export function useNotifications(): UseNotificationReturn {
         setError(null);
 
         const currentPage = reset ? 1 : page;
-        const res = await getAllNotifications({
-          page: currentPage,
-          limit,
-        });
+        const res = await getAllNotifications({ page: currentPage, limit });
 
         const data = res?.data as NotificationType[];
         const unread = res?.unreadCount || 0;
@@ -67,7 +64,6 @@ export function useNotifications(): UseNotificationReturn {
         }
 
         setUnreadCount(unread);
-
         setHasMore(data.length >= limit);
       } catch {
         setError("Failed to load notifications");
@@ -75,8 +71,7 @@ export function useNotifications(): UseNotificationReturn {
         setLoading(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [  user]
+    [user, page]
   );
 
   const loadMore = useCallback(() => {
@@ -114,32 +109,27 @@ export function useNotifications(): UseNotificationReturn {
     }
   }, []);
 
-
-
-const deleteNotif = useCallback(
-  async (id: string) => {
-
-    try {
-      const target = notifications.find((n) => n._id === id);
-      const res = await deleteNotification(id);
-      if(!res?.success) return
-      toast.success("Successfully Completed")
-      setNotifications((prev) => prev.filter((n) => n._id !== id));
-      if (target && !target.isRead) {
-        setUnreadCount((prev) => Math.max(prev - 1, 0));
+  const deleteNotif = useCallback(
+    async (id: string) => {
+      try {
+        const target = notifications.find((n) => n._id === id);
+        const res = await deleteNotification(id);
+        if (!res?.success) return;
+        toast.success("Successfully Completed");
+        setNotifications((prev) => prev.filter((n) => n._id !== id));
+        if (target && !target.isRead) {
+          setUnreadCount((prev) => Math.max(prev - 1, 0));
+        }
+      } catch {
+        setError("Failed to delete notification");
       }
-    } catch {
-      setError("Failed to delete notification");
-    }
-  },
-  [notifications] 
-);
-
+    },
+    [notifications]
+  );
 
   const getCurrentToken = useCallback(async (): Promise<string | null> => {
     try {
       const token = await requestFirebaseNotificationPermission();
-      console.log(token);
       return token;
     } catch (error) {
       console.error("Failed to get current token:", error);
@@ -147,18 +137,25 @@ const deleteNotif = useCallback(
     }
   }, []);
 
+  // Safe fetchNotifications call on mount or when user changes
   useEffect(() => {
-    fetchNotifications(true);
-  }, [fetchNotifications]);
+    if (!user?.role) return;
 
+    const fetchData = async () => {
+      await fetchNotifications(true);
+    };
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Firebase push notification listener
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
     const setupMessaging = async () => {
       const messaging = await getMessagingInstance();
       if (messaging) {
-        unsubscribe = onMessage(messaging, (payload) => {
-          console.log("🔔 Push notification received:", payload);
+        unsubscribe = onMessage(messaging, () => {
           fetchNotifications(true);
         });
       }
@@ -169,6 +166,7 @@ const deleteNotif = useCallback(
     return () => {
       if (unsubscribe) unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
