@@ -12,6 +12,10 @@ export const registerUser = async (data: RegisterUser) => {
 };
 export const verifyEmail = async (data: VerifyEmailData) => {
   return request("POST", "/auth/verify-email", { ...data });
+}
+
+export const forgetPassword = async (userEmail: string) => {
+  return request("POST", "/auth/forget-password", { userEmail });
 };
 
 

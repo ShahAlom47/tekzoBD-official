@@ -129,7 +129,7 @@ const Login: React.FC = () => {
           </p>
 
           <Link
-            className="underline  text-xs text-blue-700"
+            className="underline   text-blue-700"
             href="/forget-password"
           >
             Lost your password?
