@@ -17,5 +17,8 @@ export const verifyEmail = async (data: VerifyEmailData) => {
 export const forgetPassword = async (userEmail: string) => {
   return request("POST", "/auth/forget-password", { userEmail });
 };
+export const resetPassword = async (newPassword: string, token: string,userEmail:string) => {
+  return request("PATCH", `/auth/reset-password/${userEmail}`, { newPassword, token });
+};
 
 

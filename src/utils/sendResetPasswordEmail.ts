@@ -7,15 +7,15 @@ export const sendResetPasswordEmail = async (userEmail: string, userName: string
 
   // Generate token + expiry
   const resetPasswordToken = generateRandomToken(32);
-  const tokenExpiry = new Date(Date.now() + 1000 * 60 * 15); // 15 min
+  const tokenExpiry = new Date(Date.now() + 1000 * 60 * 15).toISOString(); // 15 min
 
   // Save token + expiry to user
   await usersCollection.updateOne(
     { email: userEmail },
     { 
       $set: { 
-        resetPasswordToken, 
-        resetPasswordExpires: tokenExpiry 
+        emailVerificationToken: resetPasswordToken, 
+        tokenExpires: tokenExpiry 
       } 
     }
   );

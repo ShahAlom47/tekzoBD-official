@@ -8,15 +8,23 @@ const ForgetPassword = () => {
   const [success, setSuccess] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setMessage(null);
 
     const form = e.currentTarget;
     const formData = new FormData(form);
     const userEmail = formData.get("email") as string;
 
+    if (!userEmail) {
+      setMessage({ type: "error", text: "❌ Email is required. (ইমেইল আবশ্যক)" });
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       const res = await forgetPassword(userEmail);
 
       if (res?.success) {
@@ -41,11 +49,19 @@ const ForgetPassword = () => {
         text: "❌ Server error. Please try again later. (সার্ভার সমস্যা হয়েছে, পরে আবার চেষ্টা করুন)"
       });
       toast.error("Server error.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleResend = async () => {
+    if (!email) return;
+
+    // Clear previous message before resend
+    setMessage(null);
+
     try {
+      setIsSubmitting(true);
       const res = await forgetPassword(email);
 
       if (res?.success) {
@@ -67,6 +83,8 @@ const ForgetPassword = () => {
         text: "❌ Server error. Please try again later. (সার্ভার সমস্যা হয়েছে, পরে আবার চেষ্টা করুন)"
       });
       toast.error("Server error.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,7 +99,7 @@ const ForgetPassword = () => {
 
           {message && (
             <p
-              className={`mb-3 p-2 rounded-md text-sm ${
+              className={`mb-3 p-2 rounded-md text-sm w-full ${
                 message.type === "success"
                   ? "bg-green-100 text-green-700 border border-green-300"
                   : "bg-red-100 text-red-700 border border-red-300"
@@ -91,33 +109,28 @@ const ForgetPassword = () => {
             </p>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
             <input
               type="email"
               name="email"
               placeholder="Enter your email"
               required
-              className="w-full my-input rounded-full"
+              className="w-full my-input rounded-full p-3 border focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button type="submit" className="btn-bordered">
-              Send Reset Link
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-bordered w-full"
+            >
+              {isSubmitting ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
         </>
       ) : (
         <>
-          <h2 className="text-xl font-bold text-green-600 mb-4">
-            ✅ পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে।
-          </h2>
-          <p className="text-gray-700 mb-6">
-            Please check your inbox (<span className="font-medium">{email}</span>) 
-            to reset your password.  
-            If you don’t see the email, check your Spam/Junk folder.
-          </p>
-
           {message && (
             <p
-              className={`mb-3 p-2 rounded-md text-sm ${
+              className={`mb-3 p-2 rounded-md text-sm w-full ${
                 message.type === "success"
                   ? "bg-green-100 text-green-700 border border-green-300"
                   : "bg-red-100 text-red-700 border border-red-300"
@@ -127,11 +140,20 @@ const ForgetPassword = () => {
             </p>
           )}
 
+          <h2 className="text-xl font-bold text-green-600 mb-4">
+            ✅ Password reset link has been sent. (পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে)
+          </h2>
+          <p className="text-gray-700 mb-6">
+            Please check your inbox (<span className="font-medium">{email}</span>) to reset your password.  
+            If you don’t see the email, check your Spam/Junk folder.
+          </p>
+
           <button
             onClick={handleResend}
+            disabled={isSubmitting}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            Resend Link
+            {isSubmitting ? "Resending..." : "Resend Link"}
           </button>
         </>
       )}

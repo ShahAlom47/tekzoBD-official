@@ -27,6 +27,7 @@ export interface Users {
     isActive?: boolean;
   verified?: boolean;
   emailVerificationToken?: string | null;
+  tokenExpires?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   newsletter?: boolean; // user wants newsletter or not
