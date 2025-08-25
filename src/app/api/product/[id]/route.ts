@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 // ✅ Get Single Product
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json(
@@ -29,7 +29,11 @@ export async function GET(
     }
 
     return NextResponse.json(
-      { message: "Product retrieved successfully", success: true, data: result },
+      {
+        message: "Product retrieved successfully",
+        success: true,
+        data: result,
+      },
       { status: 200 }
     );
   } catch (error) {
@@ -48,10 +52,10 @@ export async function GET(
 // ✅ Update Product
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     if (!body || typeof body !== "object") {

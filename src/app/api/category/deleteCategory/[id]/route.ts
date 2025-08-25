@@ -2,14 +2,12 @@ import { getCategoryCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-// ✅ DELETE category by ID
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // params as Promise
 ) {
   try {
-    const id = params.id;
-
+    const { id } = await params; // await the params
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json(
         { message: "Invalid category ID", success: false },

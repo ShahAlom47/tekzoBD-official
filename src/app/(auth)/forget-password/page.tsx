@@ -3,6 +3,7 @@
 import { forgetPassword } from "@/lib/allApiRequest/authRequest/authRequest";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+export const dynamic = "force-dynamic";
 
 const ForgetPassword = () => {
   const [success, setSuccess] = useState(false);

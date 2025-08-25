@@ -5,7 +5,7 @@ import { getProductCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise< { slug: string }> }) {
 
   try {
     const { slug } = await params;
@@ -50,10 +50,10 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 // update product 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params:Promise< { id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     if (!body || typeof body !== "object") {

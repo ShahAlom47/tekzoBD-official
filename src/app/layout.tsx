@@ -9,6 +9,8 @@ import MainWrapper from "@/components/wrappers/MainWrapper"; // 👈 import here
 import ScrollTopButton from "@/components/ScrollTopButton";
 import SmartChatWidget from "@/components/SmartChatWidget";
 import GoogleAnalyticsWrapper from "@/components/wrappers/GoogleAnalyticsWrapper";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "TeckzoBD",
@@ -27,7 +29,8 @@ export default function RootLayout({
     <html lang="en" >
       <body className="min-h-screen bg-white relative">
         <Providers>
-          <GoogleAnalyticsWrapper>
+        <Suspense fallback={<Loading></Loading>}>
+            <GoogleAnalyticsWrapper>
           <ConditionalWrapper hideOn={["dashboard"]}>
             <Navbar />
           </ConditionalWrapper>
@@ -41,6 +44,7 @@ export default function RootLayout({
             <Footer />
           </ConditionalWrapper>
           </GoogleAnalyticsWrapper>
+        </Suspense>
         </Providers>
       </body>
     </html>

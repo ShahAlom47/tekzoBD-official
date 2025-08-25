@@ -138,7 +138,7 @@ export const useWishlist = () => {
         console.error(error);
       }
     },
-    [userEmail, refetchWishlist, queryClient]
+    [userEmail, refetchWishlist, ]
   );
 
   // ✅ Toggle wishlist state

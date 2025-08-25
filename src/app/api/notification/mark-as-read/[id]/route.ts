@@ -4,9 +4,9 @@ import { ObjectId } from "mongodb";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params:Promise< { id: string }> }
 ) {
-  const { id } = params;
+  const { id } =await params;
 
   try {
     const notificationCollection = await getNotificationCollection();

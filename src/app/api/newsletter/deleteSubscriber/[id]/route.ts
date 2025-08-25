@@ -4,10 +4,10 @@ import { getNewsLetterCollection } from "@/lib/database/db_collections";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params:Promise< { id: string }> }) {
   try {
     const newsLetterCollection = await getNewsLetterCollection();
-    const id = params.id;
+    const {id} = await params;
 
     const result = await newsLetterCollection.deleteOne({ _id: new ObjectId(id) });
 

@@ -11,7 +11,7 @@ interface PasswordInputProps {
   error?: string;
   placeholder?: string;
 }
-
+ 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   register,

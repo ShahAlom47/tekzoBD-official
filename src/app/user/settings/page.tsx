@@ -104,7 +104,13 @@ const Settings: React.FC = () => {
       if (!userData?.email) throw new globalThis.Error("User email not found");
       setIsSubmitting(true);
 
-      const res = await updateUserInfo(userData.email, formData);
+      const res = await updateUserInfo(userData.email, {
+        ...formData,
+        emailVerificationToken:
+          userData.emailVerificationToken === null
+            ? undefined
+            : userData.emailVerificationToken,
+      });
       if (res?.success) {
         toast.success("Settings updated successfully!");
         refetch();

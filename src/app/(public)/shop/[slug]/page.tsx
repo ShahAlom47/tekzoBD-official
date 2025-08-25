@@ -9,14 +9,14 @@ import ProductDetailsContent from "@/components/ProductDetailsContent";
 import RelatedProducts from "@/components/RelatedProducts";
 import ReviewContent from "@/components/ReviewContent";
 
-interface Props {
-  params: {
-    slug: string;
-  };
-}
 
-export default async function ProductDetailPage({ params }: Props) {
-  const { slug } = params;
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params;
   const response = await getSingleProductBySlug(slug);
   const product = response?.data as ProductType;
 
@@ -29,7 +29,7 @@ export default async function ProductDetailPage({ params }: Props) {
       <PageHeading title="Details" isDetailsPage={true}  subTitle={product?.title} />
       <ProductDetailsContent product={product}></ProductDetailsContent>
       <ReviewContent product={product}></ReviewContent>
-      <RelatedProducts productId={product?._id.toString()}></RelatedProducts>
+     <RelatedProducts productId={product?._id ? product._id.toString() : ''} />
 
     </section>
   );

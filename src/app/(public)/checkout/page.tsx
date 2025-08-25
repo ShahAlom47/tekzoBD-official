@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import toast from "react-hot-toast";
 import { RootState } from "@/redux/store/store";
 import PageHeading from "@/components/PageHeading";
@@ -23,6 +23,8 @@ import { useGAnalytics } from "@/hooks/useGAnalytics";
 
 const DELIVERY_CHARGE = 100;
 const COD_EXTRA_CHARGE = 10; // Cash on Delivery extra charge
+
+export const dynamic = "force-dynamic";
 
 const CheckoutPage = () => {
   const dispatch = useAppDispatch();
@@ -165,8 +167,10 @@ const CheckoutPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <PageHeading title="Checkout" />
-
+      
+      <Suspense fallback={<div>Loading...</div>}>
+        <PageHeading></PageHeading>
+      </Suspense>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Shipping Info */}
         <div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import ContactInfo from "@/components/AboutUsComponents/ContactInfo";
 import CustomerTrust from "@/components/AboutUsComponents/CustomerTrust";
@@ -8,11 +8,13 @@ import WhatWeOffer from "@/components/AboutUsComponents/WhatWeOffer";
 import WhyChooseUs from "@/components/AboutUsComponents/WhyChooseUs";
 import AboutUsSection from "@/components/HomeComponents/AboutUsSection";
 import Newsletter from "@/components/HomeComponents/NewsLetter";
+import Loading from "@/app/loading";
 
+export const dynamic = "force-dynamic";
 
 const About = () => {
   return (
-    <div className="">
+    <Suspense fallback={<Loading></Loading>}>
       <AboutUsSection></AboutUsSection>
       <VisionMission />
       <Story />
@@ -20,8 +22,8 @@ const About = () => {
       <WhyChooseUs />
       <CustomerTrust />
       <Newsletter></Newsletter>
-       <ContactInfo />
-    </div>
+      <ContactInfo />
+    </Suspense>
   );
 };
 
