@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 interface DrawerProps {
@@ -23,6 +23,7 @@ const Drawer: React.FC<DrawerProps> = ({
   children,
 }) => {
   const pathname = usePathname();
+  const pathnameRef = useRef(usePathname());
 
   useEffect(() => {
     if (isOpen) {
@@ -36,12 +37,16 @@ const Drawer: React.FC<DrawerProps> = ({
     };
   }, [isOpen]);
 
-  // Route change detect kore drawer close korar jonno
-  useEffect(() => {
-    if (isOpen) {
-      onClose();
-    }
-  }, [pathname,isOpen,onClose]);  // jekono route change hole
+  // Route change detect kore drawer close korar jonno 
+
+
+useEffect(() => {
+  const currentPath = pathname;
+  if (isOpen && currentPath !== pathnameRef.current) {
+    onClose();
+  }
+  pathnameRef.current = currentPath;
+}, [pathname, isOpen, onClose]);
 
   const getPositionClasses = () => {
     switch (direction) {

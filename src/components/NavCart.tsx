@@ -29,6 +29,7 @@ const NavCart = () => {
     setIsClient(true);
   }, []);
 
+
   const userEmail = user?.email ?? "";
 
   const cartCount = (): string =>
@@ -61,6 +62,8 @@ const NavCart = () => {
   });
 
   if (!isClient) return null;
+
+
 
   return (
     <div className="relative flex items-center">
