@@ -15,30 +15,40 @@ export default withAuth(
       "/api/portfolio/updatePortfolio",
     ];
 
+    const res = NextResponse.next();
+
+    // 🌐 Add CORS headers
+    res.headers.set("Access-Control-Allow-Origin", "http://localhost:3001"); 
+    res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    // 🔄 Handle preflight OPTIONS requests
+    if (req.method === "OPTIONS") {
+      return new NextResponse(null, { status: 200, headers: res.headers });
+    }
+
     // ✅ Allow public pages & API without auth
     if (
       publicRoutes.includes(pathname) ||
       publicApiRoutes.includes(pathname) ||
       pathname.startsWith("/api/auth")
     ) {
-      return NextResponse.next();
+      return res;
     }
 
     // ❌ No token = unauthenticated → redirect to login
-   if (!token) {
-  const redirectTo = req.nextUrl.pathname + req.nextUrl.search;
-  return NextResponse.redirect(new URL(`/login?redirect=${redirectTo}`, req.url));
-}
-
-    // console.log("🔐 Middleware hit:", pathname, "| Role:", role);
+    if (!token) {
+      const redirectTo = req.nextUrl.pathname + req.nextUrl.search;
+      return NextResponse.redirect(new URL(`/login?redirect=${redirectTo}`, req.url));
+    }
 
     // ✅ Admin-only routes
     if (pathname.startsWith("/dashboard/admin") && role === "admin") {
-      return NextResponse.next();
+      return res;
     }
 
     if (adminApiRoutes.includes(pathname) && role === "admin") {
-      return NextResponse.next();
+      return res;
     }
 
     if (pathname.startsWith("/user") && !token) {
@@ -52,12 +62,12 @@ export default withAuth(
         pathname.startsWith("/user")) &&
       (role === "user" || role === "admin")
     ) {
-      return NextResponse.next();
+      return res;
     }
 
     // ✅ Common dashboard access for admin & user
     if (pathname === "/dashboard" && (role === "admin" || role === "user")) {
-      return NextResponse.next();
+      return res;
     }
 
     // ❌ Unauthorized fallback

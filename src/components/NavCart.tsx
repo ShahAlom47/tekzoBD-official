@@ -23,6 +23,8 @@ const NavCart = () => {
   const itemIds = cartItems?.map((item) => item?.productId) || [];
   const router = useRouter();
 
+  console.log(isOpen)
+
   useEffect(() => {
     setIsClient(true);
   }, []);
