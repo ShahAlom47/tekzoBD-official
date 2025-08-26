@@ -15,40 +15,30 @@ export default withAuth(
       "/api/portfolio/updatePortfolio",
     ];
 
-    const res = NextResponse.next();
-
-    // 🌐 Add CORS headers
-    res.headers.set("Access-Control-Allow-Origin", "http://localhost:3001"); 
-    res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-    // 🔄 Handle preflight OPTIONS requests
-    if (req.method === "OPTIONS") {
-      return new NextResponse(null, { status: 200, headers: res.headers });
-    }
-
     // ✅ Allow public pages & API without auth
     if (
       publicRoutes.includes(pathname) ||
       publicApiRoutes.includes(pathname) ||
       pathname.startsWith("/api/auth")
     ) {
-      return res;
+      return NextResponse.next();
     }
 
     // ❌ No token = unauthenticated → redirect to login
-    if (!token) {
-      const redirectTo = req.nextUrl.pathname + req.nextUrl.search;
-      return NextResponse.redirect(new URL(`/login?redirect=${redirectTo}`, req.url));
-    }
+   if (!token) {
+  const redirectTo = req.nextUrl.pathname + req.nextUrl.search;
+  return NextResponse.redirect(new URL(`/login?redirect=${redirectTo}`, req.url));
+}
+
+    // console.log("🔐 Middleware hit:", pathname, "| Role:", role);
 
     // ✅ Admin-only routes
     if (pathname.startsWith("/dashboard/admin") && role === "admin") {
-      return res;
+      return NextResponse.next();
     }
 
     if (adminApiRoutes.includes(pathname) && role === "admin") {
-      return res;
+      return NextResponse.next();
     }
 
     if (pathname.startsWith("/user") && !token) {
@@ -62,12 +52,12 @@ export default withAuth(
         pathname.startsWith("/user")) &&
       (role === "user" || role === "admin")
     ) {
-      return res;
+      return NextResponse.next();
     }
 
     // ✅ Common dashboard access for admin & user
     if (pathname === "/dashboard" && (role === "admin" || role === "user")) {
-      return res;
+      return NextResponse.next();
     }
 
     // ❌ Unauthorized fallback
