@@ -45,7 +45,7 @@ const Home = async () => {
     
 
       {/* searchParams এখন blank object পাঠানো হয়েছে */}
-      <ShopPage searchParams={Promise.resolve({})} isHomePage={true}></ShopPage>
+      <ShopPage  isHomePage={true}></ShopPage>
 
       {/* Only render if data is available, else skip section */}
       {categories.length > 0 && <CategorySection categories={categories} />}

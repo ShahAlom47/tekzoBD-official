@@ -14,7 +14,7 @@ import { Suspense } from "react";
 
 interface Props {
   isHomePage?: boolean;
-  searchParams: Promise<{
+  searchParams?: Promise<{
     page?: string;
     minPrice?: string;
     maxPrice?: string;

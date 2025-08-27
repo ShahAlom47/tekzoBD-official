@@ -18,32 +18,47 @@ const SortFilter = () => {
   const pathname = usePathname();
   const isShopPage = pathname?.includes("/shop");
 
-  const initialSort = searchParams.get("sort") || "";
-
-  const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [selectedSort, setSelectedSort] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setSelectedSort(initialSort);
-  }, [initialSort]);
+    try {
+      const initialSort = searchParams?.get("sort") || "";
+      setSelectedSort(initialSort);
+      setError(""); // clear error if success
+    } catch (err) {
+      console.error(err);
+      setError("⚠ Could not read sort parameter");
+      setSelectedSort(""); // fallback to empty
+    }
+  }, [searchParams]);
 
   const handleChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    try {
+      if (!searchParams) throw new Error("Invalid search params");
 
-    if (value === "") {
-      params.delete("sort");
-    } else {
-      params.set("sort", value);
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (value === "") {
+        params.delete("sort");
+      } else {
+        params.set("sort", value);
+      }
+
+      params.set("page", "1"); // reset page
+      setSelectedSort(value);
+      setError(""); // clear error
+      router.push(`/shop?${params.toString()}`);
+    } catch (err) {
+      console.error(err);
+      setError("⚠ Something went wrong while updating sort");
     }
-
-    params.set("page", "1"); // Reset page on sort change
-    setSelectedSort(value);
-    router.push(`/shop?${params.toString()}`);
   };
 
   return (
-    <div className="p-1 space-y- text-sm md:text-base ">
+    <div className="p-1 space-y-1 text-sm md:text-base">
       {isShopPage && (
-        <label className="font-medium  text-gray-700">Sort By</label>
+        <label className="font-medium text-gray-700">Sort By</label>
       )}
 
       <select
@@ -57,6 +72,9 @@ const SortFilter = () => {
           </option>
         ))}
       </select>
+
+      {/* Show error if any */}
+      {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   );
 };
