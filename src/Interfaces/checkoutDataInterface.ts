@@ -86,3 +86,15 @@ export interface GetAllOrdersParams {
   toDate?: string;   // ISO format
   isDashboardRequest?: boolean;
 }
+
+
+// Shiping Form Data 
+
+export interface ShippingInfoFormType {
+  name: string;
+  address: string;
+  city: string;
+  zipCode?: string;
+  phone: string;
+  deliveryMethod: "home-delivery" | "standard" | "express" | "pickup";
+}

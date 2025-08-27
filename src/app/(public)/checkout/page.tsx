@@ -10,7 +10,7 @@ import OrderSuccessContent from "@/components/OrderSuccessContent";
 import { clearCheckoutData } from "@/redux/features/checkoutSlice/checkoutSlice";
 import { useAppDispatch } from "@/redux/hooks/reduxHook";
 import { useRouter } from "next/navigation";
-import { CheckoutDataType } from "@/Interfaces/checkoutDataInterface";
+import { CheckoutDataType, ShippingInfoFormType } from "@/Interfaces/checkoutDataInterface";
 import { useCart } from "@/hooks/useCart";
 import { addOrder } from "@/lib/allApiRequest/orderRequest/orderRequest";
 import { useUser } from "@/hooks/useUser";
@@ -20,6 +20,8 @@ import bkashQR from "@/assets/image/bkashQR.jpg";
 import bkashQRinfo from "@/assets/image/bkashQRinfo.jpg";
 import SafeImage from "@/components/SafeImage";
 import { useGAnalytics } from "@/hooks/useGAnalytics";
+// import { useUserFullInfo } from "@/hooks/useUserFullInfo";
+import ShippingInfoForm from "@/components/ShippingInfoForm";
 
 const DELIVERY_CHARGE = 100;
 const COD_EXTRA_CHARGE = 10; // Cash on Delivery extra charge
@@ -40,28 +42,24 @@ const CheckoutPage = () => {
 
   const { sendNewNotification } = useNotifications();
 
-  const [shippingInfo, setShippingInfo] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    deliveryMethod: "home-delivery" as const,
-  });
+const [shippingInfo, setShippingInfo] = useState<ShippingInfoFormType>({
+  name: "",
+  phone: "",
+  address: "",
+  city: "",
+  zipCode: "",
+  deliveryMethod: "home-delivery",
+});
+
 
   const [paymentMethod, setPaymentMethod] = useState<"full" | "cod">("cod");
   const [transactionId, setTransactionId] = useState("");
   const [bkashNumber, setBkashNumber] = useState("");
 
-  // Handle shipping info input
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setShippingInfo((prev) => ({ ...prev, [name]: value }));
-  };
+ 
 
   // Confirm Order function
   const handleConfirmOrder = () => {
-   
     const phoneRegex = /^01[0-9]{9}$/;
 
     // Validation for shipping info
@@ -75,18 +73,20 @@ const CheckoutPage = () => {
       return;
     }
 
-    // Validation for Bkash payment
+    // Validation for Bkash payment (only if full payment selected)
     if (paymentMethod === "full") {
       if (!transactionId || !bkashNumber) {
         toast.error("Please enter both Bkash Number and Transaction ID");
         return;
       }
-    }
-        if (!phoneRegex.test(bkashNumber)) {
-      toast.error("Please enter a valid 11-digit Bangladeshi phone number");
-      return;
-    }
 
+      if (!phoneRegex.test(bkashNumber)) {
+        toast.error(
+          "Please enter a valid 11-digit Bangladeshi bkash phone number"
+        );
+        return;
+      }
+    }
     // Calculate grand total including delivery and COD charges
     const grandTotal =
       (checkoutData?.pricing?.grandTotal ?? 0) +
@@ -109,7 +109,8 @@ const CheckoutPage = () => {
         method: paymentMethod === "full" ? "bkash" : "cash-on-delivery",
         paymentStatus: paymentMethod === "full" ? "paid" : "unpaid",
         transactionId: paymentMethod === "full" ? transactionId : undefined,
-        paymentMethodDetails: paymentMethod === "full" ? { bkashNumber } : undefined,
+        paymentMethodDetails:
+          paymentMethod === "full" ? { bkashNumber } : undefined,
       },
       meta: {
         checkoutAt: new Date().toISOString(),
@@ -119,13 +120,13 @@ const CheckoutPage = () => {
         orderStatus: "pending",
       },
     };
-   event({
+    event({
       action: "checkout",
       category: "ecommerce",
       value: 1,
     });
     setFinalOrder(order);
-    setSuccessModalOpen(true); 
+    setSuccessModalOpen(true);
   };
 
   const handleModalConfirm = async () => {
@@ -154,7 +155,11 @@ const CheckoutPage = () => {
   const handleSendNotification = async (orderId: string) => {
     sendNewNotification({
       title: "New Order Placed",
-      message: `Customer Name: ${finalOrder?.shippingInfo?.name}\nOrder ID: ${orderId || "N/A"}\nTotal Amount: ${finalOrder?.pricing?.grandTotal} BDT\nDate: ${new Date(finalOrder?.meta?.checkoutAt || "").toLocaleString()}`,
+      message: `Customer Name: ${finalOrder?.shippingInfo?.name}\nOrder ID: ${
+        orderId || "N/A"
+      }\nTotal Amount: ${finalOrder?.pricing?.grandTotal} BDT\nDate: ${new Date(
+        finalOrder?.meta?.checkoutAt || ""
+      ).toLocaleString()}`,
       type: "order_placed",
       link: `/dashboard/manageOrders/${orderId}`,
       relatedId: orderId,
@@ -167,13 +172,12 @@ const CheckoutPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      
       <Suspense fallback={<div>Loading...</div>}>
         <PageHeading></PageHeading>
       </Suspense>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Shipping Info */}
-        <div>
+        {/* <div>
           <h2 className="text-lg font-semibold mb-2">Shipping Information</h2>
           <div className="space-y-3">
             {["name", "phone", "address", "city", "zipCode"].map((field) => (
@@ -186,7 +190,11 @@ const CheckoutPage = () => {
               />
             ))}
           </div>
-        </div>
+        </div> */}
+        <ShippingInfoForm
+          shippingInfo={shippingInfo}
+          setShippingInfo={setShippingInfo}
+        />
 
         {/* Order Summary & Payment */}
         <div>
@@ -195,8 +203,12 @@ const CheckoutPage = () => {
             <p>Subtotal: {checkoutData.pricing?.subtotal} TK</p>
             <p>Discount: -{checkoutData.pricing?.totalDiscount} TK</p>
             <p>After Discount: {checkoutData.pricing?.totalAfterDiscount} TK</p>
-            <p>Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK</p>
-            <p className="font-semibold">Delivery Charge: +{DELIVERY_CHARGE} TK</p>
+            <p>
+              Coupon Discount: -{checkoutData.pricing?.couponDiscountAmount} TK
+            </p>
+            <p className="font-semibold">
+              Delivery Charge: +{DELIVERY_CHARGE} TK
+            </p>
             {paymentMethod === "cod" && (
               <p className="font-semibold text-red-600">
                 Cash on Delivery Charge: +{COD_EXTRA_CHARGE} TK
@@ -243,8 +255,18 @@ const CheckoutPage = () => {
             {paymentMethod === "full" && (
               <div className="mt-4 space-y-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 my-3">
-                  <SafeImage src={bkashQR} alt="Bkash Logo" width={400} height={400} />
-                  <SafeImage src={bkashQRinfo} alt="Bkash Info" width={400} height={400} />
+                  <SafeImage
+                    src={bkashQR}
+                    alt="Bkash Logo"
+                    width={400}
+                    height={400}
+                  />
+                  <SafeImage
+                    src={bkashQRinfo}
+                    alt="Bkash Info"
+                    width={400}
+                    height={400}
+                  />
                 </div>
                 <p className="text-lg font-medium text-gray-700">
                   Pay to: <span className="font-bold">01773133145</span>
