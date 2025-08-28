@@ -154,6 +154,10 @@ const UserOrderCard: React.FC<OrderCardProps> = ({ order }) => {
           )}
         </div>
       </div>
+      <p className="mt-3 text-xs  italic bg-blue-100 p-2 rounded-sm">
+        ※ অর্ডার কনফার্ম হওয়ার পর সাধারণত ২-৩ কর্মদিবসের মধ্যে ডেলিভারি সম্পন্ন
+        হয়। ডেলিভারির আগে আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবেন।
+      </p>
       {ConfirmModal}
     </div>
   );

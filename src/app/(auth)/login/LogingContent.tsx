@@ -30,8 +30,8 @@ const Login: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>({
     defaultValues: {
-      email: "admin@gmail.com",
-      password: "123456",
+      email: "",
+      password: "",
     },
     mode: "onBlur",
     reValidateMode: "onBlur",
