@@ -41,7 +41,7 @@ const CheckoutPage = () => {
   const [finalOrder, setFinalOrder] = useState<CheckoutDataType | null>(null);
 
   const { sendNewNotification } = useNotifications();
-
+const [shippingInfoErrors, setShippingInfoErrors] = useState<boolean>(false);
 const [shippingInfo, setShippingInfo] = useState<ShippingInfoFormType>({
   name: "",
   phone: "",
@@ -60,6 +60,7 @@ const [shippingInfo, setShippingInfo] = useState<ShippingInfoFormType>({
 
   // Confirm Order function
   const handleConfirmOrder = () => {
+    if (shippingInfoErrors) return;
     const phoneRegex = /^01[0-9]{9}$/;
 
     // Validation for shipping info
@@ -194,6 +195,7 @@ const [shippingInfo, setShippingInfo] = useState<ShippingInfoFormType>({
         <ShippingInfoForm
           shippingInfo={shippingInfo}
           setShippingInfo={setShippingInfo}
+          setShippingInfoErrors={setShippingInfoErrors}
         />
 
         {/* Order Summary & Payment */}
