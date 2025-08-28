@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -12,10 +12,9 @@ import { registerUser } from "@/lib/allApiRequest/authRequest/authRequest";
 import PasswordInput from "@/components/PasswordInput";
 import SocialLogin from "@/components/SocialLogin";
 
-
-
 const Register: React.FC = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -27,25 +26,26 @@ const Register: React.FC = () => {
   const password = watch("password");
 
   const onSubmit = async (data: RegisterUser) => {
-  try {
-    // 1️⃣ user register হবে
-    const res = await registerUser({ ...data });
+    setIsLoading(true);
+    try {
+      // 1️⃣ user register হবে
+      const res = await registerUser({ ...data });
 
-    if (res?.success) {
-      toast.success(res.message || "Registration successful");
+      if (res?.success) {
+        toast.success(res.message || "Registration successful");
 
-      // 2️⃣ auto login বাদ, verify page এ redirect
-      router.push("/verify-email"); 
-    } else {
-      toast.error(res.message || "Registration failed");
+        // 2️⃣ auto login বাদ, verify page এ redirect
+        router.push("/verify-email");
+      } else {
+        toast.error(res.message || "Registration failed");
+      }
+    } catch (error) {
+      handleApiError(error);
+      console.error("Registration error:", error);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    handleApiError(error);
-    console.error("Registration error:", error);
-  } finally {
-    // console.log("Form Submitted Data:", data);
-  }
-};
+  };
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen max-w-xl mx-auto ">
@@ -61,7 +61,7 @@ const Register: React.FC = () => {
             type="text"
             placeholder="Enter your name"
             {...register("name", { required: "Name is required" })}
-       className="my-input rounded-full "
+            className="my-input rounded-full "
           />
           {errors.name && (
             <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
@@ -69,13 +69,13 @@ const Register: React.FC = () => {
         </div>
 
         {/* Email Field */}
-    <div className="w-full">
+        <div className="w-full">
           <label className="ml-2">User Email:</label>
           <input
             type="email"
             placeholder="Enter your email"
             {...register("email", { required: "Email is required" })}
-          className="my-input rounded-full "
+            className="my-input rounded-full "
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -99,11 +99,15 @@ const Register: React.FC = () => {
           label="Confirm Password"
           register={register("confirmPassword", {
             required: "Please confirm your password",
-            validate: (value) => value === password || "Passwords do not match",
+            validate: (value) =>
+              value === password || "Passwords do not match",
           })}
           error={errors.confirmPassword?.message}
         />
-        <PrimaryButton type="submit">Register</PrimaryButton>
+
+        <PrimaryButton type="submit" loading={isLoading} disabled={isLoading}>
+          Register
+        </PrimaryButton>
       </form>
       <div className=" w-full  max-w-xl flex flex-col justify-center items-center mt-3 ">
         <SocialLogin />
