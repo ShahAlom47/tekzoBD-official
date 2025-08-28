@@ -16,13 +16,12 @@ type LoginFormInputs = {
   password: string;
 };
 
-
-
 const Login: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/"; // default: home
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // ✅ Loading state
 
   const {
     register,
@@ -38,7 +37,8 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
-    setLoginError(null); // আগে error clear
+    setLoginError(null);
+    setIsLoading(true); // ✅ Start loading
 
     try {
       const res = await signIn("credentials", {
@@ -52,7 +52,6 @@ const Login: React.FC = () => {
       } else {
         const rawError = res?.error || "";
 
-        // ✅ New: Verified check
         if (rawError.includes("not verified")) {
           setLoginError(
             "⚠ আপনার ইমেইল যাচাই করা হয়নি। / Your email is not verified. একটি verification email পাঠানো হয়েছে। / A new verification email has been sent."
@@ -64,14 +63,14 @@ const Login: React.FC = () => {
         } else if (rawError.includes("Incorrect password")) {
           setLoginError("❌ পাসওয়ার্ড ভুল হয়েছে। / Incorrect password.");
         } else {
-          setLoginError(
-            "⚠ লগইন ব্যর্থ হয়েছে। / Login failed. Please try again."
-          );
+          setLoginError("⚠ লগইন ব্যর্থ হয়েছে। / Login failed. Please try again.");
         }
       }
     } catch (error) {
       console.error("Login error:", error);
       setLoginError("⚠ কিছু সমস্যা হয়েছে। / Something went wrong. Try again.");
+    } finally {
+      setIsLoading(false); // ✅ Stop loading
     }
   };
 
@@ -115,12 +114,15 @@ const Login: React.FC = () => {
           </div>
         )}
 
-        <PrimaryButton type="submit">Login</PrimaryButton>
+        {/* ✅ Login Button with Loading */}
+        <PrimaryButton type="submit" disabled={isLoading} loading={isLoading}>
+          Login
+        </PrimaryButton>
 
         <SocialLogin />
 
         {/* Links */}
-        <div className="flex flex-col items-center gap-2 flex-wrap  mt-2">
+        <div className="flex flex-col items-center gap-2 flex-wrap mt-2">
           <p className="text-sm text-gray-700">
             Don’t have an account?
             <Link
@@ -132,10 +134,7 @@ const Login: React.FC = () => {
             .
           </p>
 
-          <Link
-            className="underline   text-blue-700"
-            href="/forget-password"
-          >
+          <Link className="underline text-blue-700" href="/forget-password">
             Lost your password?
           </Link>
         </div>
