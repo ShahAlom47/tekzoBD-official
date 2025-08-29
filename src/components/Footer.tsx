@@ -19,12 +19,13 @@ const Footer = () => {
         </div>
 
         {/* Social Icons (external) */}
-       <SocialButtons></SocialButtons>
+        <SocialButtons></SocialButtons>
       </div>
 
       {/* Bottom Line */}
       <div className="text-center text-xs mt-6 text-gray-500">
-        © {new Date().getFullYear()} TekzoBD. All rights reserved.
+        © {new Date().getFullYear()} TekzoBD. All rights reserved. | Version
+        1.0.0
       </div>
     </footer>
   );
