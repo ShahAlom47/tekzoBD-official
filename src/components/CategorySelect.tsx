@@ -60,7 +60,7 @@ export function CategorySelect<T extends FieldValues = FieldValues>({
         render={({ field }) => (
           <select
             {...field}
-            className={`my-input max-w-14 ${className}`}
+            className={`my-input w-fit ${className}`}
             value={field.value || ""}
           >
             {renderOptions()}

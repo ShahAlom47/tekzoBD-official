@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const collection = await getNewsLetterCollection();
-    
+
     const existing = await collection.findOne({ email: body.email });
     if (existing) {
       return NextResponse.json(
