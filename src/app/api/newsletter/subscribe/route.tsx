@@ -13,6 +13,14 @@ export async function POST(req: NextRequest) {
     }
 
     const collection = await getNewsLetterCollection();
+    
+    const existing = await collection.findOne({ email: body.email });
+    if (existing) {
+      return NextResponse.json(
+        { message: "This email is already subscribed", success: false },
+        { status: 400 }
+      );
+    }
 
     const newSubscriber = {
       email: body.email,
@@ -21,6 +29,7 @@ export async function POST(req: NextRequest) {
       ...body,
     };
     const result = await collection.insertOne(newSubscriber);
+    console.log(result);
 
     if (!result.acknowledged) {
       return NextResponse.json(

@@ -9,19 +9,21 @@ type FormData = {
 };
 
 export default function Newsletter() {
-  const {user}=useUser()
- const {
-  register,
-  handleSubmit,
-  reset,
-  formState: { errors, isSubmitting },
-} = useForm<FormData>({
-  defaultValues: {
-    email: user?.email || "example@gmail.com",
-  },
-});
+  const { user } = useUser();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    defaultValues: {
+      email: user?.email || "", // <-- default empty, placeholder will show example
+    },
+  });
 
   const onSubmit = async (data: FormData) => {
+    if (!data.email) return; // extra safety
+
     const subsData = {
       email: data.email,
       isActive: true,
@@ -44,7 +46,6 @@ export default function Newsletter() {
 
   return (
     <div className="relative bg-gray-50 py-16 px-6 sm:px-10 overflow-hidden shadow-md rounded-2xl">
-      {/* Dot Background */}
       <div className="absolute inset-0 bg-dot-pattern opacity-90 pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-xl mx-auto text-center">
@@ -58,7 +59,7 @@ export default function Newsletter() {
         >
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder={user?.email || "example@gmail.com"} // <-- placeholder instead of default value
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -67,21 +68,19 @@ export default function Newsletter() {
               },
             })}
             className={`flex-grow px-2 py-3 text-gray-700 bg-transparent outline-none 
-              ${
-                errors.email ? "border-red-500" : "border-transparent"
-              } focus:border-brandPrimary`}
+              ${errors.email ? "border-red-500" : "border-transparent"} focus:border-brandPrimary`}
           />
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-2 py-3  text-brandPrimary text-sm md:text-base font-semibold uppercase hover:bg-brandPrimary hover:text-white transition rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-2 py-3 text-brandPrimary text-sm md:text-base font-semibold uppercase hover:bg-brandPrimary hover:text-white transition rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Submitting..." : "Subscribe"}
           </button>
         </form>
 
         {errors.email && (
-          <p className="text-red-500 text-sm mt-2 text-left">
+          <p className="text-red-500 text-sm m-2 text-left">
             {errors.email.message}
           </p>
         )}

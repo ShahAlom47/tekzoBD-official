@@ -38,7 +38,7 @@ const checkConnection = async (): Promise<void> => {
     const client: MongoClient = await clientPromise;
     const db: Db = client.db(); // You can specify your database name here if needed
     await db.command({ ping: 1 }); // Send a ping to the server to check the connection
-    // console.log("MongoDB connected successfully!");
+    console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error("MongoDB connection error:", error);
   }
