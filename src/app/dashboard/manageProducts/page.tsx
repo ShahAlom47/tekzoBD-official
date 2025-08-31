@@ -99,7 +99,7 @@ const ManageProduct = () => {
   ];
 
   const data = productData?.map((item) => ({
-    title: item.title,
+    title: item.title.slice(0, 20),
     price: `${item.price} TK`,
     discount: `${item.discount || 0}%`,
     stock: item.stock,

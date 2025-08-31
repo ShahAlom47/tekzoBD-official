@@ -276,7 +276,7 @@ const Settings: React.FC = () => {
           🔒 পাসওয়ার্ড পরিবর্তন করতে, `ফরগট পাসওয়ার্` অপশন ব্যবহার করুন।
           সেটিংস পেজ থেকে সরাসরি পরিবর্তন করা সম্ভব নয়।
         </p>
-        <Link href="/auth/forgot-password" className="text-blue-600 underline mt-3 flex gap-2 items-center ml-5">
+        <Link href="/forget-password" className="text-blue-600 underline mt-3 flex gap-2 items-center ml-5">
         <FaArrowRight></FaArrowRight> Forgot Password?
         </Link>
       </div>
