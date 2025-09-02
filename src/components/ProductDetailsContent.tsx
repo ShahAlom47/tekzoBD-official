@@ -207,12 +207,16 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
           </div>
 
           {/* Source Info */}
-          {product.sourceInfo && (
+          {product.sourceInfo && product?.sourceInfo?.sourceType ==="dropship" && (
             <div className="text-sm space-y-1 mt-4 border-t pt-3">
-              <h3 className="font-medium text-brandDark">
+              {/* <h3 className="font-medium text-brandDark">
                 Shipping & Source Info
-              </h3>
-              <p>Source: {product.sourceInfo.supplierName || "Unknown"}</p>
+              </h3> */}
+              {
+                user?.role === "admin"  && (
+                  <p>Source: {product.sourceInfo.supplierName}</p>
+                )
+              }
               {product.sourceInfo.deliveryTime && (
                 <p>Delivery: {product.sourceInfo.deliveryTime}</p>
               )}
@@ -222,7 +226,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
               {product.sourceInfo.returnPolicy && (
                 <p>Return: {product.sourceInfo.returnPolicy}</p>
               )}
-              {/* {product.sourceInfo.productSourceLink && (
+              {product.sourceInfo.productSourceLink && user?.role === "admin" && (
               <p>
                 Source Link:{" "}
                 <a
@@ -234,7 +238,7 @@ const ProductDetailsContent: React.FC<Props> = ({ product }) => {
                   View Original
                 </a>
               </p>
-            )} */}
+            )}
             </div>
           )}
 

@@ -2,3 +2,9 @@
 // userCollection.createIndex({ email: 1 }, { unique: true })
 // productCollection.createIndex({ slug: 1 }, { unique: true })
 
+
+
+
+//  product  details  page     soucse  er info hide korte  hobe ...
+// produt  add  and   update  form   laster  2 ta  fild  kiser seta   likhe  dite  hobe  cina  jacce na  
+// product  card   er   title  slice  aro barate  hobe 
