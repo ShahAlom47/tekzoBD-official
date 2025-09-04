@@ -19,7 +19,7 @@ const PageHeading = ({ title, isDetailsPage, subTitle }: { title?: string; isDet
         {isDetailsPage && subTitle && (
           <>
             {" "}
-            / <span className="text-gray-600 font-normal capitalize">{subTitle}</span>
+            / <span className="text-gray-600 font-normal capitalize  ">{subTitle.slice(0, 15)}....</span>
           </>
         )}
       </h1>

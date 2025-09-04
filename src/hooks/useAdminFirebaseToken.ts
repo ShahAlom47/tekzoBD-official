@@ -37,7 +37,7 @@ export function useAdminFirebaseToken() {
       const updateFirebaseToken = async () => {
         try {
           const currentToken = await getToken(messaging, {
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || "",
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYyy || "",
           });
 
           if (currentToken) {
