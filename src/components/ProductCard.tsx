@@ -39,6 +39,8 @@ const ProductCard = ({
       offer: item.offer,
       stock: item.stock,
     });
+    
+    // console.log("ProductCard render", item);
 
   const handleCardClick = () => {
     router.push(`/shop/${item.slug}`);

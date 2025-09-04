@@ -88,7 +88,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     if (data.stock !== undefined) {
       data.stock = Number(data.stock);
       if (isNaN(data.stock)) {
-        data.stock = 0; 
+        data.stock = 0;
       }
     }
     const submitData =
@@ -256,24 +256,32 @@ const ProductForm: React.FC<ProductFormProps> = ({
           placeholder="Delivery Time"
           className="my-input w-full"
         />
-        <input
-          type="number"
-          {...register("sourceInfo.shippingCost")}
-          placeholder="Shipping Cost"
-          className="my-input w-full"
-        />
+
+        <div className="flex items-center gap-2">
+          <label className=" w-full min-w-2">Shipping Cost :</label>
+          <input
+            type="number"
+            {...register("sourceInfo.shippingCost")}
+            placeholder="Shipping Cost"
+            className="my-input w-full"
+          />
+        </div>
         <input
           {...register("sourceInfo.returnPolicy")}
           placeholder="Return Policy"
           className="my-input w-full"
         />
-        <input
-          type="number"
-          step="0.01"
-          {...register("sourceInfo.commissionRate")}
-          placeholder="Commission Rate"
-          className="my-input w-full"
-        />
+
+        <div className="flex items-center gap-2">
+          <label className=" w-full min-w-2">Commission Rate :</label>
+          <input
+            type="number"
+            step="0.01"
+            {...register("sourceInfo.commissionRate")}
+            placeholder="Commission Rate"
+            className="my-input w-full "
+          />
+        </div>
         <div className="flex items-center gap-2">
           <input
             type="checkbox"

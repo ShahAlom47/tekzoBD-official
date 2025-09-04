@@ -63,7 +63,9 @@ const Login: React.FC = () => {
         } else if (rawError.includes("Incorrect password")) {
           setLoginError("❌ পাসওয়ার্ড ভুল হয়েছে। / Incorrect password.");
         } else {
-          setLoginError("⚠ লগইন ব্যর্থ হয়েছে। / Login failed. Please try again.");
+          setLoginError(
+            "⚠ লগইন ব্যর্থ হয়েছে। / Login failed. Please try again."
+          );
         }
       }
     } catch (error) {
@@ -118,28 +120,26 @@ const Login: React.FC = () => {
         <PrimaryButton type="submit" disabled={isLoading} loading={isLoading}>
           Login
         </PrimaryButton>
-
-     
       </form>
-         <SocialLogin />
 
-        {/* Links */}
-        <div className="flex flex-col items-center gap-2 flex-wrap mt-2">
-          <p className="text-sm text-gray-700">
-            Don’t have an account?
-            <Link
-              className="underline hover:scale-105 ml-1 text-blue-700"
-              href="/register"
-            >
-              Register
-            </Link>
-            .
-          </p>
-
-          <Link className="underline text-blue-700" href="/forget-password">
-            Lost your password?
+      {/* Links */}
+      <div className="flex flex-col items-center gap-2 flex-wrap mt-2 ">
+        <SocialLogin />
+        <p className="text-sm text-gray-700">
+          Don’t have an account?
+          <Link
+            className="underline hover:scale-105 ml-1 text-blue-700"
+            href="/register"
+          >
+            Register
           </Link>
-        </div>
+          .
+        </p>
+
+        <Link className="underline text-blue-700" href="/forget-password">
+          Lost your password?
+        </Link>
+      </div>
     </div>
   );
 };

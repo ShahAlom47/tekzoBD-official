@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useConfirm } from "@/hooks/useConfirm";
 import { NotificationType } from "@/Interfaces/notificationInterfaces";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ const NotificationCard = ({
   markAsRead,
   deleteNotif,
 }: Props) => {
-  const { confirm ,ConfirmModal} = useConfirm();
+  const { confirm, ConfirmModal } = useConfirm();
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -38,36 +38,39 @@ const NotificationCard = ({
   };
 
   return (
-    <div
-      onClick={handleCardClick}
-      className={`p-3 rounded-md shadow-sm border cursor-pointer
-        ${notification.isRead ? "bg-white" : "bg-gray-100"}
-        hover:bg-gray-200 transition-colors duration-200
-      `}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          handleCardClick();
-        }
-      }}
-    >
-      <h4 className="font-semibold text-sm">{notification.title}</h4>
-      <p className="text-xs text-gray-600">{notification.message}</p>
-      <div className="flex justify-end gap-2 mt-2 text-xs">
-       
-        <button
-          className="text-red-500 hover:underline"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete();
-          }}
-        >
-          Delete
-        </button>
+    <>
+      <div
+        onClick={handleCardClick}
+        className={`p-3 rounded-md shadow-sm border cursor-pointer
+          ${notification.isRead ? "bg-white" : "bg-gray-100"}
+          hover:bg-gray-200 transition-colors duration-200
+        `}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleCardClick();
+          }
+        }}
+      >
+        <h4 className="font-semibold text-sm">{notification.title}</h4>
+        <p className="text-xs text-gray-600">{notification.message}</p>
+        <div className="flex justify-end gap-2 mt-2 text-xs">
+          <button
+            className="text-red-500 hover:underline"
+            onClick={(e) => {
+              e.stopPropagation(); // 🔑 card click আটকাচ্ছে
+              handleDelete();
+            }}
+          >
+            Delete
+          </button>
+        </div>
       </div>
+
+      {/* Modal আলাদা রেন্ডার করা হলো */}
       {ConfirmModal}
-    </div>
+    </>
   );
 };
 
