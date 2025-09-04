@@ -119,7 +119,9 @@ const Login: React.FC = () => {
           Login
         </PrimaryButton>
 
-        <SocialLogin />
+     
+      </form>
+         <SocialLogin />
 
         {/* Links */}
         <div className="flex flex-col items-center gap-2 flex-wrap mt-2">
@@ -138,7 +140,6 @@ const Login: React.FC = () => {
             Lost your password?
           </Link>
         </div>
-      </form>
     </div>
   );
 };

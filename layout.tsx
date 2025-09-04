@@ -7,8 +7,8 @@ import ConditionalWrapper from "@/components/wrappers/ConditionalWrapper";
 import MainWrapper from "@/components/wrappers/MainWrapper"; // 👈 import here
 
 export const metadata: Metadata = {
-  title: "Shah Alom Official",
-  description: "Shah Alom's official website",
+  title: "TekzoBD",
+  description: "An online marketplace for buying and selling electronics and gadgets in Bangladesh.",
 };
 
 export default function RootLayout({

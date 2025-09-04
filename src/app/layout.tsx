@@ -13,8 +13,8 @@ import { Suspense } from "react";
 import Loading from "./loading";
 
 export const metadata: Metadata = {
-  title: "TeckzoBD",
-  description: "Shah Alom's official website",
+  title: "TekzoBD",
+  description: "An online marketplace for buying and selling electronics and gadgets in Bangladesh.",
    icons: {
     icon: "/fIcon.png",
   },
